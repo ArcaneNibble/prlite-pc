@@ -1,0 +1,12 @@
+<package>
+  <description brief="prlite_urdf">
+
+     prlite_urdf
+
+  </description>
+  <author>andrew</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/prlite_urdf</url>
+
+</package>

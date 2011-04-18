@@ -1,0 +1,20 @@
+<package>
+  <description brief="prlite_mimic">
+
+     prlite_mimic
+
+  </description>
+  <author>Robert</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/prlite_mimic</url>
+
+  <depend package="rospy"/>
+  <depend package="smach_ros"/>
+  <depend package="move_base_msgs"/>
+  <depend package="actionlib"/>
+  <depend package="prlite_kinematics"/>
+
+</package>
+
+

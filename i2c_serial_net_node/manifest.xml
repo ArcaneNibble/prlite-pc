@@ -1,0 +1,17 @@
+<package>
+  <description brief="i2c_serial_net_node">
+
+     i2c_serial_net_node
+
+  </description>
+  <author>Robert</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/i2c_serial_net_node</url>
+
+  <depend package="rospy"/>
+  <depend package="i2c_net_utils"/>
+
+</package>
+
+

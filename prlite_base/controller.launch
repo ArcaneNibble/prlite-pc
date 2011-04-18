@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="i2c_serial_net_node" type="i2c_serial.py" name="i2c_serial_node" output="screen"/>
+  <node pkg="i2c_net_packet_translator" type="i2c_net_packet_translator" name="i2c_net_packet_translator_node" output="screen"/>
+  <node pkg="i2c_health_check" type="i2c_health_check.py" name="i2c_health_check_node" output="screen"/>
+  <node pkg="prlite_base" type="base_controller" name="base_controller_node" output="screen"/>
+</launch>

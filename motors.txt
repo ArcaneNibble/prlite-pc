@@ -1,0 +1,11 @@
+2 sub 1 -- back left
+2 sub 2 -- back right
+4 sub 1 -- front left
+4 sub 2 -- front right
+
+no invert on 2
+1 0 invert on 4
+
+
+1000 is straight
+0 is sideways

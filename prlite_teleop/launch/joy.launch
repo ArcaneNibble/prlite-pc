@@ -1,0 +1,5 @@
+<launch>
+    <!-- Load the joystick service -->
+    <node name="joystick_service" pkg="joy" type="joy_node" 
+args="" output="screen"/>
+</launch>

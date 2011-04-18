@@ -1,0 +1,17 @@
+<package>
+  <description brief="i2c_health_check">
+
+     i2c_health_check
+
+  </description>
+  <author>Robert</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/i2c_health_check</url>
+
+  <depend package="rospy"/>
+  <depend package="i2c_net_packets"/>
+  
+</package>
+
+

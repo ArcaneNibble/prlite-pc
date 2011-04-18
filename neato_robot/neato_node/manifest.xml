@@ -1,0 +1,20 @@
+<package>
+  <description brief="A node wrapper for the neato_driver package">
+    This package contains a node that connects to the Neato Robotics XV-11. It enables control of motors through a geometry_msgs/Twist topic and publishes laser scans and odometry.
+  </description>
+  <author>Michael Ferguson</author>
+  <email>ferguson@cs.albany.edu</email>
+  <license>BSD</license>
+
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/neato_node</url>
+
+  <depend package="neato_driver"/>
+  <depend package="rospy"/>
+  <depend package="sensor_msgs"/>
+  <depend package="geometry_msgs"/>
+  <depend package="nav_msgs"/>
+  <depend package="tf"/>
+</package>
+
+

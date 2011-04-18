@@ -1,0 +1,11 @@
+<launch>
+    <!-- Start the low-level serial driver and controller manager -->
+    <include file="$(find ax12_controller_core)/launch/controller_manager.launch" />
+    
+    <!-- Start the smart_arm controller -->
+    <include file="$(find smart_arm_controller)/launch/prlite.launch" />
+
+    <!-- Start the arm inverse kinematics nodes -->
+    <include file="$(find prlite_kinematics)/launch/dual_armik.launch" />
+
+</launch>

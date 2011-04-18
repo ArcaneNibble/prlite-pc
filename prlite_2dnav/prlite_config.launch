@@ -1,0 +1,13 @@
+<launch>
+  <node pkg="hokuyo_node" type="hokuyo_node" name="sensor_node" output="screen">
+    <!--<param name="sensor_param" value="param_value" />-->
+  </node>
+
+  <node pkg="prlite_odom" type="odom" name="odom_node" output="screen">
+    <!--<param name="fake_localization" value="true" />-->
+  </node>
+
+  <node pkg="prlite_tf" type="tf_broadcaster" name="transform_configuration" output="screen">
+    <!--<param name="transform_configuration_param" value="param_value" />-->
+  </node>
+</launch>

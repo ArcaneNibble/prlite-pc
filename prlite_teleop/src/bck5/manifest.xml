@@ -1,0 +1,34 @@
+<package>
+  <description brief="prlite_teleop_general">
+
+     prlite_teleop_general
+
+  </description>
+  <author>Gil Jones</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/prlite_teleop_general</url>
+
+  <depend package="roscpp" />
+  <depend package="actionlib" />
+  <depend package="actionlib_msgs" />
+  <depend package="geometry_msgs" />
+  <depend package="sensor_msgs" />
+  <depend package="urdf" />
+  <depend package="ua_controller_msgs" />
+  <depend package="ax12_driver_core" />
+  <depend package="joy" />
+  <depend package="i2c_net_packets" />
+  <!--depend package="ps3joy" /-->
+
+  <export>
+    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib"/>
+  </export>
+
+  <platform os="ubuntu" version="9.04"/>
+  <platform os="ubuntu" version="9.10"/>
+  <platform os="ubuntu" version="10.04"/>
+
+</package>
+
+

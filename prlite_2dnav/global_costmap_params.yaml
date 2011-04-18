@@ -1,0 +1,13 @@
+global_costmap:
+  global_frame: odom # this is a hack?, should use something else like /map
+  robot_base_frame: base_link
+  update_frequency: 5.0
+  static_map: false # we are currently not using a map
+
+  transform_tolerance: 1.0
+
+  # suggested by http://ros-users.122217.n3.nabble.com/Problems-in-running-navigation-stack-td715922.html
+  rolling_window: true
+  width: 20.0
+  height: 20.0
+  resolution: 0.05er

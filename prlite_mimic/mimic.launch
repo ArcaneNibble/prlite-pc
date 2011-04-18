@@ -1,0 +1,7 @@
+<launch>
+  <include file="$(find prlite_base)/controller.launch" />
+  <include file="$(find prlite_2dnav)/prlite_config.launch" />
+  <include file="$(find prlite_2dnav)/move_base.launch" />
+
+  <node pkg="prlite_mimic" type="prlite_mimic.py" name="mimic_node" output="screen"/>
+</launch>

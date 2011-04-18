@@ -1,0 +1,6 @@
+BUS=="usb", SYSFS{idProduct}=="6001", SYSFS{idVendor}=="0403", SYSFS{serial}=="A600cUBW", SYMLINK="magellan_arm"
+BUS=="usb", SYSFS{idProduct}=="6001", SYSFS{idVendor}=="0403", SYSFS{serial}=="MGLNMOT_", SYMLINK="magellan-i2c-serial"
+BUS=="usb", SYSFS{idProduct}=="780b", SYSFS{idVendor}=="2108", SYMLINK="prlite-neato"
+BUS=="usb", SYSFS{idProduct}=="0000", SYSFS{idVendor}=="15d1", SYMLINK="prlite-hokuyo"
+BUS=="usb", SYSFS{idVendor}=="06c2", SYSFS{idProduct}=="00[3-a][0-f]", MODE:="0666"
+

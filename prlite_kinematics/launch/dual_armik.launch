@@ -1,0 +1,11 @@
+<launch>
+	<!-- Load configuration -->
+    <rosparam file="$(find prlite_kinematics)/config/armik-config-dual.yaml" command="load"/>
+
+    <!-- Launch first armik node -->
+    <node name="armikL" pkg="prlite_kinematics" type="armik_node" args="0" output="screen" /> 
+ 
+    <!-- Launch first armik node -->
+    <node name="armikR" pkg="prlite_kinematics" type="armik_node" args="1" output="screen" />
+  
+</launch>

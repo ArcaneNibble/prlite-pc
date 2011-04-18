@@ -1,0 +1,6 @@
+uint8 addr
+---
+bool present
+bool responding
+uint8 reply
+

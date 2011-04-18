@@ -1,0 +1,18 @@
+<package>
+  <description brief="prlite_2dnav">
+
+     prlite_2dnav
+
+  </description>
+  <author>andrew</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/prlite_2dnav</url>
+  <depend package="move_base"/>
+  <depend package="prlite_tf"/>
+  <depend package="prlite_odom"/>
+  <depend package="hokuyo_node"/>
+
+</package>
+
+
