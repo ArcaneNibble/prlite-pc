@@ -2,4 +2,4 @@
 roslaunch prlite_base controller.launch
 roslaunch prlite_2dnav prlite_config.launch
 roslaunch prlite_2dnav move_base.launch
-rosrun prlite_base send_goal.sh fwd_goal sideways_goal
+rosrun prlite_2dnav send_goal.sh fwd_goal sideways_goal rotation_goal

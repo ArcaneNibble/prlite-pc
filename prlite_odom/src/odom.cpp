@@ -5,7 +5,7 @@
 #include "i2c_net_packets/wheel_status_packet.h"
 
 const double WHEEL_TICKS_PER_METER = 75.1913116; // from magellan-v2 code: 36 clicks/circumference / pi diameter/circumference / 6 inches/diameter * 39.3700787 inches/meter
-const double TURN_DIAMETER_METERS = 1; // this needs tuning
+const double TURN_DIAMETER_METERS = 0.2; // found by tuning (is approximate)
 
 ros::Publisher odom_pub;
 ros::Time current_time, last_time;
@@ -85,8 +85,8 @@ void wheelStatusCallback(const i2c_net_packets::wheel_status_packet& ws)
 {
   // update wheel velocity
   int addr = ws.srcaddr / 2 - 1;
-  vl[addr] = ws.ticks0_interval;
-  vr[addr] = ws.ticks1_interval;
+  vl[addr] = ws.ticks0_interval * 10; // 10 intervals per second
+  vr[addr] = ws.ticks1_interval * 10;
   // update forward and rotation velocities (algorithm based on magellan-v2 odometryupdate)
   double lavg = ((double)(vl[0] + vl[1])) * 0.5 / WHEEL_TICKS_PER_METER;
   double ravg = ((double)(vr[0] + vr[1])) * 0.5 / WHEEL_TICKS_PER_METER;

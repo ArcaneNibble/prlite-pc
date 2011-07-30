@@ -4,13 +4,12 @@
      prlite_kinematics
 
   </description>
-  <author>Nathaniel LewisHome(925)-640-9957(925)-415-0881</author>
+  <author>ros</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/prlite_kinematics</url>
   <depend package="roscpp"/>
   <depend package="std_msgs"/>
-  <depend package="kdl"/>
   <depend package="smart_arm_controller"/>
 
 </package>

@@ -17,6 +17,7 @@ void scanCallback(const sensor_msgs::LaserScan& scan)
   static tf::TransformBroadcaster broadcaster;
   int minrangeid = -1;
   float minrange = 0;
+  std_msgs::Bool bool_pub;
   // find person (currently closest object > 0.5 meters)
   for (int i = 0; i < (scan.angle_max - scan.angle_min) / scan.angle_increment; i++)
   {
@@ -41,13 +42,15 @@ void scanCallback(const sensor_msgs::LaserScan& scan)
     trans.transform.rotation.z = 0.0;
     trans.transform.rotation.w = 1.0;
     broadcaster.sendTransform(trans);
-    pub.publish(true);
+    bool_pub.data = true;
+    pub.publish(bool_pub);
     ROS_INFO("angle %d dist %f x %f y %f", minrangeid, minrange, trans.transform.translation.x, trans.transform.translation.y);
   }
   else
   {
     // not seeing person
-    pub.publish(false);
+    bool_pub.data = false;
+    pub.publish(bool_pub);
   }
 }
 

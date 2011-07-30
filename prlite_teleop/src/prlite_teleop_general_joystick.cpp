@@ -1020,16 +1020,21 @@ ROS_INFO("init done");
       kinect_get_pos(&x,&y,&z);
       if (kinect_follow_ > 0) 
       {
-       if (abs(x) > .01)
-	 dz = x *2.0;
+       // rotation
+       if (fabs(x) > .01)
+	 dz = x * 1.0;
        else
 	 dz = 0;
+       if (dz > 0.6) dz = 0.6;
+       if (dz < -0.6) dz = -0.6;
 
-       // rotate vs forward
-       if (abs(z - 1.50) > .1 && kinect_follow_ == 2)
+       // forward/backward
+       if (fabs(z - 1.50) > .1 && kinect_follow_ == 2)
 	 dx = (z-1.50)*1.0;
        else
 	 dx = 0;
+       if (dx > 0.5) dx = 0.5;
+       if (dx < -0.5) dx = -0.5;
 
        if (x != 0 || y != 0 || z != 0) {
          generaljoy.gc->sendBaseCommand(dx, 0.0, dz);

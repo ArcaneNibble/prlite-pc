@@ -8,7 +8,7 @@
 #include "i2c_net_packets/linact_target.h"
 
 const double X_MULT = 7.51913116; // speed is ticks per interval and interval is 1/10 sec, so should be WHEEL_TICKS_PER_METER / 10
-const double TH_MULT = 5;
+const double TH_MULT = 5; // tuned manually (is about right)
 const uint16_t LINACT_0 = 940;
 const uint16_t LINACT_45 = 500;
 const uint16_t LINACT_90 = 62;

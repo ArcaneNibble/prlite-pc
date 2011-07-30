@@ -1,5 +1,6 @@
 #include "ros/ros.h"
 #include "std_msgs/Float64.h"
+#include "std_msgs/Int32.h"
 #include "std_msgs/Bool.h"
 #include "joy/Joy.h"
 
@@ -456,12 +457,14 @@ void prlite_ax12commander::move_to_desired_pos()
 
 void prlite_ax12commander::set_desired_pos(int joint, double desired_pos)
 {
+  std_msgs::Float64 desired_pos_pub;
   if (joint == shouldertiltR || joint == lfingerR || joint == rfingerR) 
           desired_pos *= -1;
   if (prlite_ax12joint[joint].desiredpos == desired_pos) return;
   ROS_INFO_STREAM("set_desired_pos " << joint << " " << desired_pos);
+  desired_pos_pub.data = desired_pos;
   if (/* joint != lfingerR && joint != rfingerR */ true)  // bad motors
-    prlite_ax12joint[joint].controller.publish(desired_pos);
+    prlite_ax12joint[joint].controller.publish(desired_pos_pub);
   prlite_ax12joint[joint].desiredpos = desired_pos;
 }
 
@@ -498,17 +501,20 @@ void prlite_ax12commander::kinect_callobration_pos()
 
 void prlite_ax12commander::arm_head_mode(int left_arm_control_mode, int right_arm_control_mode, int head_control_mode)
 {
-   int i; 
+   int i;
+   std_msgs::Int32 torque_pub;
 
    if (left_arm_control_mode == UNCHANGED_MODE) {
    } else if (left_arm_control_mode == MANNEQUIN_MODE || left_arm_control_mode == NO_CONTROLLER_MODE) {
      /* turn off torque */
+     torque_pub.data = 0;
      for (i = 0; i <= prlite_ax12commander::rfinger; i ++) {
-       prlite_ax12joint[i].torque.publish(0);
+       prlite_ax12joint[i].torque.publish(torque_pub);
      }
    } else if (left_arm_control_mode == POSITION_MODE) {
+     torque_pub.data = 1;
      for (i = 0; i <= prlite_ax12commander::rfinger; i ++) {
-       prlite_ax12joint[i].torque.publish(1);
+       prlite_ax12joint[i].torque.publish(torque_pub);
      }
      ros::Duration(0.1).sleep();
      for (i = 0; i <= prlite_ax12commander::rfinger; i ++) {
@@ -518,12 +524,14 @@ void prlite_ax12commander::arm_head_mode(int left_arm_control_mode, int right_ar
    if (right_arm_control_mode == UNCHANGED_MODE) {
    } else if (right_arm_control_mode == MANNEQUIN_MODE || right_arm_control_mode == NO_CONTROLLER_MODE) {
      /* turn off torque */
+     torque_pub.data = 0;
      for (i = prlite_ax12commander::shoulderpanR; i <= prlite_ax12commander::rfingerR; i ++) {
-       prlite_ax12joint[i].torque.publish(0);
+       prlite_ax12joint[i].torque.publish(torque_pub);
      }
    } else if (right_arm_control_mode == POSITION_MODE) {
+     torque_pub.data = 1;
      for (i = prlite_ax12commander::shoulderpanR; i <= prlite_ax12commander::rfingerR; i ++) {
-       prlite_ax12joint[i].torque.publish(1);
+       prlite_ax12joint[i].torque.publish(torque_pub);
      }
      ros::Duration(0.1).sleep();
      for (i = prlite_ax12commander::shoulderpanR; i <= prlite_ax12commander::rfingerR; i ++) {
@@ -534,12 +542,14 @@ void prlite_ax12commander::arm_head_mode(int left_arm_control_mode, int right_ar
    if (head_control_mode == UNCHANGED_MODE) {
    } else if (head_control_mode == MANNEQUIN_MODE || head_control_mode == NO_CONTROLLER_MODE) {
      /* turn off torque */
+     torque_pub.data = 0;
      for (i = prlite_ax12commander::kinectpan; i < prlite_ax12commander::numjoints; i ++) {
-       prlite_ax12joint[i].torque.publish(0);
+       prlite_ax12joint[i].torque.publish(torque_pub);
      }
    } else if (head_control_mode == POSITION_MODE) {
+     torque_pub.data = 1;
      for (i = prlite_ax12commander::kinectpan; i < prlite_ax12commander::numjoints; i ++) {
-       prlite_ax12joint[i].torque.publish(1);
+       prlite_ax12joint[i].torque.publish(torque_pub);
      }
      ros::Duration(0.1).sleep();
      for (i = prlite_ax12commander::kinectpan; i < prlite_ax12commander::numjoints; i ++) {
