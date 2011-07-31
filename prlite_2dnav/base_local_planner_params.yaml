@@ -1,6 +1,6 @@
 TrajectoryPlannerROS:
   max_vel_x: 0.61177281 # 46 ticks/sec / 75.1913116 ticks/meter (see magellan-v2 code)
-  min_vel_x: 0.1
+  min_vel_x: 0.2
   max_rotational_vel: 1.0
   min_in_place_rotational_vel: 0.4
 

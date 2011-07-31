@@ -33,7 +33,7 @@ args="" output="screen"/>
   	<param name="walk_along_w_speed_scale" type="double" value="3.0"/>
   	<param name="walk_along_x_dist_max" type="double" value=".25"/>
   	<param name="walk_along_y_dist_max" type="double" value=".20"/>
-  	<param name="kinect_follow" type="int" value="1"/>
+  	<param name="kinect_follow" type="int" value="2"/>
   </node>
 
 </launch>
