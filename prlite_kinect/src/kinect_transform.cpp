@@ -45,7 +45,7 @@
 #define CHECK_RC(nRetVal, what)										\
 if (nRetVal != XN_STATUS_OK)									\
 {																\
-    printf("%s failed: %s\n", what, xnGetStatusString(nRetVal));\
+    ROS_INFO_STREAM(what << " failed: " << xnGetStatusString(nRetVal));\
 	return nRetVal;												\
 }
 
@@ -77,7 +77,8 @@ double calc3DDist( XnPoint3D p1, XnPoint3D p2 ) {
 // Callback: New user was detected
 void XN_CALLBACK_TYPE User_NewUser(xn::UserGenerator& generator, XnUserID nId, void* pCookie)
 {
-	printf("New User %d\n", nId);
+	// printf("New User %d\n", nId);
+	ROS_INFO_STREAM("New User " << nId);
 	// New user found
 	if (g_bNeedPose)
 	{
@@ -92,7 +93,8 @@ void XN_CALLBACK_TYPE User_NewUser(xn::UserGenerator& generator, XnUserID nId, v
 // Callback: An existing user was lost
 void XN_CALLBACK_TYPE User_LostUser(xn::UserGenerator& generator, XnUserID nId, void* pCookie)
 {
-	printf("Lost user %d\n", nId);
+	// printf("Lost user %d\n", nId);
+        ROS_INFO_STREAM("Lost user " <<  nId);
 		
 	prlite_kinematics::some_status_thing status;
 	status.lulz = 2;	//lost user
@@ -104,7 +106,7 @@ void XN_CALLBACK_TYPE User_LostUser(xn::UserGenerator& generator, XnUserID nId, 
 // Callback: Detected a pose
 void XN_CALLBACK_TYPE UserPose_PoseDetected(xn::PoseDetectionCapability& capability, const XnChar* strPose, XnUserID nId, void* pCookie)
 {
-	printf("Pose %s detected for user %d\n", strPose, nId);
+	ROS_INFO_STREAM("Pose " << strPose << " detected for user " << nId);
 	g_UserGenerator.GetPoseDetectionCap().StopPoseDetection(nId);
 	g_UserGenerator.GetSkeletonCap().RequestCalibration(nId, TRUE);
 }
@@ -112,7 +114,7 @@ void XN_CALLBACK_TYPE UserPose_PoseDetected(xn::PoseDetectionCapability& capabil
 // Callback: Started calibration
 void XN_CALLBACK_TYPE UserCalibration_CalibrationStart(xn::SkeletonCapability& capability, XnUserID nId, void* pCookie)
 {
-	printf("Calibration started for user %d\n", nId);
+	ROS_INFO_STREAM("Calibration started for user " << nId);
 }
 
 // Callback: Finished calibration
@@ -121,7 +123,8 @@ void XN_CALLBACK_TYPE UserCalibration_CalibrationEnd(xn::SkeletonCapability& cap
 	if (bSuccess)
 	{
 		// Calibration succeeded
-		printf("Calibration complete, start tracking user %d\n", nId);
+		ROS_INFO_STREAM("Calibration complete, start tracking user "
+                         <<  nId);
 		g_UserGenerator.GetSkeletonCap().StartTracking(nId);
 		
 		prlite_kinematics::some_status_thing status;
@@ -131,7 +134,7 @@ void XN_CALLBACK_TYPE UserCalibration_CalibrationEnd(xn::SkeletonCapability& cap
 	else
 	{
 		// Calibration failed
-		printf("Calibration failed for user %d\n", nId);
+		ROS_INFO_STREAM("Calibration failed for user " << nId);
 		if (g_bNeedPose)
 		{
 			g_UserGenerator.GetPoseDetectionCap().StartPoseDetection(g_strPose, nId);
@@ -170,10 +173,10 @@ int main(int argc, char **argv) {
 	{
 		XnChar strError[1024];
 		errors.ToString(strError, 1024);
-		printf("%s\n", strError);
+		ROS_INFO_STREAM(strError);
 		return (nRetVal);
 	} else if (nRetVal != XN_STATUS_OK) {
-		printf("Open failed: %s\n", xnGetStatusString(nRetVal));
+		ROS_INFO_STREAM("Open failed: " << xnGetStatusString(nRetVal));
 		return (nRetVal);
 	}
 
@@ -189,7 +192,7 @@ int main(int argc, char **argv) {
 	XnCallbackHandle hUserCallbacks, hCalibrationCallbacks, hPoseCallbacks;
 	if (!g_UserGenerator.IsCapabilitySupported(XN_CAPABILITY_SKELETON))
 	{
-		printf("Supplied user generator doesn't support skeleton\n");
+		ROS_INFO_STREAM("Supplied user generator doesn't support skeleton");
 		return 1;
 	}
 	g_UserGenerator.RegisterUserCallbacks(User_NewUser, User_LostUser, NULL, hUserCallbacks);
@@ -200,7 +203,7 @@ int main(int argc, char **argv) {
 		g_bNeedPose = TRUE;
 		if (!g_UserGenerator.IsCapabilitySupported(XN_CAPABILITY_POSE_DETECTION))
 		{
-			printf("Pose required, but not supported\n");
+			ROS_INFO_STREAM("Pose required, but not supported");
 			return 1;
 		}
 		g_UserGenerator.GetPoseDetectionCap().RegisterToPoseCallbacks(UserPose_PoseDetected, NULL, NULL, hPoseCallbacks);

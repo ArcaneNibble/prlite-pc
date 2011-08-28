@@ -1020,6 +1020,8 @@ ROS_INFO("init done");
       kinect_get_pos(&x,&y,&z);
       if (kinect_follow_ > 0) 
       {
+       static int stopped = 0;
+
        // rotation
        if (fabs(x) > .01)
 	 dz = x * 1.0;
@@ -1040,6 +1042,12 @@ ROS_INFO("init done");
          generaljoy.gc->sendBaseCommand(dx, 0.0, dz);
          ROS_INFO_STREAM("kinect x= " << x << " y= " << y << " z= " << z);
          ROS_INFO_STREAM("prlite x= " << dx << " y= " << 0 << " z= " << dz);
+         stopped = 0;
+       } else if (!stopped) {
+         generaljoy.gc->sendBaseCommand(0.0, 0.0, 0.0);
+         ROS_INFO_STREAM("kinect x= " << x << " y= " << y << " z= " << z);
+         ROS_INFO_STREAM("prlite x= " << dx << " y= " << 0 << " z= " << dz);
+         stopped = 1;
        }
      }
     } else 

@@ -1,12 +1,15 @@
 TrajectoryPlannerROS:
   max_vel_x: 0.61177281 # 46 ticks/sec / 75.1913116 ticks/meter (see magellan-v2 code)
-  min_vel_x: 0.2
-  max_rotational_vel: 1.0
-  min_in_place_rotational_vel: 0.4
+  min_vel_x: 0.4
+  max_rotational_vel: 0.7
+  min_in_place_rotational_vel: 0.5
 
-  acc_lim_th: 3.2
+  acc_lim_th: 100
   acc_lim_x: 2.5
   acc_lim_y: 2.5
+
+  yaw_goal_tolerance: 0.05
+  xy_goal_tolerance: 0.2
 
   # disable holonomic robot for now, should enable it again after we know what we are doing
   holonomic_robot: false

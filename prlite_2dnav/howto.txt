@@ -1,4 +1,4 @@
-(each line should be run in a new terminal, replace fwd_goal and sideways_goal with numbers)
+(each line should be run in a new terminal, replace fwd_goal and sideways_goal and rotation_goal with numbers)
 roslaunch prlite_base controller.launch
 roslaunch prlite_2dnav prlite_config.launch
 roslaunch prlite_2dnav move_base.launch

@@ -83,7 +83,7 @@ void state_change(void)
         ROS_INFO("ERR: WHEELS MOVING");
         // shouldn't happen
         base_state = wheel_moving;
-      } else if (linact_goal == linact_goal_last && cmd_l != 0 && cmd_r != 0) {
+      } else if (linact_goal == linact_goal_last && (cmd_l != 0 || cmd_r != 0)) {
         // publish wheel commands
         base_state = wheel_start;
         cmdPublishWheel();
@@ -97,7 +97,7 @@ void state_change(void)
           base_state = linact_moving;
         } else if (state_timeout(linact_start, &now, LINACT_TO)) {
           // timeout without linact moving
-          if (cmd_l != 0 && cmd_r != 0)
+          if (cmd_l != 0 || cmd_r != 0)
             ROS_INFO("ERR: LINACT START TIMEOUT");
           base_state = ready;
         }
