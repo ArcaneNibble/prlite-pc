@@ -4,8 +4,10 @@
 #- git: {local-name: neato_robot, uri: 'git://github.com/someh4x0r/neato_robot.git'}
 
 - svn: {local-name: ua-ros-pkg, uri: 'http://ua-ros-pkg.googlecode.com/svn/trunk/arrg'}
-- svn: {local-name: laser_drivers, uri: 'https://code.ros.org/svn/ros-pkg/stacks/laser_drivers/tags/laser_drivers-1.2.2'}
-- svn: {local-name: joystick_drivers, uri: 'https://code.ros.org/svn/ros-pkg/stacks/joystick_drivers/tags/joystick_drivers-1.4.2'}
-- svn: {local-name: pr2_controllers, uri: 'https://code.ros.org/svn/wg-ros-pkg/stacks/pr2_controllers/tags/pr2_controllers-1.4.0'}
-- hg: {local-name: openni_kinect, uri: 'https://kforge.ros.org/openni/openni_ros', version: default}
-- svn: {local-name: erratic_robot, uri: 'http://ua-ros-pkg.googlecode.com/svn/stacks/erratic_robot/trunk'}
+- svn: {local-name: laser_drivers, uri: 'https://code.ros.org/svn/ros-pkg/stacks/laser_drivers/tags/electric/'}
+- svn: {local-name: joystick_drivers, uri: 'https://code.ros.org/svn/ros-pkg/stacks/joystick_drivers/tags/electric/'}
+- svn: {local-name: pr2_controllers, uri: 'https://code.ros.org/svn/wg-ros-pkg/stacks/pr2_controllers/tags/electric/'}
+- hg: {local-name: openni_kinect, uri: 'https://kforge.ros.org/openni/openni_ros', version: electric}
+- svn: {local-name: erratic_robot, uri: 'http://ua-ros-pkg.googlecode.com/svn/stacks/erratic_robot/tags/electric/'}
+
+# need to also run sudo apt-get install ros-electric-dynamixel-motor

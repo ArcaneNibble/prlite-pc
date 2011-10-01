@@ -159,10 +159,10 @@ typedef struct ax12_joint_s {
   ros::Publisher controller;
   ros::Subscriber subscriber;
   ros::Publisher torque;
-  ua_controller_msgs::JointState joint_state;
+  dynamixel_msgs::JointState joint_state;
   double directpos;
   double desiredpos;
-  ax12_driver_core::MotorState motor_state[2];  
+  dynamixel_msgs::MotorState motor_state[2];  
   double minpos;
   double maxpos;
   double nxtpos;
@@ -221,8 +221,8 @@ void prlite_ax12commander::get_params()
     }
 }
 
-// void prlite_ax12commander::motor_state_callback(const ax12_driver_core::MotorStateList& motor_state_list)
-void motor_state_callback(const ax12_driver_core::MotorStateList& motor_state_list)
+// void prlite_ax12commander::motor_state_callback(const dynamixel_msgs::MotorStateList& motor_state_list)
+void motor_state_callback(const dynamixel_msgs::MotorStateList& motor_state_list)
 {
   int i, j;
 
@@ -281,8 +281,8 @@ int prlite_ax12commander::get_joint_by_name(std::string name)
    return(joint);
 }
 
-// void prlite_ax12commander::joint_state_callback(const ua_controller_msgs::JointState& joint_msg_ptr)
-void joint_state_callback(const ua_controller_msgs::JointState& joint_msg_ptr)
+// void prlite_ax12commander::joint_state_callback(const dynamixel_msgs::JointState& joint_msg_ptr)
+void joint_state_callback(const dynamixel_msgs::JointState& joint_msg_ptr)
 {
     int joint;
 
