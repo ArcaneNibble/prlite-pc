@@ -106,12 +106,14 @@
                 </geometry>
             </visual>
             
+<!--
             <collision>
                 <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
                 <geometry>
                     <mesh filename="package://smart_arm_description/meshes/convex/arm_base_convex.stlb"/>
                 </geometry>
             </collision>
+-->
         </link>
         
         <link name="${side}_elbow_flex_link">
@@ -130,12 +132,14 @@
                 </geometry>
             </visual>
             
+<!--
             <collision>
                 <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
                 <geometry>
                     <mesh filename="package://smart_arm_description/meshes/convex/arm_shoulder_pan_convex.stlb"/>
                 </geometry>
             </collision>
+-->
         </link>
         
         <link name="${side}_forearm_link">
@@ -154,12 +158,14 @@
                 </geometry>
             </visual>
             
+<!--
             <collision>
                 <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
                 <geometry>
                     <mesh filename="package://smart_arm_description/meshes/convex/arm_shoulder_tilt_convex.stlb"/>
                 </geometry>
             </collision>
+-->
         </link>
         
         <link name="${side}_wrist_flex_link">
@@ -178,12 +184,14 @@
                 </geometry>
             </visual>
             
+<!--
             <collision>
                 <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
                 <geometry>
                     <mesh filename="package://smart_arm_description/meshes/convex/arm_elbow_tilt_convex.stlb"/>
                 </geometry>
             </collision>
+-->
         </link>
         
         <link name="${side}_wrist_roll_link">
@@ -202,12 +210,14 @@
                 </geometry>
             </visual>
             
+<!--
             <collision>
                 <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
                 <geometry>
                     <mesh filename="package://smart_arm_description/meshes/convex/arm_wrist_rotate_convex.stlb"/>
                 </geometry>
             </collision>
+-->
         </link>
         
         <link name="${side}_gripper_right_link">
@@ -226,12 +236,14 @@
                 </geometry>
             </visual>
             
+<!--
             <collision>
                 <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
                 <geometry>
                     <mesh filename="package://smart_arm_description/meshes/convex/arm_right_finger_convex.stlb"/>
                 </geometry>
             </collision>
+-->
         </link>
         
         <link name="${side}_gripper_left_link">
@@ -250,12 +262,14 @@
                 </geometry>
             </visual>
             
+<!--
             <collision>
                 <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
                 <geometry>
                     <mesh filename="package://smart_arm_description/meshes/convex/arm_left_finger_convex.stlb"/>
                 </geometry>
             </collision>
+-->
         </link>
         
         <!-- ****** TRANSMISSION DEFINITIONS ****** -->

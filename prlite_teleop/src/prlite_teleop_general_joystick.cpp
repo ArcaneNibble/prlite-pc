@@ -39,7 +39,7 @@
 
 #include <ros/ros.h>
 
-#include <joy/Joy.h>
+#include <sensor_msgs/Joy.h>
 #include "prlite_teleop_general/prlite_teleop_general_commander.h"
 #include "kinect_transform.h"
 
@@ -102,6 +102,91 @@ static const unsigned int SET_WALK_ALONG_BUTTON = 3;
 static JoystickLayoutMode layout = LAYOUT_NONE;
 static const ros::Duration DOUBLE_TAP_TIMEOUT(.25);
 static int kinect_follow_ = 0;
+  double max_pan_, max_tilt_, min_tilt_;
+  int axis_pan_, axis_tilt_;
+  double pan_scale_, tilt_scale_;
+
+  double des_pan_pos_;
+  double des_tilt_pos_;
+
+  double vel_val_pan_;
+  double vel_val_tilt_;
+
+  double des_vx_;
+  double des_vy_;
+  double des_vw_;
+
+  double vx_scale_;
+  double vy_scale_;
+  double vw_scale_;
+
+  double arm_x_scale_;
+  double arm_y_scale_;
+  double arm_z_scale_;
+
+  double right_arm_vx_;
+  double right_arm_vy_;
+  double right_arm_vz_;
+
+  double left_arm_vx_;
+  double left_arm_vy_;
+  double left_arm_vz_;
+
+  double tuck_shoulder_pan_;
+
+  double tuck_elbow_tilt_;
+  double tuck_wrist_rotate_;
+  double tuck_finger_left_;
+  double tuck_finger_right_;
+
+  double untuck_shoulder_pan_;
+  double untuck_shoulder_tilt_; 
+  double untuck_elbow_tilt_; 
+  double untuck_wrist_rotate_; 
+  double untuck_finger_left_; 
+  double untuck_finger_right_; 
+
+  bool head_init_;
+  bool torso_init_;
+
+  double req_torso_vel_;
+  double req_torso_pos_;
+
+  double des_torso_pos_;
+  double des_torso_vel_;
+  double torso_step_;
+  double min_torso_;
+  double max_torso_;
+
+  double wrist_velocity_;
+  double des_right_wrist_vel_;  
+  double des_left_wrist_vel_;
+
+  double walk_along_x_speed_scale_;
+  double walk_along_y_speed_scale_;
+  double walk_along_w_speed_scale_;
+  double walk_along_thresh_;
+  double walk_along_x_dist_max_;
+  double walk_along_y_dist_max_;
+
+  bool walk_along_init_waiting_;
+  bool set_walk_along_mode_;
+
+  std::string prosilica_namespace_;
+
+  bool proj_toggle_com_; 
+ 
+  int projector_toggle_button_;
+  int tilt_toggle_button_;
+  int switch_head_control_mode_button_;
+
+  GeneralCommander* gc;
+
+  ros::Time joy_deadman_;
+
+  bool first_callback_;
+
+  sensor_msgs::JoyConstPtr last_joy_;
 
 class Pr2TeleopGeneralJoystick
 {
@@ -228,23 +313,23 @@ public:
     }
   }
 
-  bool buttonOkAndOn(unsigned int buttonNum, const joy::Joy::ConstPtr& joy_msg) const {
+  bool buttonOkAndOn(unsigned int buttonNum, const sensor_msgs::Joy::ConstPtr& joy_msg) const {
     if(buttonNum >= joy_msg->buttons.size()) return false;
     return(joy_msg->buttons[buttonNum]);
   }
 
-  bool axisOk(unsigned int axisNum, const joy::Joy::ConstPtr& joy_msg) const {
+  bool axisOk(unsigned int axisNum, const sensor_msgs::Joy::ConstPtr& joy_msg) const {
     return (axisNum < joy_msg->axes.size());
   }
 
   bool sameValueAsLast(unsigned int button, 
-                       const joy::Joy::ConstPtr& new_msg,
-                       const joy::Joy::ConstPtr& old_msg) {
+                       const sensor_msgs::Joy::ConstPtr& new_msg,
+                       const sensor_msgs::Joy::ConstPtr& old_msg) {
     return (buttonOkAndOn(button, new_msg) == buttonOkAndOn(button, old_msg));
   }
                        
 
-  void joy_cb(const joy::Joy::ConstPtr& joy_msg)
+  void joy_cb(const sensor_msgs::Joy::ConstPtr& joy_msg)
   {
     if(first_callback_) {
       last_joy_ = joy_msg;
@@ -868,6 +953,7 @@ public:
 */
 
 public:
+/*
   double max_pan_, max_tilt_, min_tilt_;
   int axis_pan_, axis_tilt_;
   double pan_scale_, tilt_scale_;
@@ -946,13 +1032,12 @@ public:
   int tilt_toggle_button_;
   int switch_head_control_mode_button_;
 
-  GeneralCommander* gc;
 
   ros::Time joy_deadman_;
 
-  joy::JoyConstPtr last_joy_;
   bool first_callback_;
 
+*/
   ros::NodeHandle n_;
   ros::Subscriber joy_sub_;
 
@@ -961,7 +1046,8 @@ public:
   ros::Time last_head_toggle_;
 
   ros::Time last_walk_along_time_;
-
+  GeneralCommander* gc;
+  sensor_msgs::JoyConstPtr last_joy_;
 };
 
 static const double FastHz = 100;
@@ -995,9 +1081,14 @@ ROS_INFO("init done");
   unsigned int counter_limit = (unsigned int)(FastHz/SlowHz);
 
   unsigned int counter = 0;
+/*
   generaljoy.des_vx_ = 0;
   generaljoy.des_vy_ = 0;
   generaljoy.des_vw_ = 0;
+*/
+  des_vx_ = 0;
+  des_vy_ = 0;
+  des_vw_ = 0;
 
   ros::Time beforeCall = ros::Time::now();
   ros::Time afterCall = ros::Time::now();
@@ -1052,9 +1143,11 @@ ROS_INFO("init done");
      }
     } else 
     {
-      generaljoy.gc->sendHeadCommand( generaljoy.vel_val_pan_, generaljoy.vel_val_tilt_);
+      // generaljoy.gc->sendHeadCommand( generaljoy.vel_val_pan_, generaljoy.vel_val_tilt_);
+      generaljoy.gc->sendHeadCommand( vel_val_pan_, vel_val_tilt_);
        // ROS_INFO_STREAM("prlite x= " <<  generaljoy.des_vy_ << " y= " << generaljoy.des_vx_ << " z= " << generaljoy.des_vw_);
-      generaljoy.gc->sendBaseCommand(generaljoy.des_vy_, generaljoy.des_vx_, generaljoy.des_vw_);
+      // generaljoy.gc->sendBaseCommand(generaljoy.des_vy_, generaljoy.des_vx_, generaljoy.des_vw_);
+      generaljoy.gc->sendBaseCommand(des_vy_, des_vx_, des_vw_);
 /*
     if(!generaljoy.gc->isWalkAlongOk() && !generaljoy.set_walk_along_mode_ && !generaljoy.walk_along_init_waiting_) {
       if(generaljoy.convertCurrentVelToDesiredHeadPos(FastHz)) {
@@ -1072,27 +1165,27 @@ ROS_INFO("init done");
       
       counter = 0;
       
-      if(generaljoy.set_walk_along_mode_) {
+      if(set_walk_along_mode_) {
         bool ok = generaljoy.gc->moveToWalkAlongArmPose();
         //if we didn't get a select while moving the arms
-        if(ok && generaljoy.set_walk_along_mode_) {
+        if(ok && set_walk_along_mode_) {
           ROS_INFO("Arms in walk position");
-          generaljoy.walk_along_init_waiting_ = true;
+          walk_along_init_waiting_ = true;
         } else {
           ROS_INFO("Arms not in walk position");
         }
-        generaljoy.set_walk_along_mode_ = false;
+        set_walk_along_mode_ = false;
       }
       
       if(generaljoy.gc->isWalkAlongOk()) {
        
         ROS_INFO("WalkAlong");
-        generaljoy.gc->sendWalkAlongCommand(generaljoy.walk_along_thresh_, 
-                                            generaljoy.walk_along_x_dist_max_,
-                                            generaljoy.walk_along_x_speed_scale_,
-                                            generaljoy.walk_along_y_dist_max_,
-                                            generaljoy.walk_along_y_speed_scale_,
-                                            generaljoy.walk_along_w_speed_scale_);
+        generaljoy.gc->sendWalkAlongCommand(walk_along_thresh_, 
+                                            walk_along_x_dist_max_,
+                                            walk_along_x_speed_scale_,
+                                            walk_along_y_dist_max_,
+                                            walk_along_y_speed_scale_,
+                                            walk_along_w_speed_scale_);
       } 
 /*
       else 
@@ -1100,14 +1193,14 @@ ROS_INFO("init done");
 */
       {
           // ROS_INFO("Torso");
-          generaljoy.gc->sendTorsoCommand(generaljoy.des_torso_pos_, generaljoy.des_torso_vel_);
+          generaljoy.gc->sendTorsoCommand(des_torso_pos_, des_torso_vel_);
         }
         //generaljoy.gc->updateCurrentWristPositions();
-        generaljoy.gc->sendWristVelCommands(generaljoy.des_right_wrist_vel_, generaljoy.des_left_wrist_vel_, SlowHz);
+        generaljoy.gc->sendWristVelCommands(des_right_wrist_vel_, des_left_wrist_vel_, SlowHz);
         // ROS_INFO("SendARmVelCom");
         
-        generaljoy.gc->sendArmVelCommands(generaljoy.right_arm_vx_, generaljoy.right_arm_vy_, generaljoy.right_arm_vz_, 0.0,
-                                          generaljoy.left_arm_vx_, generaljoy.left_arm_vy_, generaljoy.left_arm_vz_, 0.0,
+        generaljoy.gc->sendArmVelCommands(right_arm_vx_, right_arm_vy_, right_arm_vz_, 0.0,
+                                          left_arm_vx_, left_arm_vy_, left_arm_vz_, 0.0,
                                           SlowHz);
     }
     }
