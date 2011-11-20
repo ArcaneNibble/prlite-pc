@@ -1,0 +1,22 @@
+<package>
+  <description brief="prlite_hokuyo">
+
+     prlite_hokuyo
+
+  </description>
+  <author>ros</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/prlite_hokuyo</url>
+  <depend package="roslib"/>
+  <depend package="std_msgs" />  
+  <depend package="std_srvs" />
+  <depend package="rospy"/>
+  <depend package="roslib"/>
+  <depend package="actionlib"/>
+  <depend package="actionlib_msgs" />
+  <depend package="wubble_actions" />
+
+</package>
+
+

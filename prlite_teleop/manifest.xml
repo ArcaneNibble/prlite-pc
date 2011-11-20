@@ -27,6 +27,8 @@
   <depend package="pcl"/>
   <depend package="pcl_ros"/>
   <depend package="prlite_kinematics"/>
+  <depend package="dynamixel_controllers"/>
+
 
 
   <export>

@@ -1,0 +1,3 @@
+#! /bin/bash
+rosservice call /laser_tilt_controller/set_speed $1
+rostopic pub -1 /laser_tilt_controller/command std_msgs/Float64 -- $1

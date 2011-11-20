@@ -1,0 +1,15 @@
+dynamixels: ['hokuyo_tilt']
+
+laser_tilt_controller:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: laser_spin_joint
+    joint_speed: 0.1
+    motor:
+        id: 12
+        init: 512
+        min: 212
+        max: 812
+

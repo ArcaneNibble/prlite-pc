@@ -1,0 +1,40 @@
+<launch>
+    <!-- send description to param server -->
+<!--
+-->
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find prlite_urdf)/robot.xml'" />
+    <!-- Start the low-level serial driver and controller manager -->
+    <include file="$(find ax12_controller_core)/launch/controller_manager.launch" />
+
+    
+    <!-- Start the wubble laser tilt controller -->
+    <include file="$(find wubble_controllers)/launch/wubble_laser.launch" />
+    
+    <!-- Publish joint_states information -->
+    <node name="joint_states_publisher" pkg="wubble_controllers" type="joint_states_publisher.py" />
+    <!-- node name="erratic_state_publisher" pkg="robot_state_publisher" type="state_publisher" / -->
+    
+    <!-- Start the hokuyo laser -->
+    <node name="tilt_laser" pkg="hokuyo_node" type="hokuyo_node" respawn="false" output="screen">
+        <remap from="scan" to="tilt_laser/scan"/>
+        <param name="frame_id" value="laser_link"/>
+    </node>
+    
+    <!-- Laser Filters -->
+    <node pkg="laser_filters" type="scan_to_cloud_filter_chain" respawn="true" name="laser_shadow_filter">
+        <remap from="scan" to="tilt_laser/scan" />
+        <remap from="cloud_filtered" to="tilt_scan_shadow_filtered" />
+        <param name="target_frame" value="base_footprint" />
+        <param name="high_fidelity" value="false" />
+        <rosparam command="load" file="$(find wubble_description)/params/shadow_filter.yaml" />
+    </node>
+    
+    <!-- Start Actions -->
+    <!-- Actions for Base and Laser -->
+    <node name="laser_action" pkg="wubble_actions" type="hokuyo_laser_action.py" output=
+"screen" >
+        <param name="controller" value="laser_tilt_controller"/>
+    </node>
+<!--
+-->
+</launch>
