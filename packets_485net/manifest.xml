@@ -1,0 +1,14 @@
+<package>
+  <description brief="packets_485net">
+
+     packets_485net
+
+  </description>
+  <author>Robert</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/packets_485net</url>
+
+</package>
+
+

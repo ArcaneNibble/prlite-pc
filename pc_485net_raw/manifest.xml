@@ -9,6 +9,7 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/pc_485net_raw</url>
   <depend package="rospy"/>
+  <depend package="packets_485net"/>
 
 </package>
 
