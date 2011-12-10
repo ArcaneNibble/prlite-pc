@@ -15,26 +15,45 @@ def do_checksum(data):
 	for b in data:
 		csum = csum + struct.unpack("B", b)[0]
 		csum = csum & 0xFF
-		csum = 0x100 - csum
-		csum = csum & 0xFF
+	csum = 0x100 - csum
+	csum = csum & 0xFF
+	return csum
 
 def decode_blob(blob):
 	out = []
 	lastgoodbyte = 0;
 	#this is a really horrible hack
 	blob = decode_blob.leftovers + blob
-	for i in range(0, len(blob)):
-		for l in range(1, max(len(blob)-i, 64)):
+	#print binascii.hexlify(blob)
+	i = 0
+	while i < len(blob):
+	#for i in range(0, len(blob)):
+		if blob[i] == "\x00":
+			continue
+			#0 can never be a source address
+			#otherwise we always pick up runs of 00 as valid packets
+		for l in range(3, min(len(blob)-i, 64)):
+			#the range needs to be at least 3 for normal packets
+			#otherwise 10 f0 in the header registers as a valid packet
+			print "from %d length %d" % (i, l)
 			#this assumes all packets do have a checksum
 			possiblepkt = blob[i:i+l]
+			print binascii.hexlify(possiblepkt)
 			possiblecsum = struct.unpack("B", blob[i+l])[0]
 			checksum = do_checksum(possiblepkt)
+			print "csum is %d %d" % (possiblecsum, checksum)
 			if checksum == possiblecsum:
+				print binascii.hexlify(possiblepkt)
 				pkt = packet_485net_raw()
-				pkt.header.time = rospy.Time.now()
+				pkt.header.stamp = rospy.Time.now()
 				pkt.data = possiblepkt + blob[i+l]
 				out.append(pkt)
 				lastgoodbyte = i+l+1
+				#even more hacky
+				i = lastgoodbyte
+				print "jumping to %d" % i
+				break
+		i = i + 1
 	decode_blob.leftovers = blob[lastgoodbyte:]
 	return out
 			
