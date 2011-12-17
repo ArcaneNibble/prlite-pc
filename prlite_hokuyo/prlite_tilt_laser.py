@@ -32,15 +32,51 @@ PKG = 'prlite_hokuyo'
 NAME = 'prlite_tilt_laser'
 
 import roslib; roslib.load_manifest(PKG)
-import rospy
 
+import rospy
 from actionlib import SimpleActionClient
 from wubble_actions.msg import *
+from laser_assembler.srv import *
+from pr2_msgs.msg import LaserScannerSignal
+from sensor_msgs.msg import *
+
 # from wubble_actions.msg import HokuyoLaserTiltAction
 # from wubble_actions.msg import HokuyoLaserTiltGoal
 # from prlite_hokuyo.msg import *
+import tf
 
-def tilt(n=10):
+start_tm = rospy.Time(0,0)
+
+def callback(signal):
+   global start_tm
+   rospy.loginfo("signal callback")
+   try:
+      rospy.wait_for_service("assemble_scans")
+      cloudpub = rospy.Publisher('cloudpub', PointCloud)
+      assemble_scans = rospy.ServiceProxy('assemble_scans', AssembleScans)
+      #curtm = rospy.get_rostime()
+      # resp = assemble_scans(signal.header.stamp, curtm)
+      resp = assemble_scans(start_tm, signal.header.stamp)
+      rospy.loginfo("start %s cur %s", start_tm, signal.header.stamp)
+      start_tm = signal.header.stamp
+      rospy.loginfo("Got cloud with %u points" % len(resp.cloud.points))
+      cloudpub.publish(resp.cloud)
+   except rospy.ServiceException, e:
+      rospy.loginfo("Service call failed: %s",e);
+
+def handle_laser_tilt(laser_tilt):
+   try:
+      br = tf.TransformBroadcaster()
+      rospy.loginfo("position %s ", laser_tilt.feedback.tilt_position)
+      br.sendTransform((0, 0, 1),
+                      tf.transformations.quaternion_from_euler( 
+                                      0, -1*laser_tilt.feedback.tilt_position, 0),
+                      rospy.Time.now(),
+                     "laser", "map")
+   except rospy.ServiceException, e:
+      rospy.loginfo("Service call failed: %s",e);
+
+def tilt(n=100):
     # Creates a goal to send to the action server.
     goal = HokuyoLaserTiltGoal()
     goal.tilt_cycles = n
@@ -55,8 +91,11 @@ def tilt(n=10):
     # Sends the goal to the action server.
     client.send_goal(goal)
     
+    rospy.Subscriber('hokuyo_laser_tilt_action/feedback', HokuyoLaserTiltFeedback, handle_laser_tilt)
+    laser_signal_sub = rospy.Subscriber('laser_scanner_signal', LaserScannerSignal, callback)
     # Waits for the server to finish performing the action.
     client.wait_for_result()
+
     
     # Return result
     return client.get_result()
@@ -72,7 +111,7 @@ if __name__ == '__main__':
             print "Action failed"
         else:
             print "Result: " + str(result.tilt_position)
-            
+        rospy.spin()
     except rospy.ROSInterruptException:
         pass
 

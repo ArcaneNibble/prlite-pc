@@ -1,0 +1,9 @@
+The basic laser tilt works & comes up with a 3-D scene as seen in the screenshot.  We have a hokuyo URG with a tilting dynamixel AX-12+ servo.  
+
+The learning curve to get a single self-contained tilting laser image was big, but the overall amount of new code written in retrospect wasn't.  Having a simple self-contained example like ours is definitely useful.  Code is located at:
+
+We ended up using the UA wubble2 as a starting place.  Minor changes to comment out the setting of speeds in wubble_actions/hokuyo_laser_action.py was required.Speed can be set separately.
+
+The demo python program from UA required a lot of mods.  It calls hokuyo_laser_action, processes the servo feedback to make and broadcast a simple tf transform.  The better way to do this is by writing a URDF description of your robot, and then use the robot_state_publisher to publish the transforms.  The demo program also calls assemble scans and publishes a point_cloud.
+
+The assembler is simple.  It doesn't do self-filter or shadow filters.  It should eventually convert PointCloud to PointCloud2 and then use the PCL library.

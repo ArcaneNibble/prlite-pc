@@ -4,9 +4,11 @@
      prlite_urdf
 
   </description>
-  <author>andrew</author>
+  <author>ros</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/prlite_urdf</url>
 
 </package>
+
+

@@ -16,6 +16,8 @@
   <depend package="actionlib"/>
   <depend package="actionlib_msgs" />
   <depend package="wubble_actions" />
+  <depend package="laser_assembler" />
+
 
 </package>
 

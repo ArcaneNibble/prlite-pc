@@ -1,0 +1,15 @@
+The basic laser tilt works & comes up with a 3-D scene.
+
+roslaunch prlite_hokuyo_simple.launch
+python prlite_tilt_laser.py
+rosrun rviz rviz   => frame = /map ; Add PointCloud and subscribe to /cloudpub
+
+Use set_laser_speed to change the tilt speed & the number of tilt cycles. 0.25 seems like a reasonable default resolusion.  Minor changes to comment out the setting of speeds in wubble_actions/hokuyo_laser_action.py was required.
+
+The tilt cycles is probably hardcoded to 5 in wubble_actions/hokuyo_laser_action.py, so we can add an outer loop that does 5 cycles per iteration. hokuyo_laser_action is a hardware specific node to control the servo system.
+
+The laser_assembler also needs TF data for the frame of the laser. Currently the transform is simple and hardcoded from /map to /base_footprint.  The suggested way to do this is by writing a URDF description of your robot, and then use the robot_state_publisher to publish the transforms.
+
+prlite_tilt_laser.py sends the tilt commond, takes the servo feedback and broadcasts the tf, and assembles the clouds and publishes the pointcloud.  This control node should publish sensor_msgs/JointState, since this is required by the robot_state_publisher to generate the transforms.  Since the controller also knows the current angle of the tilting platform, it decides when each tilting cycle is complete and then make the appropriate service call to the laser_assembler to get a point cloud.  
+
+The assembler is simple.  It doesn't do self-filter or shadow filters (see prlite_hokuyo_complex_prototype.launch).  It should eventually convert PointCloud to PointCloud2 and then use the PCL library.
