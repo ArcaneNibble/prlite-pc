@@ -28,7 +28,10 @@ def decode_blob(blob):
 	i = 0
 	while i < len(blob):
 	#for i in range(0, len(blob)):
+		print binascii.hexlify(blob)
+		print i
 		if blob[i] == "\x00":
+			i = i + 1
 			continue
 			#0 can never be a source address
 			#otherwise we always pick up runs of 00 as valid packets
