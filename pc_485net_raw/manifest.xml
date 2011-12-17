@@ -1,0 +1,16 @@
+<package>
+  <description brief="pc_485net_raw">
+
+     pc_485net_raw
+
+  </description>
+  <author>Robert</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/pc_485net_raw</url>
+  <depend package="rospy"/>
+  <depend package="packets_485net"/>
+
+</package>
+
+
