@@ -68,9 +68,11 @@ def tx_packet(packet):
 	#We just transmit
 	global ser
 	ser.setRTS(False)
+	ser.setDTR(False)
 	ser.write(packet.data)
 	ser.flush()
 	ser.setRTS(True)
+	ser.setDTR(True)
 
 def main():
 	global ser
