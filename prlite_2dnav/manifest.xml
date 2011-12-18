@@ -4,10 +4,10 @@
      prlite_2dnav
 
   </description>
-  <author>andrew</author>
+  <author>Andrew Downing</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/prlite_2dnav</url>
+  <url>https://github.com/someh4x0r/prlite-pc</url>
   <depend package="move_base"/>
   <depend package="prlite_tf"/>
   <depend package="prlite_odom"/>

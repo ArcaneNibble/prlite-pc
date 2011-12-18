@@ -4,10 +4,10 @@
      prlite_tf
 
   </description>
-  <author>andrew</author>
+  <author>Andrew Downing</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/prlite_tf</url>
+  <url>https://github.com/someh4x0r/prlite-pc</url>
   <depend package="roscpp"/>
   <depend package="tf"/>
   <depend package="geometry_msgs"/>
