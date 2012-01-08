@@ -1,0 +1,4 @@
+/opt/ros/electric/stacks/xacro/xacro.py ../config/pr2lite_base.xacro  > ../config/pr2lite.xacro
+rosrun urdf check_urdf robot.xml
+roslaunch robot.launch
+rosrun rviz rviz
