@@ -1,6 +1,6 @@
 <launch>
     <!-- send erratic description to param server -->
-    <param name="robot_description" command="$(find xacro)/xacro.py '$(find prlite_urdf)/robot.xml'" />
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find prlite_urdf)/config/robot.xml'" />
 
 
     <!-- Load the joystick service -->
@@ -18,7 +18,7 @@ args="" output="screen"/>
 
     <!-- Start the smart_arm controller -->
     <include file="$(find prlite_teleop)/launch/prlite_smart_arm.launch" />
-    <include file="$(find prlite_kinematics)/launch/dual_armik.launch" />
+    <include file="$(find prlite_arm_navigation)/launch/prlite_arm_navigation.launch" />
 
     <!-- node pkg="prlite_teleop" type="ax12_to_pr2_state_msgs.py" name="ax12_to_pr2" /-->
 
