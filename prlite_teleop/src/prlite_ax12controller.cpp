@@ -10,8 +10,7 @@
 
 #include "std_msgs/String.h"
 #include "geometry_msgs/Twist.h"
-#include "i2c_net_packets/linact_position.h"
-#include "i2c_net_packets/linact_target.h"
+#include "packets_485net/packet_485net_dgram.h"
 
 #include <prlite_kinematics/SphereCoordinate.h>
 /*
@@ -62,12 +61,21 @@ void TorsoPublish(void)
   {
     if (linact_goal != linact_goal_last)
     {
+		uint16_t itmp;
       // publish linear actuator command
-      i2c_net_packets::linact_target linact_cmd;
-      linact_cmd.dstaddr = 6;
-      linact_cmd.which = 1;
-      linact_cmd.min = linact_goal - LINACT_PRECISION;
-      linact_cmd.max = linact_goal + LINACT_PRECISION;
+      packets_485net::packet_485net_dgram linact_cmd;
+      linact_cmd.destination = 0x0D;
+	  linact_cmd.source = 0xF0;
+	  linact_cmd.sport = 7;
+	  linact_cmd.dport = 1;
+	  
+	  itmp = linact_goal - LINACT_PRECISION;
+	  linact_cmd.data[0] = itmp & 0xFF;
+	  linact_cmd.data[1] = (itmp >> 16) & 0xFF;
+	  itmp = linact_goal + LINACT_PRECISION;
+	  linact_cmd.data[2] = itmp & 0xFF;
+	  linact_cmd.data[3] = (itmp >> 16) & 0xFF;
+	  
       linact_pub.publish(linact_cmd);
       linact_goal_last = linact_goal;
       linact_new_goal = true;
@@ -77,9 +85,15 @@ void TorsoPublish(void)
   }
 }
 
-void TorsoCallback(const i2c_net_packets::linact_position& linear_actuator_status)
+void TorsoCallback(const packets_485net::packet_485net_dgram& linear_actuator_status)
 {
-  linact_arrived = linear_actuator_status.arr0;
+	if(linear_actuator_status.source != 0x0D)
+		return;
+	if(!(linear_actuator_status.destination == 0xF0 || linear_actuator_status.destination == 0x00))
+		return;
+	if(linear_actuator_status.dport != 7)
+		return;
+  linact_arrived = linear_actuator_status.data[4+2];
   if (linact_new_goal) // if new linear actuator goal then linact_arrived may take a few frames to update
   {
     if (!linact_arrived)
@@ -96,8 +110,8 @@ void TorsoInit(void)
 {
   ros::NodeHandle n;
 
-  linact_sub = n.subscribe("linear_actuator_status", 1000, TorsoCallback);
-  linact_pub = n.advertise<i2c_net_packets::linact_target>("linear_actuator_target", 1000);
+  linact_sub = n.subscribe("net_485net_incoming_dgram", 1000, TorsoCallback);
+  linact_pub = n.advertise<i2c_net_packets::linact_target>("net_485net_outgoing_dgram", 1000);
 
 }
 
