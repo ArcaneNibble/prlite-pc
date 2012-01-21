@@ -1,0 +1,16 @@
+<package>
+  <description brief="net_485net_firmware_utils">
+
+     net_485net_firmware_utils
+
+  </description>
+  <author>Robert</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/net_485net_firmware_utils</url>
+  <depend package="rospy"/>
+  <depend package="packets_485net"/>
+
+</package>
+
+
