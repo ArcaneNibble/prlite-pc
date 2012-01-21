@@ -2,10 +2,9 @@
 #include "std_msgs/String.h"
 #include "geometry_msgs/Twist.h"
 #include "i2c_net_packets/wheel_status_packet.h"
-#include "i2c_net_packets/linact_position.h"
+#include "packets_485net/packet_485net_dgram.h"
 #include "i2c_net_packets/wheel_pid_gains.h"
 #include "i2c_net_packets/wheel_setpoints.h"
-#include "i2c_net_packets/linact_target.h"
 
 const double X_MULT = 7.51913116; // speed is ticks per interval and interval is 1/10 sec, so should be WHEEL_TICKS_PER_METER / 10
 const double TH_MULT = 5; // tuned manually (is about right)
@@ -165,11 +164,20 @@ void state_change(void)
 // only routine that can change linact_goal_last
 void cmdPublishLinact(void)
 {
-  i2c_net_packets::linact_target linact_cmd;
-  linact_cmd.dstaddr = 6;
-  linact_cmd.which = 0;
-  linact_cmd.min = linact_goal - LINACT_PRECISION;
-  linact_cmd.max = linact_goal + LINACT_PRECISION;
+	uint16_t itmp;
+  packets_485net::packet_485net_dgram linact_cmd;
+	linact_cmd.destination = 0x0C;
+	linact_cmd.source = 0xF0;
+	linact_cmd.sport = 7;
+	linact_cmd.dport = 1;
+	
+	itmp = linact_goal - LINACT_PRECISION;
+	linact_cmd.data[0] = itmp & 0xFF;
+	linact_cmd.data[1] = (itmp >> 16) & 0xFF;
+	itmp = linact_goal + LINACT_PRECISION;
+	linact_cmd.data[2] = itmp & 0xFF;
+	linact_cmd.data[3] = (itmp >> 16) & 0xFF;
+	
   ROS_INFO("linact %d", linact_goal);
   linact_pub.publish(linact_cmd);
   linact_goal_last = linact_goal;
@@ -277,11 +285,19 @@ void wheelCallback(const i2c_net_packets::wheel_status_packet& ws)
 }
 
 // only place to set linact_arrived and linact_goal_arrived
-void linactCallback(const i2c_net_packets::linact_position& linear_actuator_status)
+void linactCallback(const packets_485net::packet_485net_dgram& linear_actuator_status)
 {
-  linact_arrived = linear_actuator_status.arr0;
+	uint16_t itmp;
+	if(linear_actuator_status.source != 0x0D)
+		return;
+	if(!(linear_actuator_status.destination == 0xF0 || linear_actuator_status.destination == 0x00))
+		return;
+	if(linear_actuator_status.dport != 7)
+		return;
+  linact_arrived = linear_actuator_status.data[4+2];
+  itmp = linear_actuator_status.data[4] | ((linear_actuator_status.data[5]) << 8);
   //linact_arrived = true; // hack for if linear actuator isn't working
-  linact_goal_arrived = (linear_actuator_status.pos0 >= linact_goal - LINACT_PRECISION && linear_actuator_status.pos0 <= linact_goal + LINACT_PRECISION);
+  linact_goal_arrived = (itmp >= linact_goal - LINACT_PRECISION && itmp <= linact_goal + LINACT_PRECISION);
   state_change();
 }
 
@@ -326,11 +342,11 @@ int main(int argc, char **argv)
 
   ros::Subscriber cmd_sub = n.subscribe("cmd_vel", 1000, cmdCallback);
   ros::Subscriber wheel_sub = n.subscribe("wheel_status", 1000, wheelCallback);
-  ros::Subscriber linact_sub = n.subscribe("linear_actuator_status", 1000, linactCallback);
+  ros::Subscriber linact_sub = n.subscribe("net_485net_outgoing_dgram", 1000, linactCallback);
 
   pid_pub = n.advertise<i2c_net_packets::wheel_pid_gains>("wheel_pid", 1000);
   cmd_pub = n.advertise<i2c_net_packets::wheel_setpoints>("wheel_setpoints", 1000);
-  linact_pub = n.advertise<i2c_net_packets::linact_target>("linear_actuator_target", 1000);
+  linact_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
 
   /**
    * ros::spin() will enter a loop, pumping callbacks.  With this version, all

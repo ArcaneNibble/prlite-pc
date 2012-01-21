@@ -111,7 +111,7 @@ void TorsoInit(void)
   ros::NodeHandle n;
 
   linact_sub = n.subscribe("net_485net_incoming_dgram", 1000, TorsoCallback);
-  linact_pub = n.advertise<i2c_net_packets::linact_target>("net_485net_outgoing_dgram", 1000);
+  linact_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
 
 }
 
