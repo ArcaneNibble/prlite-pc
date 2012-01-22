@@ -2,7 +2,7 @@
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
 #include "std_msgs/String.h"
-#include "i2c_net_packets/wheel_status_packet.h"
+#include "packets_485net/packet_485net_dgram.h"
 
 const double WHEEL_TICKS_PER_METER = 75.1913116; // from magellan-v2 code: 36 clicks/circumference / pi diameter/circumference / 6 inches/diameter * 39.3700787 inches/meter
 const double TURN_DIAMETER_METERS = 0.2; // found by tuning (is approximate)
@@ -81,12 +81,37 @@ void odometryUpdate(void)
   ROS_INFO("x %f y %f theta %f vx %f vy %f vtheta %f", x, y, th, vx, vy, vth);
 }
 
-void wheelStatusCallback(const i2c_net_packets::wheel_status_packet& ws)
+void wheelStatusCallback(const packets_485net::packet_485net_dgram& ws)
 {
+	uint16_t itmp;
+	if(ws.source != 0x08 && ws.source != 0x09 && ws.source != 0x0A && ws.source != 0x0B)
+		return;
+	if(!(ws.destination == 0xF0 || ws.destination == 0x00))
+		return;
+	if(ws.dport != 7)
+		return;
+		
   // update wheel velocity
-  int addr = ws.srcaddr / 2 - 1;
-  vl[addr] = ws.ticks0_interval * 10; // 10 intervals per second
-  vr[addr] = ws.ticks1_interval * 10;
+  //int addr = ws.srcaddr / 2 - 1;
+  //vl[addr] = ws.ticks0_interval * 10; // 10 intervals per second
+  //vr[addr] = ws.ticks1_interval * 10;
+	itmp = ws.data[4] | ((ws.data[5]) << 8);
+	
+	switch(ws.source)
+	{
+	case 0x08:
+		vr[1] = itmp;
+		break;
+	case 0x09:
+		vr[0] = itmp;
+		break;
+	case 0x0A:
+		vl[1] = itmp;
+		break;
+	case 0x0B:
+		vl[0] = itmp;
+		break;
+	}
   // update forward and rotation velocities (algorithm based on magellan-v2 odometryupdate)
   double lavg = ((double)(vl[0] + vl[1])) * 0.5 / WHEEL_TICKS_PER_METER;
   double ravg = ((double)(vr[0] + vr[1])) * 0.5 / WHEEL_TICKS_PER_METER;
@@ -117,7 +142,7 @@ int main(int argc, char** argv)
   if (fake_localization)
     odom_sub = n.subscribe("cmd_vel", 50, cmdVelCallback);
   else
-    odom_sub = n.subscribe("wheel_status", 50, wheelStatusCallback);
+    odom_sub = n.subscribe("net_485net_outgoing_dgram", 50, wheelStatusCallback);
 
   vl[0] = 0;
   vl[1] = 0;
