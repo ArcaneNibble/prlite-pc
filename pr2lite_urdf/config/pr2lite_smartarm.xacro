@@ -49,6 +49,41 @@
     <mimic joint="${side}_shoulder_tilt_joint" multiplier="-1" offset="0"/> 
 </joint>
 
+<!--
+ <joint:hinge name="${prefix}_r_parallel_root_joint">
+          <body1>${prefix}_r_parallel_link</body1>
+          <body2>${prefix}_palm_link</body2>
+          <anchor>${prefix}_palm_link</anchor>
+          <axis>0 0 -1</axis>
+          <damping>0.2</damping>
+          <anchorOffset>${0.07691+parallel_link_x_offset} ${-0.01-parallel_link_y_offset} 0</anchorOffset>
+      </joint:hinge>
+
+ 	157	    <!-- parallel link for simulating gripper constraints --> 
+ 	158	    <gazebo> 
+ 	159	      <joint:hinge name="${prefix}_r_parallel_tip_joint"> 
+ 	160	          <body1>${prefix}_r_parallel_link</body1> 
+ 	161	          <body2>${prefix}_r_finger_tip_link</body2> 
+ 	162	          <anchor>${prefix}_r_finger_tip_link</anchor> 
+ 	163	          <axis>0 0 1</axis> 
+ 	164	          <anchorOffset>${parallel_link_x_offset} ${-parallel_link_y_offset} 0</anchorOffset> 
+ 	165	      </joint:hinge> 
+ 	166	      <joint:hinge name="${prefix}_l_parallel_tip_joint"> 
+ 	167	          <body1>${prefix}_l_parallel_link</body1> 
+ 	168	          <body2>${prefix}_l_finger_tip_link</body2> 
+ 	169	          <anchor>${prefix}_l_finger_tip_link</anchor> 
+ 	170	          <axis>0 0 1</axis> 
+ 	171	          <anchorOffset>${parallel_link_x_offset} ${parallel_link_y_offset} 0</anchorOffset> 
+ 	172	      </joint:hinge> 
+ 	173	      <joint:slider name="${prefix}_simulated_joint"> 
+ 	174	          <body1>${prefix}_l_finger_tip_link</body1> 
+ 	175	          <body2>${prefix}_r_finger_tip_link</body2> 
+ 	176	          <anchor>${prefix}_r_finger_tip_link</anchor> 
+ 	177	          <axis>0 1 0</axis> 
+ 	178	      </joint:slider> 
+ 	179	    </gazebo> 
+-->
+
         <joint name="${side}_elbow_pan_joint" type="revolute" >
             <origin xyz="${inch_to_meter*0} 0 ${inch_to_meter*1}" rpy="0 0 0" />
             <parent link="${side}_upper_arm_hinge_link" />
