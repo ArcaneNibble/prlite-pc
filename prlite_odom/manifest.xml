@@ -4,10 +4,10 @@
      prlite_odom
 
   </description>
-  <author>andrew</author>
+  <author>Andrew Downing</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/prlite_odom</url>
+  <url>https://github.com/someh4x0r/prlite-pc</url>
   <depend package="roscpp"/>
   <depend package="nav_msgs"/>
   <depend package="prlite_tf"/>

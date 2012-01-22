@@ -1,0 +1,20 @@
+<launch>
+  <!-- start world -->
+  <include file="$(find gazebo_worlds)/launch/office_world.launch"/>
+
+  <!-- start controller manager (rviz) -->
+  <include file="$(find pr2_controller_manager)/controller_manager.launch"/>
+
+  <!-- load robot -->
+  <param name="robot_description" command="$(find xacro)/xacro.py $(find pr2lite_urdf)/config/robot.xml" />
+<param name="/use_gui" value="True" />
+<param name="/use_sim_time" value="False" />
+
+
+<node name="joint_state_publisher" pkg="joint_state_publisher"
+type="joint_state_publisher" output="screen" />
+
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="spawn_single_link" pkg="gazebo_tools" type="gazebo_model" args="-p robot_description spawn -z 0.5" respawn="false" output="screen" />
+
+</launch>

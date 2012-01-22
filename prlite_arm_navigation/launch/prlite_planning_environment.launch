@@ -1,0 +1,4 @@
+<launch>
+    <param name="robot_description" textfile="$(find planning_models)/../../prlite/prlite_urdf/config/robot.xml" />
+    <rosparam command="load" ns="robot_description_planning" file="$(find prlite_arm_navigation)/config/prlite_planning_description.yaml" />
+</launch>
