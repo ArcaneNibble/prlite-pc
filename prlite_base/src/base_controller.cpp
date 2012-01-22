@@ -1,7 +1,6 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "geometry_msgs/Twist.h"
-#include "i2c_net_packets/wheel_status_packet.h"
 #include "packets_485net/packet_485net_dgram.h"
 #include "i2c_net_packets/wheel_pid_gains.h"
 #include "i2c_net_packets/wheel_setpoints.h"
@@ -272,14 +271,40 @@ void cmdCallback(const geometry_msgs::Twist& cmd_vel)
 }
 
 // only place to set wheel_stopped
-void wheelCallback(const i2c_net_packets::wheel_status_packet& ws)
+void wheelCallback(const packets_485net::packet_485net_dgram& ws)
 {
   static int16_t vl[2];
   static int16_t vr[2];
 
-  int addr = ws.srcaddr / 2 - 1;
-  vl[addr] = ws.ticks0_interval;
-  vr[addr] = ws.ticks1_interval;  
+	uint16_t itmp;
+	if(ws.source != 0x08 && ws.source != 0x09 && ws.source != 0x0A && ws.source != 0x0B)
+		return;
+	if(!(ws.destination == 0xF0 || ws.destination == 0x00))
+		return;
+	if(ws.dport != 7)
+		return;
+		
+	itmp = ws.data[4] | ((ws.data[5]) << 8);
+	
+	switch(ws.source)
+	{
+	case 0x08:
+		vr[1] = itmp;
+		break;
+	case 0x09:
+		vr[0] = itmp;
+		break;
+	case 0x0A:
+		vl[1] = itmp;
+		break;
+	case 0x0B:
+		vl[0] = itmp;
+		break;
+	}
+		
+  //int addr = ws.srcaddr / 2 - 1;
+  //vl[addr] = ws.ticks0_interval;
+  //vr[addr] = ws.ticks1_interval;  
   wheel_stopped = (0 == vl[0] && 0 == vl[1] && 0 == vr[0] && 0 == vr[1]);
   state_change();
 }
@@ -288,7 +313,7 @@ void wheelCallback(const i2c_net_packets::wheel_status_packet& ws)
 void linactCallback(const packets_485net::packet_485net_dgram& linear_actuator_status)
 {
 	uint16_t itmp;
-	if(linear_actuator_status.source != 0x0D)
+	if(linear_actuator_status.source != 0x0C)
 		return;
 	if(!(linear_actuator_status.destination == 0xF0 || linear_actuator_status.destination == 0x00))
 		return;
