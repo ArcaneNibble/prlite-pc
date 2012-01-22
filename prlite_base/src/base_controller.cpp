@@ -2,7 +2,6 @@
 #include "std_msgs/String.h"
 #include "geometry_msgs/Twist.h"
 #include "packets_485net/packet_485net_dgram.h"
-#include "i2c_net_packets/wheel_pid_gains.h"
 #include "i2c_net_packets/wheel_setpoints.h"
 
 const double X_MULT = 7.51913116; // speed is ticks per interval and interval is 1/10 sec, so should be WHEEL_TICKS_PER_METER / 10
@@ -188,19 +187,36 @@ void cmdPublishWheel(void)
   static bool init = true;
   if (init) {
     // publish pid gains
-    i2c_net_packets::wheel_pid_gains pid_gains;
-    pid_gains.p0 = 100; // 70 on ground, 20 above ground
-    pid_gains.i0 = 0;
-    pid_gains.d0 = 0;
-    pid_gains.p1 = 100;
-    pid_gains.i1 = 0;
-    pid_gains.d1 = 0;
-    pid_gains.rev0 = true; // ARD: this used to be false
-    pid_gains.rev1 = false;
-    pid_gains.dstaddr = 2;
+    packets_485net::packet_485net_dgram pid_gains;
+	
+	pid_gains.source = 0xF0;
+	pid_gains.sport = 7;
+	pid_gains.dport = 1;
+	  
+	pid_gains.data[0] = 0;
+	pid_gains.data[1] = 0;
+	pid_gains.data[2] = 100;
+	pid_gains.data[3] = 0;		//this is 100.0 (p)
+	pid_gains.data[4] = 0;
+	pid_gains.data[5] = 0;
+	pid_gains.data[6] = 0;
+	pid_gains.data[7] = 0;		//this is 0.0 (i)
+	pid_gains.data[8] = 0;
+	pid_gains.data[9] = 0;
+	pid_gains.data[10] = 0;
+	pid_gains.data[11] = 0;		//this is 0.0 (d)
+	
+	pid_gains.data[12] = 1;		//do not reverse
+	pid_gains.destination = 0x0A;	//robert: I have no idea what these should be
     pid_pub.publish(pid_gains);
-    pid_gains.rev0 = true;
-    pid_gains.dstaddr = 4;
+	pid_gains.data[12] = 1;		//do not reverse
+	pid_gains.destination = 0x0B;
+    pid_pub.publish(pid_gains);
+	pid_gains.data[12] = -1;		//do reverse (0xFF)
+	pid_gains.destination = 0x08;
+    pid_pub.publish(pid_gains);
+	pid_gains.data[12] = -1;		//do reverse
+	pid_gains.destination = 0x09;
     pid_pub.publish(pid_gains);
     // init = false;
   }
@@ -366,10 +382,10 @@ int main(int argc, char **argv)
   base_state_time = ros::Time::now();
 
   ros::Subscriber cmd_sub = n.subscribe("cmd_vel", 1000, cmdCallback);
-  ros::Subscriber wheel_sub = n.subscribe("wheel_status", 1000, wheelCallback);
+  ros::Subscriber wheel_sub = n.subscribe("net_485net_outgoing_dgram", 1000, wheelCallback);
   ros::Subscriber linact_sub = n.subscribe("net_485net_outgoing_dgram", 1000, linactCallback);
 
-  pid_pub = n.advertise<i2c_net_packets::wheel_pid_gains>("wheel_pid", 1000);
+  pid_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
   cmd_pub = n.advertise<i2c_net_packets::wheel_setpoints>("wheel_setpoints", 1000);
   linact_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
 
