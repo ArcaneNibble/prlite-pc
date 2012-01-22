@@ -2,7 +2,6 @@
 #include "std_msgs/String.h"
 #include "geometry_msgs/Twist.h"
 #include "packets_485net/packet_485net_dgram.h"
-#include "i2c_net_packets/wheel_setpoints.h"
 
 const double X_MULT = 7.51913116; // speed is ticks per interval and interval is 1/10 sec, so should be WHEEL_TICKS_PER_METER / 10
 const double TH_MULT = 5; // tuned manually (is about right)
@@ -223,33 +222,60 @@ void cmdPublishWheel(void)
   if (cmd_l != cmd_l_last || cmd_r != cmd_r_last || (LINACT_90 == linact_goal) != cmd_90_last)
   {
     // publish wheel commands
-    i2c_net_packets::wheel_setpoints wheel_cmd;
+    packets_485net::packet_485net_dgram wheel_cmd;
+	
+	wheel_cmd.source = 0xF0;
+	wheel_cmd.sport = 7;
+	wheel_cmd.dport = 2;
     if (LINACT_90 == linact_goal)
     {
       ROS_INFO("LINACT_90");
       // move sideways (positive cmd_l/cmd_r means go left)
       // back wheels
-      wheel_cmd.s0 = cmd_l;
-      wheel_cmd.s1 = -cmd_l;
-      wheel_cmd.dstaddr = 2;
+      wheel_cmd.data[0] = cmd_l & 0xFF;
+      wheel_cmd.data[1] = (cmd_l >> 8) & 0xFF;
+	  wheel_cmd.destination = 0x0A;		//robert: check me FIXME
       cmd_pub.publish(wheel_cmd);
+	  
+      wheel_cmd.data[0] = (-cmd_l) & 0xFF;
+      wheel_cmd.data[1] = ((-cmd_l) >> 8) & 0xFF;
+	  wheel_cmd.destination = 0x08;
+      cmd_pub.publish(wheel_cmd);
+	  
       // front wheels
-      wheel_cmd.s0 = -cmd_r;
-      wheel_cmd.s1 = cmd_r;
-      wheel_cmd.dstaddr = 4;
+      wheel_cmd.data[0] = cmd_r & 0xFF;
+      wheel_cmd.data[1] = (cmd_r >> 8) & 0xFF;
+	  wheel_cmd.destination = 0x0B;
+      cmd_pub.publish(wheel_cmd);
+	  
+      wheel_cmd.data[0] = (-cmd_r) & 0xFF;
+      wheel_cmd.data[1] = ((-cmd_r) >> 8) & 0xFF;
+	  wheel_cmd.destination = 0x09;
       cmd_pub.publish(wheel_cmd);
     }
     else
     {
       ROS_INFO("MOVE F/B");
       // move forwards/backwards or spin in place
-      wheel_cmd.s0 = cmd_l;
-      wheel_cmd.s1 = cmd_r;
-      wheel_cmd.dstaddr = 2;
+      wheel_cmd.data[0] = cmd_l & 0xFF;
+      wheel_cmd.data[1] = (cmd_l >> 8) & 0xFF;
+	  wheel_cmd.destination = 0x0A;		//robert: check me FIXME
       cmd_pub.publish(wheel_cmd);
-      wheel_cmd.s0 = cmd_l;
-      wheel_cmd.s1 = cmd_r;
-      wheel_cmd.dstaddr = 4;
+	  
+      wheel_cmd.data[0] = (cmd_r) & 0xFF;
+      wheel_cmd.data[1] = ((cmd_r) >> 8) & 0xFF;
+	  wheel_cmd.destination = 0x08;
+      cmd_pub.publish(wheel_cmd);
+	  
+      // front wheels
+      wheel_cmd.data[0] = cmd_l & 0xFF;
+      wheel_cmd.data[1] = (cmd_l >> 8) & 0xFF;
+	  wheel_cmd.destination = 0x0B;
+      cmd_pub.publish(wheel_cmd);
+	  
+      wheel_cmd.data[0] = (cmd_r) & 0xFF;
+      wheel_cmd.data[1] = ((cmd_r) >> 8) & 0xFF;
+	  wheel_cmd.destination = 0x09;
       cmd_pub.publish(wheel_cmd);
     }
     cmd_l_last = cmd_l;
@@ -386,7 +412,7 @@ int main(int argc, char **argv)
   ros::Subscriber linact_sub = n.subscribe("net_485net_outgoing_dgram", 1000, linactCallback);
 
   pid_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
-  cmd_pub = n.advertise<i2c_net_packets::wheel_setpoints>("wheel_setpoints", 1000);
+  cmd_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
   linact_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
 
   /**
