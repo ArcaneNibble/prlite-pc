@@ -11,7 +11,6 @@
   <depend package="geometry_msgs"/>
   <depend package="roscpp"/>
   <depend package="packets_485net"/>
-  <depend package="i2c_net_packet_translator"/>
 
 </package>
 
