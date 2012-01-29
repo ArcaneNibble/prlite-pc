@@ -57,12 +57,13 @@ def decode_blob(blob):
 			#0 can never be a source address
 			#otherwise we always pick up runs of 00 as valid packets
 		#1/21/12: hack to look large to small instead
-		asdfrange = range(4, min(len(blob)-i, 64))
+		asdfrange = range(3, min(len(blob)-i, 64))
 		asdfrange.reverse()
 		for l in asdfrange:
 			#the range needs to be at least 3 for normal packets
 			#otherwise 10 f0 in the header registers as a valid packet
 			#1/21/12: change this to 4 (so every packet has >=1 byte payload)
+			#1/28/12: change this back to 3 (0xC0 doesn't have a 1 byte payload. looking large to small may have helped)
 			#print "from %d length %d" % (i, l)
 			#this assumes all packets do have a checksum
 			possiblepkt = blob[i:i+l]
