@@ -1,0 +1,13 @@
+ERROR: cannot launch node of type [prlite_state_publisher/state_publisher]: Cannot locate installation of package prlite_state_publisher: [rospack] couldn't find package [prlite_state_publisher]. ROS_ROOT[/opt/ros/electric/ros] ROS_PACKAGE_PATH[/opt/ros/electric/stacks]
+[ERROR] [1324271291.483542370]: Robot model '/robot_description' not found! Did you remap 'robot_description'?
+[ERROR] [1324271291.507386024]: Robot model '/robot_description' not found! Did you remap 'robot_description'?
+[ INFO] [1324271291.577938441]: waitForService: Service [/ompl_planning/plan_kinematic_path] has not been advertised, waiting...
+[FATAL] [1324271291.603579921]: Could not load the xml from parameter server: robot_description
+[ERROR] [1324271292.286279070, 1324271292.281192064]: Failed to parse urdf string
+[ERROR] [1324271292.286306395, 1324271292.281192064]: Could not start trajectory filter server
+[ERROR] [1324271292.286323302, 1324271292.281192064]: Check your filters.yaml file to make sure it is configured correctly
+[ERROR] [1324271292.286349033, 1324271292.281192064]: Also check the ROS parameter: service_type in your launch file
+[ERROR] [1324271292.286377486, 1324271292.281192064]: The message type in the service request must match the type that the filters are acting on
+[ERROR] [1324271292.287360496, 1324271292.281192064]: Error retrieving file [file:///opt/ros/electric/stacks/ua-ros-pkg/ua_robots/hokuyo_urg_description/meshes/convex/hokuyo_urg_convex.stlb]: Couldn't open file /opt/ros/electric/stacks/ua-ros-pkg/ua_robots/hokuyo_urg_description/meshes/convex/hokuyo_urg_convex.stlb
+[ERROR] [1324271292.287540044, 1324271292.281192064]: Could not load model 'package://hokuyo_urg_description/meshes/convex/hokuyo_urg_convex.stlb' for link 'hokuyo_mount_link': OGRE EXCEPTION(6:FileNotFoundException): Cannot locate resource package://hokuyo_urg_description/meshes/convex/hokuyo_urg_convex.stlb in resource group Autodetect or any other group. in ResourceGroupManager::openResource at /tmp/buildd/ros-electric-visualization-common-1.6.2/debian/ros-electric-visualization-common/opt/ros/electric/stacks/visualization_common/ogre/build/ogre_src_v1-7-3/OgreMain/src/OgreResourceGroupManager.cpp (line 753)
+

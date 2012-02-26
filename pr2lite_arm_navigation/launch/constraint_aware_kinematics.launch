@@ -1,0 +1,15 @@
+<launch>
+    <include file="$(find pr2lite_arm_navigation)/launch/pr2lite_planning_environment.launch" />
+    <node pkg="arm_kinematics_constraint_aware" type="arm_kinematics_constraint_aware" name="pr2lite_left_arm_kinematics">
+        <param name="group" type="string" value="left_arm" />
+        <param name="left_arm/root_name" type="string" value="left_shoulder_pan_link" />
+        <param name="left_arm/tip_name" type="string" value="left_gripper_right_link" />
+        <param name="kinematics_solver" type="string" value="arm_kinematics_constraint_aware/KDLArmKinematicsPlugin" />
+    </node>
+    <node pkg="arm_kinematics_constraint_aware" type="arm_kinematics_constraint_aware" name="pr2lite_right_arm_kinematics">
+        <param name="group" type="string" value="right_arm" />
+        <param name="right_arm/root_name" type="string" value="right_shoulder_pan_link" />
+        <param name="right_arm/tip_name" type="string" value="right_gripper_right_link" />
+        <param name="kinematics_solver" type="string" value="arm_kinematics_constraint_aware/KDLArmKinematicsPlugin" />
+    </node>
+</launch>

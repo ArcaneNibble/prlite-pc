@@ -1,0 +1,4 @@
+<launch>
+    <include file="$(find pr2lite_arm_navigation)/launch/move_left_arm.launch" />
+    <include file="$(find pr2lite_arm_navigation)/launch/move_right_arm.launch" />
+</launch>

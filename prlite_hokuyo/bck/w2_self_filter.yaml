@@ -1,0 +1,17 @@
+min_sensor_dist: .05
+self_see_default_padding: .05
+self_see_default_scale: 1.0
+self_see_links:
+  - name: L0_base_link
+  - name: L1_shoulder_pitch_link
+  - name: L2_shoulder_yaw_link
+  - name: L3_shoulder_roll_link
+  - name: L4_elbow_pitch_link
+  - name: L5_wrist_roll_link
+  - name: L6_wrist_pitch_link
+  - name: L7_wrist_yaw_link
+  - name: L8_left_finger_link
+  - name: L9_right_finger_link
+  - name: platform_link
+  - name: base_link
+  - name: base_top_link

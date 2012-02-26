@@ -1,0 +1,4 @@
+make
+rosrun urdf check_urdf robot.xml
+roslaunch robot.launch
+rosrun rviz rviz

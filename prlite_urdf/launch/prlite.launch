@@ -1,0 +1,109 @@
+<launch>
+    <param name="/use_sim_time" value="true" />
+    <!-- start gazebo with an empty plane -->
+    <node name="gazebo" pkg="gazebo" type="gazebo"
+          args="$(find gazebo_worlds)/worlds/empty.world"
+          respawn="false" output="screen" />
+    <!-- send prlite robot XML to param server -->
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find prlite_urdf)/config/prlite.urdf.xacro'" />
+
+
+  <!-- start controller manager (rviz) -->
+  <include file="$(find pr2_controller_manager)/controller_manager.launch"/>
+
+  <!-- load robot -->
+  <param name="robot_description" command="$(find xacro)/xacro.py $(find prlite_urdf)/config/robot.xml" />
+
+
+<node name="joint_state_publisher" pkg="joint_state_publisher"
+type="joint_state_publisher" output="screen" />
+
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="spawn_single_link" pkg="gazebo_tools" type="gazebo_model" args="-p robot_description spawn -z 0.5" respawn="false" output="screen" />
+
+    <!-- Arm Controllers -->
+
+    <!-- ARD: change names, make work for left/right arms -->
+    <rosparam file="$(find prlite_arm_description)/controllers/prlite_arm_controllers.yaml" command="load" />
+    <node name="prlite_arm_controller_spawner" pkg="pr2_controller_manager" type="spawner"
+          args="shoulder_pitch_controller
+                shoulder_yaw_controller
+                shoulder_roll_controller
+                elbow_pitch_controller
+                wrist_roll_controller
+                wrist_pitch_controller
+                wrist_yaw_controller
+                gripper_left_finger_controller
+                gripper_right_finger_controller"
+          respawn="false" output="screen" />
+
+    <!-- Laser Controllers -->
+    <rosparam file="$(find prlite_description)/controllers/prlite2_laser_controllers.yaml" command="load" />
+    <node name="laser_controllers_spawner" pkg="pr2_controller_manager" type="spawner"
+          args="base_laser_tilt_controller
+                neck_laser_tilt_controller"
+          respawn="false" output="screen" />
+
+    <!-- Laser Controllers -->
+    <rosparam file="$(find prlite_description)/controllers/prlite2_laser_controllers.yaml" command="load" />
+    <node name="laser_controllers_spawner" pkg="pr2_controller_manager" type="spawner"
+          args="base_laser_tilt_controller
+                neck_laser_tilt_controller"
+          respawn="false" output="screen" />
+    <!-- start robot state publisher -->
+    <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" respawn="true" output="screen" >
+        <param name="publish_frequency" type="double" value="50.0" />
+        <param name="tf_prefix" type="string" value="" />
+    </node>
+
+    <!-- start arm kinematics services (IK and FK) -->
+    <node pkg="arm_kinematics" type="arm_kinematics" name="arm_kinematics" respawn="true" output="screen" >
+        <param name="root_name" value="L0_base_link" />
+        <param name="tip_name" value="L7_wrist_yaw_link" />
+    </node>
+
+    <node pkg="fake_localization" type="fake_localization" name="fake_localization" respawn="true" output="screen" >
+        <param name="odom_frame_id" value="odom"/>
+    </node>
+    <!-- an empty map so navigation will still work -->
+    <node name="map_node" pkg="map_server" type="map_server"
+          args="$(find prlite_environments)/Media/materials/textures/empty_map.yaml"
+          respawn="true" output="screen" />
+
+    <!-- Throttle the voxel grid that is being published for rviz -->
+    <node ns="move_base_node/local_costmap"
+          name="voxel_grid_throttle" pkg="topic_tools" type="throttle"
+          args="messages voxel_grid 3.0 voxel_grid_throttled" />
+
+    <!-- for moving -->
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen">
+        <rosparam file="$(find prlite_description)/params/move_base_params.yaml" command="load" />
+        <rosparam file="$(find prlite_description)/params/w2_costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find prlite_description)/params/w2_costmap_common_params.yaml" command="load" ns="local_costmap" />
+
+        <rosparam file="$(find prlite_description)/params/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find prlite_description)/params/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find prlite_description)/params/base_local_planner_params.yaml" command="load" />
+    </node>
+   <!-- Laser Filters -->
+    <node pkg="laser_filters" type="scan_to_cloud_filter_chain" respawn="true" name="laser_shadow_filter">
+        <remap from="scan" to="neck_scan/scan" />
+        <remap from="cloud_filtered" to="tilt_scan_shadow_filtered" /> <!-- Probably want to rename this to use namespaces -->
+        <param name="target_frame" value="base_footprint" />
+        <param name="high_fidelity" value="false" /> <!-- Turning this on slows down the laser a lot -->
+        <rosparam command="load" file="$(find prlite_description)/params/shadow_filter.yaml" />
+    </node>
+
+    <node pkg="robot_self_filter" type="self_filter" name="laser_self_filter" respawn="true" output="screen">
+        <!-- The topic for the input cloud -->
+        <remap from="cloud_in" to="tilt_scan_shadow_filtered" />
+        <!-- The topic for the output cloud -->
+        <remap from="cloud_out" to="tilt_scan_self_filtered" />
+        <!-- The frame of the sensor used to obtain the data to be
+        filtered; This parameter is optional. If it is not specified,
+        shadow points will be considered outside -->
+        <param name="sensor_frame" type="string" value="neck_scan_link" />
+        <rosparam file="$(find prlite_description)/params/self_filter.yaml" command="load" />
+    </node>
+
+</launch>

@@ -1,0 +1,31 @@
+<launch>
+    <!-- include file="$(find prlite_teleop)/launch/prlite_smart_arm.launch" -->
+    <node name="hokuyo_laser_tilt_action" pkg="wubble_actions" type="hokuyo_laser_action.py" output="screen" >
+	<!-- remap from="/laser_tilt_controller/state" to="/laser_tilt_controller/state_pr2_msgs" -->
+        <param name="controller" value="laser_tilt_controller" />
+    </node>
+    <!-- node name="tilt_neck_laser" pkg="prlite_hokuyo" type="tilt_neck_laser.py" output="screen" -->
+
+    <!-- Start the hokuyo laser at the neck -->
+    <node name="neck_laser" pkg="hokuyo_node" type="hokuyo_node" respawn="false" output="screen">
+        <remap from="scan" to="neck_scan/scan"/>
+        <param name="port" value="/dev/hokuyo_usb"/>
+        <param name="min_ang" value="-2.08"/>
+        <param name="max_ang" value="2.08"/>
+        <param name="frame_id" value="neck_scan_link"/>
+    </node>
+
+    <include file="$(find prlite_hokuyo)/launch/tilting_laser_ground_filter.launch" />
+
+    <!-- assemble pointcloud into a full world view -->
+    <node pkg="laser_assembler" type="point_cloud_assembler" output="screen"  name="point_cloud_assembler">
+        <remap from="cloud" to="neck_scan/self_filtered"/>
+        <param name="tf_cache_time_secs" type="double" value="15.0" />
+        <param name="tf_tolerance_secs" type="double" value="0.0" />
+        <param name="max_clouds" type="int" value="400" />
+        <param name="ignore_laser_skew" type="bool" value="false" />
+        <param name="fixed_frame" type="string" value="base_link" />
+    </node>
+
+    -->
+</launch>
