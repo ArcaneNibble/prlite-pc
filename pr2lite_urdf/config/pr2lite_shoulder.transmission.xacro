@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#slider"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="pr2lite_shoulder_transmission_v0" >
+    <transmission type="pr2_mechanism_model/Pr2LiteShoulderTransmission" name="${side}_pr2lite_shoulder_trans" >
+      <actuator       name="${side}_linear_actuator_joint" />
+      <gap_joint      name="${side}_shoulder_tilt_joint"
+                      />
+      <!-- if a gazebo joint exists as [l|r]_gripper_joint, use this tag to have
+           gripper transmission apply torque directly to prismatic joint
+           this should be the default behavior in diamondback, deprecating this flag -->
+      <use_simulated_gripper_joint/>
+      <!-- set passive joint angles so things look nice in rviz -->
+      <passive_joint  name="${side}_shoulder_tilt_joint"     />
+      <passive_joint  name="${side}_lin_act_cyl_joint"     />
+      <passive_joint  name="${side}_upper_arm_hinge_joint" />
+      <!-- screw joint to capture gripper "dynamics" -->
+      <simulated_actuated_joint name="${side}_linear_actuator_joint"
+                                passive_actuated_joint="${side}_gripper_motor_slider_joint"
+                                simulated_reduction="1"   /
+    </transmission>
+  </xacro:macro>
+
+
+</robot>
