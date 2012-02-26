@@ -1,4 +1,5 @@
-/opt/ros/electric/stacks/xacro/xacro.py ../config/pr2lite_base.xacro  > ../config/pr2lite.xacro
+/opt/ros/electric/stacks/xacro/xacro.py ../config/pr2lite_base.xacro  > ../config/pr2lite_urdf.xml
 rosrun urdf check_urdf robot.xml
 roslaunch robot.launch
 rosrun rviz rviz
+roslaunch planning_environment planning_description_configuration_wizard.launch urdf_package:=pr2lite_urdf urdf_path:=config/pr2lite_urdf.xml

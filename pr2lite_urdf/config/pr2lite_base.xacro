@@ -312,16 +312,16 @@
 
 
 
-        <xacro:prlite_wheel suffix="fl" parent="base_link" reflect_x="1" reflect_y="1">
-        </xacro:prlite_wheel>
-        <xacro:prlite_wheel suffix="fr" parent="base_link" reflect_x="1" reflect_y="-1">
-        </xacro:prlite_wheel>
-        <xacro:prlite_wheel suffix="bl" parent="base_link" reflect_x="-1" reflect_y="1">
-        </xacro:prlite_wheel>
-        <xacro:prlite_wheel suffix="br" parent="base_link" reflect_x="-1" reflect_y="-1">
-        </xacro:prlite_wheel>
-        <xacro:prlite_torso>
-        </xacro:prlite_torso>
+        <xacro:pr2lite_wheel suffix="fl" parent="base_link" reflect_x="1" reflect_y="1">
+        </xacro:pr2lite_wheel>
+        <xacro:pr2lite_wheel suffix="fr" parent="base_link" reflect_x="1" reflect_y="-1">
+        </xacro:pr2lite_wheel>
+        <xacro:pr2lite_wheel suffix="bl" parent="base_link" reflect_x="-1" reflect_y="1">
+        </xacro:pr2lite_wheel>
+        <xacro:pr2lite_wheel suffix="br" parent="base_link" reflect_x="-1" reflect_y="-1">
+        </xacro:pr2lite_wheel>
+        <xacro:pr2lite_torso>
+        </xacro:pr2lite_torso>
 <!--
 -->
         <xacro:smart_arm parent="left_shoulder_pan_link" side="left" >

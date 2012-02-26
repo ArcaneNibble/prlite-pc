@@ -27,9 +27,36 @@
             <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="${-1.22+0.1}" soft_upper_limit="${1.22-0.1}" />
             <dynamics damping="50" friction="1"/>
         </joint>
+
+        <joint name="${side}_shoulder_caster_joint" type="fixed">
+          <axis xyz="0 0 0" />
+          <parent link="${side}_shoulder_link"/>
+          <child link="${side}_shoulder_caster_link"/>
+          <origin xyz="${inch_to_meter*-2} ${inch_to_meter*0} ${inch_to_meter*7.3575}" rpy="0 0 0"/>
+        </joint>
+
+        <joint name="${side}_lin_act_cyl_joint" type="revolute">
+          <!-- shoulder pan cylindar to lin act joint -->
+          <origin xyz="${inch_to_meter*(1.5)} ${inch_to_meter*0} ${inch_to_meter*7.3575}" rpy="0 0 0"/>
+          <parent link="${side}_shoulder_caster_link"/>
+          <child link="${side}_lower_linear_actuator_link"/>
+          <axis xyz="0 -1 0"/>
+          <limit  lower="-1.04719755" upper="1.972222" effort="300" velocity="1.17" />
+          <!-- mimic joint="${side}_shoulder_tilt_joint" multiplier="-1" offset="0" -->
+      </joint>
+
+
+       <joint name="${side}_linear_actuator_joint" type="prismatic">
+          <!-- linact down: 9.9 inches, up 13.9 inches -->
+          <axis xyz="0 0 1" />
+          <limit lower="${inch_to_meter*0}" upper="${inch_to_meter*-4}" effort="10000" velocity=".025"/>
+          <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+          <parent link="${side}_lower_linear_actuator_link"/>
+          <child link="${side}_upper_linear_actuator_link"/>
+        </joint>
         
         <joint name="${side}_shoulder_tilt_joint" type="revolute">
-            <origin xyz="${inch_to_meter*0} 0 ${0}" rpy="0 0 0" />
+            <origin xyz="${inch_to_meter*2} 0 ${0}" rpy="0 0 0" />
             <parent link="${side}_shoulder_link"/>
             <child link="${side}_upper_arm_link" />
             
@@ -48,41 +75,6 @@
     <limit  lower="-1.04719755" upper="1.972222" effort="300" velocity="1.17" />
     <mimic joint="${side}_shoulder_tilt_joint" multiplier="-1" offset="0"/> 
 </joint>
-
-<!--
- <joint:hinge name="${prefix}_r_parallel_root_joint">
-          <body1>${prefix}_r_parallel_link</body1>
-          <body2>${prefix}_palm_link</body2>
-          <anchor>${prefix}_palm_link</anchor>
-          <axis>0 0 -1</axis>
-          <damping>0.2</damping>
-          <anchorOffset>${0.07691+parallel_link_x_offset} ${-0.01-parallel_link_y_offset} 0</anchorOffset>
-      </joint:hinge>
-
- 	157	    <!-- parallel link for simulating gripper constraints --> 
- 	158	    <gazebo> 
- 	159	      <joint:hinge name="${prefix}_r_parallel_tip_joint"> 
- 	160	          <body1>${prefix}_r_parallel_link</body1> 
- 	161	          <body2>${prefix}_r_finger_tip_link</body2> 
- 	162	          <anchor>${prefix}_r_finger_tip_link</anchor> 
- 	163	          <axis>0 0 1</axis> 
- 	164	          <anchorOffset>${parallel_link_x_offset} ${-parallel_link_y_offset} 0</anchorOffset> 
- 	165	      </joint:hinge> 
- 	166	      <joint:hinge name="${prefix}_l_parallel_tip_joint"> 
- 	167	          <body1>${prefix}_l_parallel_link</body1> 
- 	168	          <body2>${prefix}_l_finger_tip_link</body2> 
- 	169	          <anchor>${prefix}_l_finger_tip_link</anchor> 
- 	170	          <axis>0 0 1</axis> 
- 	171	          <anchorOffset>${parallel_link_x_offset} ${parallel_link_y_offset} 0</anchorOffset> 
- 	172	      </joint:hinge> 
- 	173	      <joint:slider name="${prefix}_simulated_joint"> 
- 	174	          <body1>${prefix}_l_finger_tip_link</body1> 
- 	175	          <body2>${prefix}_r_finger_tip_link</body2> 
- 	176	          <anchor>${prefix}_r_finger_tip_link</anchor> 
- 	177	          <axis>0 1 0</axis> 
- 	178	      </joint:slider> 
- 	179	    </gazebo> 
--->
 
         <joint name="${side}_elbow_pan_joint" type="revolute" >
             <origin xyz="${inch_to_meter*0} 0 ${inch_to_meter*1}" rpy="0 0 0" />
@@ -194,8 +186,37 @@
     </inertial>
   <visual>
     <origin xyz="${inch_to_meter*0} ${inch_to_meter*0} ${inch_to_meter*0}" rpy="0 0 0"/>
-    <geometry><box size="${inch_to_meter*1} ${inch_to_meter*1} ${inch_to_meter*.25}"/></geometry>
+    <geometry><box size="${inch_to_meter*4} ${inch_to_meter*4} ${inch_to_meter*.25}"/></geometry>
     <material name="Silver1"><color rgba="0 0.9 0.9 1.0"/></material>
+  </visual>
+</link>
+
+<link name="${side}_shoulder_caster_link">
+  <!-- 14.715 inches from linact to caster -->
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry><box size="${inch_to_meter*0.25} ${inch_to_meter * 4} ${inch_to_meter*-14.715}"/></geometry>
+    <material name="Green"><color rgba="0 0.9 0.9 1.0"/></material>
+  </visual>
+</link>
+
+<link name="${side}_lower_linear_actuator_link">
+  <visual>
+    <axis xyz="0 0 0" />
+    <origin xyz="${inch_to_meter*(0)} ${inch_to_meter*0} ${inch_to_meter*-4.95}" rpy="0 0 0"/>
+    <geometry><box size="${inch_to_meter*1.4} ${inch_to_meter*1.2} ${inch_to_meter*-9.9}"/></geometry>
+    <material name="Silver1"><color rgba="0 0.9 0.9 1.0"/></material>
+  </visual>
+</link>
+
+<link name="${side}_upper_linear_actuator_link" >
+  <!-- (4.3 - .315) inches where lin act attaches to arm -->
+  <visual>
+    <!-- origin xyz="${inch_to_meter*0} ${inch_to_meter*0} ${inch_to_meter*0}" rpy="0 0 0"-->
+    <!-- geometry><box size="${inch_to_meter*0} ${inch_to_meter*0} ${inch_to_meter*0}"/></geometry -->
+    <origin xyz="${inch_to_meter*(0)} ${inch_to_meter*0} ${inch_to_meter*-5.95}" rpy="0 0 0"/>
+    <geometry><box size="${inch_to_meter*.8} ${inch_to_meter*.8} ${inch_to_meter*-9.9}"/></geometry>
+    <material name="green"><color rgba="0 0.9 0.9 1.0"/></material>
   </visual>
 </link>
 
@@ -515,5 +536,23 @@
             <stopKp value="1000000.0" />
             <fudgeFactor value="1.0" />
         </gazebo>
+
+    <transmission type="pr2_mechanism_model/Pr2LiteShoulderTransmission" name="${side}_pr2lite_shoulder_trans" >
+      <actuator       name="${side}_linear_actuator_joint" />
+      <gap_joint      name="${side}_shoulder_tilt_joint"
+                      />
+      <!-- if a gazebo joint exists as [l|r]_gripper_joint, use this tag to have
+           gripper transmission apply torque directly to prismatic joint
+           this should be the default behavior in diamondback, deprecating this flag -->
+      <use_simulated_gripper_joint/>
+      <!-- set passive joint angles so things look nice in rviz -->
+      <passive_joint  name="${side}_shoulder_tilt_joint"     />
+      <passive_joint  name="${side}_lin_act_cyl_joint"     />
+      <passive_joint  name="${side}_upper_arm_hinge_joint" />
+      <!-- screw joint to capture gripper "dynamics" -->
+      <simulated_actuated_joint name="${side}_linear_actuator_joint"
+                                passive_actuated_joint="${side}_gripper_motor_slider_joint"
+                                simulated_reduction="1"   />
+    </transmission>
     </macro>
 </robot>

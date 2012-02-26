@@ -1,13 +1,13 @@
 <package>
-  <description brief="prlite_urdf">
+  <description brief="pr2lite_urdf">
 
-     prlite_urdf
+     pr2lite_urdf
 
   </description>
   <author>ros</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/prlite_urdf</url>
+  <url>http://ros.org/wiki/pr2lite_urdf</url>
 
 </package>
 

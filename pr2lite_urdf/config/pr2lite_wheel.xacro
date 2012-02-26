@@ -38,7 +38,7 @@
     <property name="motor_block_size_z" value="0.1016"/>
     <property name="wheel_radius" value=".0762"/>
 
- <macro name="prlite_wheel" params="suffix parent reflect_x reflect_y">
+ <macro name="pr2lite_wheel" params="suffix parent reflect_x reflect_y">
 <!-- * * * Link Definitions * * * -->
 <joint name="${suffix}_base_joint" type="fixed">
   <axis xyz="0 0 1" />
