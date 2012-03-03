@@ -196,11 +196,11 @@ void cmdPublishLinact(void)
 	linact_cmd.dport = 1;
 	
 	itmp = linact_goal - LINACT_PRECISION;
-	linact_cmd.data[0] = itmp & 0xFF;
-	linact_cmd.data[1] = (itmp >> 16) & 0xFF;
+	linact_cmd.data.push_back(itmp & 0xFF);
+	linact_cmd.data.push_back((itmp >> 16) & 0xFF);
 	itmp = linact_goal + LINACT_PRECISION;
-	linact_cmd.data[2] = itmp & 0xFF;
-	linact_cmd.data[3] = (itmp >> 16) & 0xFF;
+	linact_cmd.data.push_back(itmp & 0xFF);
+	linact_cmd.data.push_back((itmp >> 16) & 0xFF);
 	
   ROS_INFO("linact %d", linact_goal);
   linact_pub.publish(linact_cmd);
@@ -219,23 +219,23 @@ void cmdPublishWheel(void)
 	pid_gains.sport = 7;
 	pid_gains.dport = 1;
 	  
-	pid_gains.data[0] = 0;
-	pid_gains.data[1] = 0;
-	pid_gains.data[2] = 100;
-	pid_gains.data[3] = 0;		//this is 100.0 (p)
-	pid_gains.data[4] = 0;
-	pid_gains.data[5] = 0;
-	pid_gains.data[6] = 0;
-	pid_gains.data[7] = 0;		//this is 0.0 (i)
-	pid_gains.data[8] = 0;
-	pid_gains.data[9] = 0;
-	pid_gains.data[10] = 0;
-	pid_gains.data[11] = 0;		//this is 0.0 (d)
+	pid_gains.data.push_back(0);
+	pid_gains.data.push_back(0);
+	pid_gains.data.push_back(100);
+	pid_gains.data.push_back(0);		//this is 100.0 (p)
+	pid_gains.data.push_back(0);
+	pid_gains.data.push_back(0);
+	pid_gains.data.push_back(0);
+	pid_gains.data.push_back(0);		//this is 0.0 (i)
+	pid_gains.data.push_back(0);
+	pid_gains.data.push_back(0);
+	pid_gains.data.push_back(0);
+	pid_gains.data.push_back(0);		//this is 0.0 (d)
 	
-	pid_gains.data[12] = 1;		//do not reverse
+	pid_gains.data.push_back(1);		//do not reverse
 	pid_gains.destination = 0x0A;	//robert: I have no idea what these should be
     pid_pub.publish(pid_gains);
-	pid_gains.data[12] = 1;		//do not reverse
+	pid_gains.data[12] = 1;		//do not reverse	//this isn't push_back
 	pid_gains.destination = 0x0B;
     pid_pub.publish(pid_gains);
 	pid_gains.data[12] = -1;		//do reverse (0xFF)
@@ -259,8 +259,8 @@ void cmdPublishWheel(void)
       ROS_INFO("LINACT_90");
       // move sideways (positive cmd_l/cmd_r means go left)
       // back wheels
-      wheel_cmd.data[0] = cmd_l & 0xFF;
-      wheel_cmd.data[1] = (cmd_l >> 8) & 0xFF;
+      wheel_cmd.data.push_back(cmd_l & 0xFF);
+      wheel_cmd.data.push_back((cmd_l >> 8) & 0xFF);
 	  wheel_cmd.destination = 0x0A;		//robert: check me FIXME
       cmd_pub.publish(wheel_cmd);
 	  
@@ -284,8 +284,8 @@ void cmdPublishWheel(void)
     {
       ROS_INFO("MOVE F/B");
       // move forwards/backwards or spin in place
-      wheel_cmd.data[0] = cmd_l & 0xFF;
-      wheel_cmd.data[1] = (cmd_l >> 8) & 0xFF;
+      wheel_cmd.data.push_back(cmd_l & 0xFF);
+      wheel_cmd.data.push_back((cmd_l >> 8) & 0xFF);
 	  wheel_cmd.destination = 0x0A;		//robert: check me FIXME
       cmd_pub.publish(wheel_cmd);
 	  
