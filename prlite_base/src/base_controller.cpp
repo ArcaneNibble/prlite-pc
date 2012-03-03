@@ -444,8 +444,8 @@ int main(int argc, char **argv)
   base_state_time = ros::Time::now();
 
   ros::Subscriber cmd_sub = n.subscribe("cmd_vel", 1000, cmdCallback);
-  ros::Subscriber wheel_sub = n.subscribe("net_485net_outgoing_dgram", 1000, wheelCallback);
-  ros::Subscriber linact_sub = n.subscribe("net_485net_outgoing_dgram", 1000, linactCallback);
+  ros::Subscriber wheel_sub = n.subscribe("net_485net_incoming_dgram", 1000, wheelCallback);
+  ros::Subscriber linact_sub = n.subscribe("net_485net_incoming_dgram", 1000, linactCallback);
 
   pid_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
   cmd_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
