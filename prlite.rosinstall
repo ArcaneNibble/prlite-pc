@@ -9,5 +9,7 @@
 - svn: {local-name: pr2_controllers, uri: 'https://code.ros.org/svn/wg-ros-pkg/stacks/pr2_controllers/tags/electric/'}
 - hg: {local-name: openni_kinect, uri: 'https://kforge.ros.org/openni/openni_ros', version: electric}
 - svn: {local-name: erratic_robot, uri: 'http://ua-ros-pkg.googlecode.com/svn/stacks/erratic_robot/tags/electric/'}
-
-# need to also run sudo apt-get install ros-electric-dynamixel-motor
+- svn: {local-name: dynamixel_motor, uri: 'http://ua-ros-pkg.googlecode.com/svn/stacks/dynamixel_motor/trunk'}
+- hg: {local-name: control_msgs, uri: 'https://bitbucket.org/sglaser/control'}
+- svn: {local-name: pr2_common, uri: 'https://code.ros.org/svn/wg-ros-pkg/stacks/pr2_common/tags/electric/'}
+- hg: {local-name: arm_navigation, uri: 'https://kforge.ros.org/armnavigation/armnavigation', version: electric}
