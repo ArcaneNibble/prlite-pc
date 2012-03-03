@@ -1,5 +1,0 @@
-#! /bin/bash
-rosservice call /dynamixel_controller/laser_tilt_controller/set_speed $1
-
-rostopic pub -1 /dynamixel_controller/laser_tilt_controller/command std_msgs/Float64 -- 1.0
-rostopic pub -1 /dynamixel_controller/laser_tilt_controller/command std_msgs/Float64 -- 0.0

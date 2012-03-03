@@ -1,6 +1,0 @@
-<launch>
-    <!-- send erratic description to param server -->
-    <param name="robot_description" command="$(find xacro)/xacro.py '$(find prlite_urdf)/robot.xml'" />
-    <include file="$(find prlite_base)/controller.launch" />
-    <include file="$(find ax12_controller_core)/launch/controller_manager.launch" />
-</launch>
