@@ -1,6 +1,6 @@
 #include "dynamixel_msgs/MotorStateList.h"
 #include "dynamixel_msgs/JointState.h"
-#include "dynamixel_msgs/JointStateList.h"
+//#include "dynamixel_msgs/JointStateList.h"
 
 
 /* enumerated types */
