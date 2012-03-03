@@ -92,6 +92,10 @@ void state_change(void)
 {  
   ros::Time now;
   base_state_enum base_state_last;
+  
+  //debug
+  linact_arrived = true;
+  linact_goal_arrived = true;
 
   // Get the current time
   now = ros::Time::now();
@@ -148,6 +152,11 @@ void state_change(void)
           // publish new linear actuator command
           cmdPublishLinact();
         } 
+		else if (linact_arrived && linact_goal_arrived)
+		{
+			//done with linact
+			base_state = ready;
+		}
     } else if (base_state == wheel_start) {
         if (!wheel_stopped) {
           base_state = wheel_moving;
@@ -244,7 +253,7 @@ void cmdPublishWheel(void)
 	pid_gains.data[12] = -1;		//do reverse
 	pid_gains.destination = 0x09;
     pid_pub.publish(pid_gains);
-    // init = false;
+    init = false;	//robert: I have no idea why this was commented out
   }
   if (cmd_l != cmd_l_last || cmd_r != cmd_r_last || (LINACT_90 == linact_goal) != cmd_90_last)
   {
