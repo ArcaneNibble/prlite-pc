@@ -361,6 +361,8 @@ void wheelCallback(const packets_485net::packet_485net_dgram& ws)
 		return;
 	if(ws.dport != 7)
 		return;
+	if(ws.data.size() != 22)
+		return;
 		
 	itmp = ws.data[4] | ((ws.data[5]) << 8);
 	
@@ -396,6 +398,8 @@ void linactCallback(const packets_485net::packet_485net_dgram& linear_actuator_s
 	if(!(linear_actuator_status.destination == 0xF0 || linear_actuator_status.destination == 0x00))
 		return;
 	if(linear_actuator_status.dport != 7)
+		return;
+	if(linear_actuator_status.data.size() != 7)
 		return;
   linact_arrived = linear_actuator_status.data[4+2];
   itmp = linear_actuator_status.data[4] | ((linear_actuator_status.data[5]) << 8);
