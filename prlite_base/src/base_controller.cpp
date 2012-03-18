@@ -244,13 +244,13 @@ void cmdPublishWheel(void)
 	pid_gains.data.push_back(0xFF);		//do reverse
 	pid_gains.destination = 0x0A;	//robert: I have no idea what these should be
     pid_pub.publish(pid_gains);
-	pid_gains.data[12] = 1;		//do not reverse	//this isn't push_back
+	pid_gains.data[12] = 0xFF;		//do reverse	//this isn't push_back
 	pid_gains.destination = 0x0B;
     pid_pub.publish(pid_gains);
 	pid_gains.data[12] = 1;		//do not reverse
 	pid_gains.destination = 0x08;
     pid_pub.publish(pid_gains);
-	pid_gains.data[12] = 0xFF;		//do reverse
+	pid_gains.data[12] = 1;		//do not reverse
 	pid_gains.destination = 0x09;
     pid_pub.publish(pid_gains);
     init = false;	//robert: I have no idea why this was commented out

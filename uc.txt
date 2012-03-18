@@ -1,9 +1,9 @@
 #address list
 #AA|type name|location description
-08|wheel-cnt|back right
-09|wheel-cnt|front right
-0A|wheel-cnt|back left
-0B|wheel-cnt|front left
+08|wheel-cnt|front left
+09|wheel-cnt|back left
+0A|wheel-cnt|front right
+0B|wheel-cnt|back right
 0C|lin-act|wheel rotate
 0D|lin-act|front up down
 
