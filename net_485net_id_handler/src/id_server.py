@@ -72,6 +72,7 @@ def main():
 	def search_id_shim(req):
 		result = search_id(req.type, req.desc)
 		if result == None:
+			rospy.logwarn("Couldn't find '%s' of type '%s'" % (req.desc, req.type))
 			return 0xFF
 		return result[0]
 	search_id_service = rospy.Service('search_id', SearchID, search_id_shim)
