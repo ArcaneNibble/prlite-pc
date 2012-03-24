@@ -29,6 +29,7 @@
 #include "std_msgs/String.h"
 #include "geometry_msgs/Twist.h"
 #include "packets_485net/packet_485net_dgram.h"
+#include "net_485net_id_handler/SearchID.h"
 
 const double X_MULT = 7.51913116; // speed is ticks per interval and interval is 1/10 sec, so should be WHEEL_TICKS_PER_METER / 10
 const double TH_MULT = 5; // tuned manually (is about right)
@@ -43,6 +44,8 @@ const ros::Duration LINACT_FINISH_TO(5.0);
 ros::Publisher pid_pub;
 ros::Publisher cmd_pub;
 ros::Publisher linact_pub;
+
+ros::ServiceClient idlookup;
 
 // TODO: encapsolate globals into objects
 
@@ -194,12 +197,29 @@ void state_change(void)
   } while (base_state != base_state_last);
 }
 
+uint8_t lookup_id(const char *type, const char *desc)
+{
+	net_485net_id_handler::SearchID search;
+	
+	search.request.type = type;
+	search.request.desc = desc;
+	if(idlookup.call(search))
+	{
+		return search.response.res;
+	}
+	else
+	{
+		//ERROR
+		return 0xFF;
+	}
+}
+
 // only routine that can change linact_goal_last
 void cmdPublishLinact(void)
 {
 	uint16_t itmp;
   packets_485net::packet_485net_dgram linact_cmd;
-	linact_cmd.destination = 0x0C;
+	linact_cmd.destination = lookup_id("lin-act", "wheel rotate");
 	linact_cmd.source = 0xF0;
 	linact_cmd.sport = 7;
 	linact_cmd.dport = 1;
@@ -242,16 +262,16 @@ void cmdPublishWheel(void)
 	pid_gains.data.push_back(0);		//this is 0.0 (d)
 	
 	pid_gains.data.push_back(0xFF);		//do reverse
-	pid_gains.destination = 0x0A;	//robert: I have no idea what these should be
+	pid_gains.destination = lookup_id("wheel-cnt", "front right");
     pid_pub.publish(pid_gains);
 	pid_gains.data[12] = 0xFF;		//do reverse	//this isn't push_back
-	pid_gains.destination = 0x0B;
+	pid_gains.destination = lookup_id("wheel-cnt", "back right");
     pid_pub.publish(pid_gains);
 	pid_gains.data[12] = 1;		//do not reverse
-	pid_gains.destination = 0x08;
+	pid_gains.destination = lookup_id("wheel-cnt", "front left");
     pid_pub.publish(pid_gains);
 	pid_gains.data[12] = 1;		//do not reverse
-	pid_gains.destination = 0x09;
+	pid_gains.destination = lookup_id("wheel-cnt", "back left");
     pid_pub.publish(pid_gains);
     init = false;	//robert: I have no idea why this was commented out
   }
@@ -270,23 +290,23 @@ void cmdPublishWheel(void)
       // back wheels
       wheel_cmd.data.push_back(cmd_l & 0xFF);
       wheel_cmd.data.push_back((cmd_l >> 8) & 0xFF);
-	  wheel_cmd.destination = 0x0A;		//robert: check me FIXME
+	  wheel_cmd.destination = lookup_id("wheel-cnt", "front right");
       cmd_pub.publish(wheel_cmd);
 	  
       wheel_cmd.data[0] = (-cmd_l) & 0xFF;
       wheel_cmd.data[1] = ((-cmd_l) >> 8) & 0xFF;
-	  wheel_cmd.destination = 0x08;
+	  wheel_cmd.destination = lookup_id("wheel-cnt", "front left");
       cmd_pub.publish(wheel_cmd);
 	  
       // front wheels
       wheel_cmd.data[0] = cmd_r & 0xFF;
       wheel_cmd.data[1] = (cmd_r >> 8) & 0xFF;
-	  wheel_cmd.destination = 0x0B;
+	  wheel_cmd.destination = lookup_id("wheel-cnt", "back right");
       cmd_pub.publish(wheel_cmd);
 	  
       wheel_cmd.data[0] = (-cmd_r) & 0xFF;
       wheel_cmd.data[1] = ((-cmd_r) >> 8) & 0xFF;
-	  wheel_cmd.destination = 0x09;
+	  wheel_cmd.destination = lookup_id("wheel-cnt", "back left");
       cmd_pub.publish(wheel_cmd);
     }
     else
@@ -295,23 +315,23 @@ void cmdPublishWheel(void)
       // move forwards/backwards or spin in place
       wheel_cmd.data.push_back(cmd_l & 0xFF);
       wheel_cmd.data.push_back((cmd_l >> 8) & 0xFF);
-	  wheel_cmd.destination = 0x0A;		//robert: check me FIXME
+	  wheel_cmd.destination = lookup_id("wheel-cnt", "front right");
       cmd_pub.publish(wheel_cmd);
 	  
       wheel_cmd.data[0] = (cmd_r) & 0xFF;
       wheel_cmd.data[1] = ((cmd_r) >> 8) & 0xFF;
-	  wheel_cmd.destination = 0x08;
+	  wheel_cmd.destination = lookup_id("wheel-cnt", "front left");
       cmd_pub.publish(wheel_cmd);
 	  
       // front wheels
       wheel_cmd.data[0] = cmd_l & 0xFF;
       wheel_cmd.data[1] = (cmd_l >> 8) & 0xFF;
-	  wheel_cmd.destination = 0x0B;
+	  wheel_cmd.destination = lookup_id("wheel-cnt", "back right");
       cmd_pub.publish(wheel_cmd);
 	  
       wheel_cmd.data[0] = (cmd_r) & 0xFF;
       wheel_cmd.data[1] = ((cmd_r) >> 8) & 0xFF;
-	  wheel_cmd.destination = 0x09;
+	  wheel_cmd.destination = lookup_id("wheel-cnt", "back left");
       cmd_pub.publish(wheel_cmd);
     }
     cmd_l_last = cmd_l;
@@ -446,6 +466,8 @@ int main(int argc, char **argv)
    */
 
   base_state_time = ros::Time::now();
+  
+  idlookup = n.serviceClient<net_485net_id_handler::SearchID>("search_id", true);
 
   ros::Subscriber cmd_sub = n.subscribe("cmd_vel", 1000, cmdCallback);
   ros::Subscriber wheel_sub = n.subscribe("net_485net_incoming_dgram", 1000, wheelCallback);
