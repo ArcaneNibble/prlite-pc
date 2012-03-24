@@ -1,0 +1,15 @@
+<package>
+  <description brief="net_485net_id_handler">
+
+     net_485net_id_handler
+
+  </description>
+  <author>robert</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/net_485net_id_handler</url>
+  <depend package="rospy"/>
+
+</package>
+
+

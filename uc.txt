@@ -7,6 +7,11 @@
 0C|lin-act|wheel rotate
 0D|lin-act|front up down
 
+C1|multicast|left wheels
+C2|multicast|right wheels
+C3|multicast|front wheels
+C4|multicast|back wheels
+
 =
 
 #firmware list
