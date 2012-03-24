@@ -26,13 +26,15 @@ def main(what, addr):
 		reply.data = "\x55\xaaABCD\xc3\x3c"
 	elif what == "l":
 		reply.data = "\x55\xaaLMNO\xc3\x3c"
+	elif what == "m":
+		reply.data = "\x55\xaaMU%s%s%s%s" % (binascii.unhexlify(sys.argv[3]), binascii.unhexlify(sys.argv[4]), binascii.unhexlify(sys.argv[5]), binascii.unhexlify(sys.argv[6]))
 	
 	while not rospy.is_shutdown():
 		pub.publish(reply)
 
 if __name__ == '__main__':
 	if len(sys.argv) < 2:
-		print "Usage: %s x(everything|a|l addr" % sys.argv[0]
+		print "Usage: %s x(everything|a|l addr)\n\tor m addr aa bb cc dd" % sys.argv[0]
 		sys.exit(1)
 	try:
 		main(sys.argv[1], ord(binascii.unhexlify(sys.argv[2])))
