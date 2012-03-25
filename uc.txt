@@ -11,6 +11,7 @@ C1|multicast|left wheels
 C2|multicast|right wheels
 C3|multicast|front wheels
 C4|multicast|back wheels
+C5|multicast|all wheels
 
 =
 
