@@ -59,6 +59,7 @@ int16_t cmd_l_last = 10000;
 int16_t cmd_r = 0;
 int16_t cmd_r_last = 10000;
 bool cmd_90_last = false;
+bool force_wheel_update = false;
 
 // base states
 enum base_state_enum {ready, linact_start, linact_moving, wheel_start, wheel_moving};
@@ -68,6 +69,8 @@ ros::Time base_state_time; // time of last transition
 
 // wheel_state (sent in wheelCallback)
 bool wheel_stopped = true;
+//fl, fr, bl, br
+bool wheel_started[4] = {false, false, false, false};
 
 // linact state (set in linactCallback)
 bool linact_arrived = true;
@@ -161,11 +164,14 @@ void state_change(void)
 			base_state = ready;
 		}
     } else if (base_state == wheel_start) {
-        if (!wheel_stopped) {
+        if ((cmd_l == 0 || (wheel_started[0] && wheel_started[2])) &&
+		    (cmd_r == 0 || (wheel_started[1] && wheel_started[3]))) {
           base_state = wheel_moving;
         } else if (state_timeout(wheel_start, &now, WHEEL_TO)) {
           ROS_INFO("ERR: WHEEL START TIMEOUT");
-          base_state = ready;
+		  force_wheel_update = true;
+          //base_state = ready;
+          cmdPublishWheel();
         }
     } else if (base_state == wheel_moving) {
         if (wheel_stopped) {
@@ -178,14 +184,17 @@ void state_change(void)
           int cmd_r_tmp = cmd_r;
           cmd_l = 0;
           cmd_r = 0;
+		  force_wheel_update = true;
           cmdPublishWheel();
           cmd_l = cmd_l_tmp;
           cmd_r = cmd_r_tmp;
+		  force_wheel_update = true;
         } else if (cmd_l != cmd_l_last || cmd_r != cmd_r_last) {
           // Change in wheel command with same linact pos
           cmdPublishWheel();
         } else if (cmd_l == 0 && cmd_r == 0 && !wheel_stopped) {
           // try to stop again
+		  force_wheel_update = true;
           cmdPublishWheel();
         }
      }
@@ -275,10 +284,13 @@ void cmdPublishWheel(void)
     pid_pub.publish(pid_gains);
     init = false;	//robert: I have no idea why this was commented out
   }
-  if (cmd_l != cmd_l_last || cmd_r != cmd_r_last || (LINACT_90 == linact_goal) != cmd_90_last)
+  if (cmd_l != cmd_l_last || cmd_r != cmd_r_last || (LINACT_90 == linact_goal) != cmd_90_last || force_wheel_update)
   {
     // publish wheel commands
     packets_485net::packet_485net_dgram wheel_cmd;
+	
+	ROS_INFO("Wheel update forced");
+	force_wheel_update = false;
 	
 	wheel_cmd.source = 0xF0;
 	wheel_cmd.sport = 7;
@@ -383,7 +395,7 @@ void wheelCallback(const packets_485net::packet_485net_dgram& ws)
   static int16_t vr[2];
 
 	uint16_t itmp;
-	if(ws.source != 0x08 && ws.source != 0x09 && ws.source != 0x0A && ws.source != 0x0B)
+	if(ws.source != lookup_id("wheel-cnt", "front left") && ws.source != lookup_id("wheel-cnt", "front right") && ws.source != lookup_id("wheel-cnt", "back left") && ws.source != lookup_id("wheel-cnt", "back right"))
 		return;
 	if(!(ws.destination == 0xF0 || ws.destination == 0x00))
 		return;
@@ -394,26 +406,23 @@ void wheelCallback(const packets_485net::packet_485net_dgram& ws)
 		
 	itmp = ws.data[4] | ((ws.data[5]) << 8);
 	
-	switch(ws.source)
-	{
-	case 0x08:
-		vr[1] = itmp;
-		break;
-	case 0x09:
-		vr[0] = itmp;
-		break;
-	case 0x0A:
-		vl[1] = itmp;
-		break;
-	case 0x0B:
+	if(ws.source == lookup_id("wheel-cnt", "front left"))
 		vl[0] = itmp;
-		break;
-	}
+	else if(ws.source == lookup_id("wheel-cnt", "front right"))
+		vr[0] = itmp;
+	else if(ws.source == lookup_id("wheel-cnt", "back left"))
+		vl[1] = itmp;
+	else if(ws.source == lookup_id("wheel-cnt", "back right"))
+		vr[1] = itmp;
 		
   //int addr = ws.srcaddr / 2 - 1;
   //vl[addr] = ws.ticks0_interval;
   //vr[addr] = ws.ticks1_interval;  
   wheel_stopped = (0 == vl[0] && 0 == vl[1] && 0 == vr[0] && 0 == vr[1]);
+  wheel_started[0] = vl[0] != 0;	//fl
+  wheel_started[1] = vr[0] != 0;	//fr
+  wheel_started[2] = vl[1] != 0;	//bl
+  wheel_started[3] = vr[1] != 0;	//br
   state_change();
 }
 
