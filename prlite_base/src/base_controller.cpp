@@ -100,8 +100,8 @@ void state_change(void)
   base_state_enum base_state_last;
   
   //debug
-  linact_arrived = true;
-  linact_goal_arrived = true;
+  //linact_arrived = true;
+  //linact_goal_arrived = true;
 
   // Get the current time
   now = ros::Time::now();
@@ -430,7 +430,7 @@ void wheelCallback(const packets_485net::packet_485net_dgram& ws)
 void linactCallback(const packets_485net::packet_485net_dgram& linear_actuator_status)
 {
 	uint16_t itmp;
-	if(linear_actuator_status.source != 0x0C)
+	if(linear_actuator_status.source != lookup_id("lin-act", "wheel rotate"))
 		return;
 	if(!(linear_actuator_status.destination == 0xF0 || linear_actuator_status.destination == 0x00))
 		return;
