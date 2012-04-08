@@ -259,16 +259,16 @@ void cmdPublishWheel(void)
 	  
 	pid_gains.data.push_back(0);
 	pid_gains.data.push_back(0);
-	pid_gains.data.push_back(100);
-	pid_gains.data.push_back(0);		//this is 100.0 (p)
+	pid_gains.data.push_back(5);
+	pid_gains.data.push_back(0);		//this is 5.0 (p)
 	pid_gains.data.push_back(0);
 	pid_gains.data.push_back(0);
+	pid_gains.data.push_back(25);
+	pid_gains.data.push_back(0);		//this is 25.0 (i)
 	pid_gains.data.push_back(0);
-	pid_gains.data.push_back(0);		//this is 0.0 (i)
 	pid_gains.data.push_back(0);
-	pid_gains.data.push_back(0);
-	pid_gains.data.push_back(0);
-	pid_gains.data.push_back(0);		//this is 0.0 (d)
+	pid_gains.data.push_back(3);
+	pid_gains.data.push_back(0);		//this is 3.0 (d)
 	
 	pid_gains.data.push_back(0xFF);		//do reverse
 	pid_gains.destination = lookup_id("wheel-cnt", "front right");
