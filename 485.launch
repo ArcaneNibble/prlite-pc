@@ -1,0 +1,10 @@
+<launch>
+	<node pkg="pc_485net_raw" type="pc_485net_raw.py" name="pc_485net_raw_node" output="screen">
+		<param name="serport" value="/dev/magellan-i2c-serial" type="str" />
+		<param name="baud" value="1000000" type="int" />
+	</node>
+	<node pkg="net_485net_packet_handler" type="485net_packet_sorter.py" name="net_485net_packet_sorter_node" output="screen" />
+	<node pkg="net_485net_id_handler" type="id_server.py" name="net_485net_id_handler_node" output="screen">
+		<param name="uc_config_file" value="$(find prlite_base)/../uc.txt" type="str" />
+	</node>
+</launch>

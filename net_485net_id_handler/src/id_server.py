@@ -43,7 +43,7 @@ def update_db():
 	global db_lock
 	global db_uc_list
 	global db_firm_list
-	uc_list, firm_list = parse_db(rospy.get_param("/uc_config_file", "uc.txt"))
+	uc_list, firm_list = parse_db(rospy.get_param("~uc_config_file", "uc.txt"))
 	db_lock.acquire()
 	db_uc_list = uc_list
 	db_firm_list = firm_list

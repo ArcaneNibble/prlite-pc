@@ -110,7 +110,7 @@ def main():
 	baud = rospy.get_param("~baud", 1000000)
 	print "Using serial port %s at baud rate %d" % (serport, baud)
 	
-	ser = serial.Serial("/dev/magellan-i2c-serial", 1000000, timeout=0)
+	ser = serial.Serial(serport, baud, timeout=0)
 	ser.setRTS(True)
 	ser.setDTR(True)
 	
