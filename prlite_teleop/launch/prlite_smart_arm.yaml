@@ -4,7 +4,7 @@ shoulder_pan_controllerL:
         module: joint_position_controller_dual_motor
         type: JointPositionControllerDual
     joint_name: shoulder_pan_jointL
-    joint_speed: 1.17
+    joint_speed: .8
     motor_master:
         id: 2
         init: 512
@@ -88,7 +88,7 @@ finger_left_controllerL:
         package: dynamixel_controllers
         module: joint_position_controller
         type: JointPositionController
-    joint_name: finger_left_joint
+    joint_name: finger_left_jointL
     joint_speed: 1.17
     motor:
         id: 5
@@ -96,21 +96,20 @@ finger_left_controllerL:
         min: 400
         max: 550
 
-# ax12 #17 is broken
-# shoulder_pan_controllerR:
-#     controller:
-#         package: dynamixel_controllers
-#         module: joint_position_controller
-#         type: JointPositionController
-#     joint_name: shoulder_pan_joint
-#     joint_speed: 1.17
-#     motor:
-#         id: 17
-#         init: 520
-#         min: 200
-#         max: 800
-#     motor_slave:
-#         id: 20
+shoulder_pan_controllerR:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller_dual_motor
+        type: JointPositionControllerDual
+    joint_name: shoulder_pan_jointR
+    joint_speed: .8
+    motor_master:
+        id: 17
+        init: 512
+        min: 0
+        max: 1023
+    motor_slave:
+        id: 20
 
 elbow_tilt_controllerR:
     controller:
@@ -148,12 +147,12 @@ wrist_tilt_controllerR:
     joint_name: wrist_tilt_jointR
     joint_speed: 1.17
     motor_master:
-        id: 14
+        id: 4
         init: 512
         min: 0
         max: 1023
     motor_slave:
-        id: 4
+        id: 14
 
 wrist_rotate_controllerR:
     controller:
@@ -216,7 +215,7 @@ kinect_pan_controller:
     joint_speed: 1.17
     motor:
         id: 1
-        init: 1023
+        init: 512
         min: 0
         max: 1023
 

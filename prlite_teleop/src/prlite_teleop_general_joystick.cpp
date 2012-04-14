@@ -67,8 +67,8 @@ Axes[5] = -1 -> cross down -> SHOULDER TILT DOWN
 Axes[4] = -1 -> cross right -> shoulder pan left
 Axes[4] = 1 -> cross left -> shoulder pan right
 
-Axes[1] = 1 -> left joy up (analog) -> elbow tilt up, head tilt up, none
-Axes[1] = -1 -> left joy down -> elbow tilt down, head tilt down, none
+Axes[1] = 1 -> left joy up (analog) -> elbow tilt down, head tilt up, none
+Axes[1] = -1 -> left joy down -> elbow tilt up, head tilt down, none
 Axes[0] = 1 -> left joy left (analog) -> elbow pan left, head pan left, speed
 Axes[0] = -1 -> left joy right -> elbow pan right, head pan right, speed
 
@@ -123,16 +123,11 @@ static const unsigned int ARM_Y_AXIS = 1;
 static const unsigned int ARM_Z_AXIS = 2;
 static const unsigned int ARM_YAW_AXIS = 3;
 
-#define BODY_MODE
-
 
 #define SHOULDER_PAN_LEFT   (joy_msg->axes[4] == 1)
 #define SHOULDER_PAN_RIGHT  (joy_msg->axes[4] == -1)
 #define SHOULDER_TILT_UP    (joy_msg->axes[5] == 1)
 #define SHOULDER_TILT_DOWN  (joy_msg->axes[5] == -1)
-
-static const unsigned int WRIST_ROTATE_CLOCK_AXIS = 0;
-static const unsigned int WRIST_ROTATE_COUNTER_AXIS = 3;
 
 // toggle
 static const unsigned int ARM_UNTUCK_BUTTON = 9;
@@ -552,22 +547,22 @@ public:
 	 && !sameValueAsLast(CLOSE_GRIPPER_BUTTON, joy_msg, last_joy_)) {
         ROS_INFO("Close Gripper");
         if(layout == LAYOUT_RIGHT_ARM) {
-          gc->sendGripperCommand(GeneralCommander::ARMS_RIGHT, false);
+          gc->sendGripperCommand(GeneralCommander::ARMS_RIGHT, true);
         } else if(layout == LAYOUT_LEFT_ARM) {
-          gc->sendGripperCommand(GeneralCommander::ARMS_LEFT, false);
+          gc->sendGripperCommand(GeneralCommander::ARMS_LEFT, true);
         } else {
-          gc->sendGripperCommand(GeneralCommander::ARMS_BOTH, false);
+          gc->sendGripperCommand(GeneralCommander::ARMS_BOTH, true);
         }
       }
       if(buttonOkAndOn(OPEN_GRIPPER_BUTTON, joy_msg) 
 	 && !sameValueAsLast(OPEN_GRIPPER_BUTTON, joy_msg, last_joy_)) {
         ROS_INFO("Open Gripper");
         if(layout == LAYOUT_RIGHT_ARM) {
-          gc->sendGripperCommand(GeneralCommander::ARMS_RIGHT, true);
+          gc->sendGripperCommand(GeneralCommander::ARMS_RIGHT, false);
         } else if(layout == LAYOUT_LEFT_ARM) {
-          gc->sendGripperCommand(GeneralCommander::ARMS_LEFT, true);
+          gc->sendGripperCommand(GeneralCommander::ARMS_LEFT, false);
         } else {
-          gc->sendGripperCommand(GeneralCommander::ARMS_BOTH, true);
+          gc->sendGripperCommand(GeneralCommander::ARMS_BOTH, false);
         }
       }
     }
@@ -626,14 +621,14 @@ public:
 
       if(axisOk(HEAD_PAN_AXIS, joy_msg))
       {
-        vel_val_pan_ = joy_msg->axes[HEAD_PAN_AXIS] * pan_scale_;
+        vel_val_pan_ = -1 * joy_msg->axes[HEAD_PAN_AXIS] * pan_scale_;
         ROS_INFO_STREAM("PAN AXIS "<< joy_msg->axes[HEAD_PAN_AXIS]);
       }
       
       if(axisOk(HEAD_TILT_AXIS, joy_msg))
       {
         // ROS_INFO("TILT AXIS");
-        vel_val_tilt_ = joy_msg->axes[HEAD_TILT_AXIS] * tilt_scale_;
+        vel_val_tilt_ = -1 * joy_msg->axes[HEAD_TILT_AXIS] * tilt_scale_;
       }   
     } else {
       vel_val_pan_ = 0.0;
@@ -762,7 +757,7 @@ public:
             right_arm_vx_ = 0.0;
           }
           if(axisOk(ARM_Y_AXIS, joy_msg)) {
-            right_arm_vy_ = joy_msg->axes[ARM_Y_AXIS]*arm_y_scale_;
+            right_arm_vy_ = -1 * joy_msg->axes[ARM_Y_AXIS]*arm_y_scale_;
           } else {
             right_arm_vy_ = 0.0;
           }
@@ -873,7 +868,7 @@ public:
             left_arm_vx_ = 0.0;
           }
           if(axisOk(ARM_Y_AXIS, joy_msg)) {
-            left_arm_vy_ = joy_msg->axes[ARM_Y_AXIS]*arm_y_scale_;
+            left_arm_vy_ = -1 * joy_msg->axes[ARM_Y_AXIS]*arm_y_scale_;
           } else {
             left_arm_vy_ = 0.0;
           }
@@ -996,8 +991,8 @@ public:
             right_arm_vz_ = 0.0;
           }
           if(axisOk(ARM_Y_AXIS, joy_msg)) {
-            left_arm_vy_ = joy_msg->axes[ARM_Y_AXIS]*arm_y_scale_;
-            right_arm_vy_ = joy_msg->axes[ARM_Y_AXIS]*arm_y_scale_;
+            left_arm_vy_ = -1 * joy_msg->axes[ARM_Y_AXIS]*arm_y_scale_;
+            right_arm_vy_ = -1 * joy_msg->axes[ARM_Y_AXIS]*arm_y_scale_;
           } else {
             left_arm_vy_ = 0.0;
             right_arm_vz_ = 0.0;

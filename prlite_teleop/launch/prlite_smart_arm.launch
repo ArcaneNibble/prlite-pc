@@ -33,10 +33,11 @@
                 wrist_tilt_controllerL
                 finger_right_controllerL
                 finger_left_controllerL
+                shoulder_pan_controllerR
                 elbow_tilt_controllerR
                 elbow_pan_controllerR
                 wrist_rotate_controllerR
-                wrist_rotate_controllerR
+                wrist_tilt_controllerR
                 finger_right_controllerR
                 finger_left_controllerR
                 kinect_tilt_controller
