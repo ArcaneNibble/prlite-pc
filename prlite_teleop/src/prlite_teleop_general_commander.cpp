@@ -276,19 +276,28 @@ void GeneralCommander::sendHeadTrackCommand() {
 */
 }
 
+void GeneralCommander::sendShoulderCommand(
+       double right_shoulder_tilt_vel, double right_shoulder_pan_vel, 
+       double left_shoulder_tilt_vel, double left_shoulder_pan_vel, 
+       double SlowHz)
+{
+  ax12->ShoulderCommand(right_shoulder_pan_vel, left_shoulder_pan_vel);
+  ax12->setShoulderGoal(right_shoulder_tilt_vel, left_shoulder_tilt_vel);
+}
+
 void GeneralCommander::sendGripperCommand(WhichArm which, bool close) {
   double position, max_effort;
 
   if(!control_rarm_ && !control_larm_) return;
   if(!control_rarm_ && which == ARMS_RIGHT) return;
   if(!control_larm_ && which == ARMS_LEFT) return;
-  if(which == ARMS_RIGHT || which == ARMS_BOTH) {\
+  if(which == ARMS_RIGHT || which == ARMS_BOTH) {
     if(close) {
-      position = GRIPPER_CLOSE_POSITION;
-      max_effort = GRIPPER_CLOSE_MAX_EFFORT;
-    } else {
       position = GRIPPER_OPEN_POSITION;
       max_effort = GRIPPER_OPEN_MAX_EFFORT;
+    } else {
+      position = GRIPPER_CLOSE_POSITION;
+      max_effort = GRIPPER_CLOSE_MAX_EFFORT;
     }
     ax12->set_desired_pos(prlite_ax12commander::rfingerR, position);
     position *= -1.0;
@@ -303,9 +312,9 @@ void GeneralCommander::sendGripperCommand(WhichArm which, bool close) {
       position = GRIPPER_OPEN_POSITION;
       max_effort = GRIPPER_OPEN_MAX_EFFORT;
     }
-    ax12->set_desired_pos(prlite_ax12commander::lfinger, position);
-    position *= -1;
     ax12->set_desired_pos(prlite_ax12commander::rfinger, position);
+    position *= -1;
+    ax12->set_desired_pos(prlite_ax12commander::lfinger, position);
     ax12->move_to_desired_pos();
   }
   

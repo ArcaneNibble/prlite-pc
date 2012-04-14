@@ -142,8 +142,8 @@ void prlite_ax12commander::setShoulderGoal(int right_goal, int left_goal)
 {
   if (0 == right_goal) return;
   if (0 == left_goal) return;
-  right_goal -= right_goal*LINACT_PRECISION;
-  left_goal -= left_goal*LINACT_PRECISION;
+  // right_goal -= right_goal*LINACT_PRECISION;
+  // left_goal -= left_goal*LINACT_PRECISION;
   if (right_goal < ARM_UP)
     right_goal = ARM_UP;
   else if (right_goal > ARM_DOWN)
@@ -361,9 +361,9 @@ void joint_state_callback(const dynamixel_msgs::JointState& joint_msg_ptr)
         joint = 8;
     } else if (joint_msg_ptr.name == "elbow_tilt_jointR") {
         joint = 9;
-    } else if (joint_msg_ptr.name == "wrist_tilt_jointR") {
-        joint = 10;
     } else if (joint_msg_ptr.name == "wrist_rotate_jointR") {
+        joint = 10;
+    } else if (joint_msg_ptr.name == "wrist_tilt_jointR") {
         joint = 11;
     } else if (joint_msg_ptr.name == "finger_left_jointR") {
         joint = 12;
@@ -372,9 +372,9 @@ void joint_state_callback(const dynamixel_msgs::JointState& joint_msg_ptr)
     } else if (joint_msg_ptr.name == "kinect_pan_joint") {
         joint = 14;
     } else if (joint_msg_ptr.name == "kinect_tilt_joint") {
-        joint = 16;
+        joint = 15;
     } else if (joint_msg_ptr.name == "laser_tilt_joint") {
-        joint = 17;
+        joint = 16;
     } else {
        joint = -1;
     }
@@ -406,11 +406,24 @@ void prlite_ax12commander::init()
 
    prlite_ax12commander::arm_head_mode(POSITION_MODE, POSITION_MODE, POSITION_MODE);
    for (i = 0; i < prlite_ax12commander::numjoints; i ++) {
-      prlite_ax12joint[i].minpos = -5.23;
-      prlite_ax12joint[i].maxpos =  5.23;
+      prlite_ax12joint[i].minpos = -3.14;
+      prlite_ax12joint[i].maxpos =  3.14;
       prlite_ax12joint[i].incrpos =  0.1;
+      if (i == prlite_ax12commander::wristtiltR ||
+         i == prlite_ax12commander::wristtilt) {
+        prlite_ax12joint[i].minpos = -2;
+        prlite_ax12joint[i].maxpos =  2;
+      }
       if (i == prlite_ax12commander::shoulderpanR ||
          i == prlite_ax12commander::shoulderpan) {
+        prlite_ax12joint[i].minpos = -1.50;
+        prlite_ax12joint[i].maxpos =  1.50;
+        prlite_ax12joint[i].incrpos =  0.02;
+      }
+      if (i == prlite_ax12commander::kinectpan) {
+        prlite_ax12joint[i].incrpos =  0.02;
+      }
+      if (i == prlite_ax12commander::kinecttilt) {
         prlite_ax12joint[i].minpos = -1.50;
         prlite_ax12joint[i].maxpos =  1.50;
       }
@@ -418,14 +431,14 @@ void prlite_ax12commander::init()
         prlite_ax12joint[i].minpos = 0;
         prlite_ax12joint[i].maxpos =  1.1;
       } else if (i == prlite_ax12commander::rfinger) {
-        prlite_ax12joint[i].minpos = -1.1;
-        prlite_ax12joint[i].maxpos =  0;
+        prlite_ax12joint[i].minpos = 0;
+        prlite_ax12joint[i].maxpos =  1.1;
       } else if (i == prlite_ax12commander::lfingerR) {
         prlite_ax12joint[i].minpos = 0;
-        prlite_ax12joint[i].maxpos =  -1.1;
+        prlite_ax12joint[i].maxpos =  1.1;
       } else if (i == prlite_ax12commander::rfingerR) {
-        prlite_ax12joint[i].minpos = 1.1;
-        prlite_ax12joint[i].maxpos =  0;
+        prlite_ax12joint[i].minpos =  0;
+        prlite_ax12joint[i].maxpos = 1.1;
       }
       prlite_ax12joint[i].nxtpos = prlite_ax12joint[i].joint_state.current_pos;
       prlite_ax12joint[i].desiredpos = prlite_ax12joint[i].joint_state.current_pos;
@@ -528,7 +541,7 @@ void prlite_ax12commander::move_to_desired_pos()
 void prlite_ax12commander::set_desired_pos(int joint, double desired_pos)
 {
   std_msgs::Float64 desired_pos_pub;
-  if (joint == lfingerR  || joint == rfingerR) 
+  if (joint == lfingerR  || joint == rfingerR)
           desired_pos *= -1;
   if (prlite_ax12joint[joint].desiredpos == desired_pos) return;
   if (!(joint == 8 && desired_pos >= -.1 && desired_pos <= .1))

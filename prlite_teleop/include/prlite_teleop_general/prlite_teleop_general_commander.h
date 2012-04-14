@@ -115,6 +115,12 @@ public:
 
   void sendHeadCommand(double req_pan, double req_tilt);
 
+  void sendShoulderCommand(
+       double right_shoulder_tilt_vel, double right_shoulder_pan_vel,
+       double left_shoulder_tilt_vel, double left_shoulder_pan_vel,
+       double SlowHz);
+
+
   void sendProjectorStartStop(bool start);
 
   void sendGripperCommand(WhichArm which, bool close);
