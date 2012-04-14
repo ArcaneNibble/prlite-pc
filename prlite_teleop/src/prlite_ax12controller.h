@@ -55,8 +55,9 @@ typedef struct jointstate_s {
 class prlite_ax12commander {
 public:
 enum prlite_ax12jointtype {
-   shoulderpan, shouldertilt, elbowtilt, wristrot, lfinger, rfinger,
-   shoulderpanR, shouldertiltR, elbowtiltR, wristrotR, lfingerR, rfingerR, 
+   shoulderpan, elbowpan, elbowtilt, wristrot, wristtilt, lfinger, rfinger,
+   shoulderpanR, 
+   elbowpanR, elbowtiltR, wristrotR, wristtiltR, lfingerR, rfingerR, 
    kinectpan, kinecttilt, lasertilt, numjoints
    };
 
@@ -69,6 +70,8 @@ int get_joint_by_id(int id);
 //void joint_state_callback(const ua_controller_msgs::JointState& joint_msg_ptr);
 void init(void);
 void setTorsoGoal(int goal);
+void setShoulderGoal(int right_goal, int left_goal);
+
 void go_directly_to_pos(void);
 int move_to_next_pos(int joint, double desired_pos, int dir);
 void move_to_desired_pos();
@@ -80,6 +83,7 @@ void arm_head_mode(int left_arm_control_mode, int right_arm_control_mode, int he
 void set_arm_goal(double rx, double ry, double rz, double lx, double ly, double lz);
 void JointCommand(int joint, double vel);
 void WristCommand(double right_wrist_vel, double left_wrist_vel);
+void ShoulderCommand(double right_shoulderpan_vel, double left_shoulderpan_vel);
 void ArmCommand(
        double r_x_vel, double r_y_vel, double r_z_vel,
        double l_x_vel, double l_y_vel, double l_z_vel);

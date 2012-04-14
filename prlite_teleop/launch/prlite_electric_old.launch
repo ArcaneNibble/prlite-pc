@@ -1,6 +1,6 @@
 <launch>
     <!-- send erratic description to param server -->
-    <param name="robot_description" command="$(find xacro)/xacro.py '$(find prlite_urdf)/robot.xml'" />
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2lite_urdf)/config/pr2lite_urdf.xml'" />
 
 
     <!-- Load the joystick service -->
