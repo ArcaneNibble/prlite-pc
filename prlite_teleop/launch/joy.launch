@@ -2,4 +2,18 @@
     <!-- Load the joystick service -->
     <node name="joystick_service" pkg="joy" type="joy_node" 
 args="" output="screen"/>
+  <node pkg="prlite_teleop" type="prlite_teleop_general_joystick" name="prlite_teleop_general_joystick" output="screen">
+        <param name="control_body" type="bool" value="true"/>
+        <param name="control_head" type="bool" value="false"/>
+        <param name="control_larm" type="bool" value="true"/>
+        <param name="control_rarm" type="bool" value="true"/>
+        <param name="control_prosilica" type="bool" value="false"/>
+        <param name="walk_along_x_speed_scale" type="double" value="3.0"/>
+        <param name="walk_along_y_speed_scale" type="double" value="1.0"/>
+        <param name="walk_along_w_speed_scale" type="double" value="3.0"/>
+        <param name="walk_along_x_dist_max" type="double" value=".25"/>
+        <param name="walk_along_y_dist_max" type="double" value=".20"/>
+        <param name="kinect_follow" type="int" value="2"/>
+  </node>
+
 </launch>

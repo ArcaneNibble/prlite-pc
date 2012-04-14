@@ -1,43 +1,59 @@
 shoulder_pan_controllerL:
     controller:
         package: dynamixel_controllers
-        module: joint_position_controller
-        type: JointPositionController
-    joint_name: shoulder_pan_joint
-    joint_speed: 1.17
-    motor:
-        id: 2
-        init: 520
-        min: 200
-        max: 800
-
-shoulder_tilt_controllerL:
-    controller:
-        package: dynamixel_controllers
         module: joint_position_controller_dual_motor
         type: JointPositionControllerDual
-    joint_name: shoulder_tilt_joint
+    joint_name: shoulder_pan_jointL
     joint_speed: 1.17
     motor_master:
-        id: 16
-        init: 600
-        min: 717
-        max: 126
+        id: 2
+        init: 512
+        min: 0
+        max: 1023
     motor_slave:
-        id: 8
+        id: 22
+
+elbow_pan_controllerL:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: elbow_pan_jointL
+    joint_speed: 1.17
+    motor:
+        id: 21
+        # init: 512 - WRONG HW CONFIG?
+        init: 256
+        min: 0
+        max: 1023
 
 elbow_tilt_controllerL:
     controller:
         package: dynamixel_controllers
         module: joint_position_controller_dual_motor
         type: JointPositionControllerDual
-    joint_name: elbow_tilt_joint
+    joint_name: elbow_tilt_jointL
+    joint_speed: 1.17
+    motor_master:
+        id: 16
+        init: 192
+        min: 0
+        max: 1023
+    motor_slave:
+        id: 8
+
+wrist_tilt_controllerL:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller_dual_motor
+        type: JointPositionControllerDual
+    joint_name: wrist_tilt_jointL
     joint_speed: 1.17
     motor_master:
         id: 9
         init: 512
-        min: 881
-        max: 90
+        min: 0
+        max: 1023
     motor_slave:
         id: 11
 
@@ -46,26 +62,26 @@ wrist_rotate_controllerL:
         package: dynamixel_controllers
         module: joint_position_controller
         type: JointPositionController
-    joint_name: wrist_rotate_joint
+    joint_name: wrist_rotate_jointL
     joint_speed: 1.17
     motor:
         id: 6
-        init: 505
-        min: 205
-        max: 740
+        init: 512
+        min: 0
+        max: 1023
 
 finger_right_controllerL:
     controller:
         package: dynamixel_controllers
         module: joint_position_controller
         type: JointPositionController
-    joint_name: finger_right_joint
+    joint_name: finger_right_jointL
     joint_speed: 1.17
     motor:
         id: 7
-        init: 600
+        init: 400
         min: 400
-        max: 600
+        max: 575
 
 finger_left_controllerL:
     controller:
@@ -76,59 +92,75 @@ finger_left_controllerL:
     joint_speed: 1.17
     motor:
         id: 5
-        init: 400
+        init: 600
         min: 400
         max: 550
 
-shoulder_pan_controllerR:
-    controller:
-        package: dynamixel_controllers
-        module: joint_position_controller
-        type: JointPositionController
-    joint_name: shoulder_pan_joint
-    joint_speed: 1.17
-    motor:
-        id: 1
-        init: 520
-        min: 200
-        max: 800
-
-shoulder_tilt_controllerR:
-    controller:
-        package: dynamixel_controllers
-        module: joint_position_controller_dual_motor
-        type: JointPositionControllerDual
-    joint_name: shoulder_tilt_joint
-    joint_speed: 1.17
-    motor_master:
-        id: 3
-        init: 400
-        min: 717
-        max: 126
-    motor_slave:
-        id: 13
+# ax12 #17 is broken
+# shoulder_pan_controllerR:
+#     controller:
+#         package: dynamixel_controllers
+#         module: joint_position_controller
+#         type: JointPositionController
+#     joint_name: shoulder_pan_joint
+#     joint_speed: 1.17
+#     motor:
+#         id: 17
+#         init: 520
+#         min: 200
+#         max: 800
+#     motor_slave:
+#         id: 20
 
 elbow_tilt_controllerR:
     controller:
         package: dynamixel_controllers
         module: joint_position_controller_dual_motor
         type: JointPositionControllerDual
-    joint_name: elbow_tilt_joint
+    joint_name: elbow_tilt_jointR
     joint_speed: 1.17
     motor_master:
-        id: 4
-        init: 512
-        min: 881
-        max: 90
+        id: 13
+        init: 192
+        min: 0
+        max: 1023
     motor_slave:
+        id: 3
+
+elbow_pan_controllerR:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: elbow_pan_jointR
+    joint_speed: 1.17
+    motor:
+        id: 19
+        init: 512
+        min: 0
+        max: 1023
+
+wrist_tilt_controllerR:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller_dual_motor
+        type: JointPositionControllerDual
+    joint_name: wrist_tilt_jointR
+    joint_speed: 1.17
+    motor_master:
         id: 14
+        init: 512
+        min: 0
+        max: 1023
+    motor_slave:
+        id: 4
 
 wrist_rotate_controllerR:
     controller:
         package: dynamixel_controllers
         module: joint_position_controller
         type: JointPositionController
-    joint_name: wrist_rotate_joint
+    joint_name: wrist_rotate_jointR
     joint_speed: 1.17
     motor:
         id: 18
@@ -141,7 +173,7 @@ finger_right_controllerR:
         package: dynamixel_controllers
         module: joint_position_controller
         type: JointPositionController
-    joint_name: finger_right_joint
+    joint_name: finger_right_jointR
     joint_speed: 1.17
     motor:
         id: 15
@@ -154,7 +186,7 @@ finger_left_controllerR:
         package: dynamixel_controllers
         module: joint_position_controller
         type: JointPositionController
-    joint_name: finger_left_joint
+    joint_name: finger_left_jointR
     joint_speed: 1.17
     motor:
         id: 10
@@ -170,10 +202,10 @@ kinect_tilt_controller:
     joint_name: kinect_tilt_joint
     joint_speed: 0.80
     motor:
-        id: 21
-        init: 300
-        min: 0
-        max: 1023
+        id: 23
+        init: 512
+        min: 300
+        max: 800
 
 kinect_pan_controller:
     controller:
@@ -183,10 +215,10 @@ kinect_pan_controller:
     joint_name: kinect_pan_joint
     joint_speed: 1.17
     motor:
-        id: 20
-        init: 480
-        min: 200
-        max: 800
+        id: 1
+        init: 1023
+        min: 0
+        max: 1023
 
 laser_tilt_controller:
     controller:

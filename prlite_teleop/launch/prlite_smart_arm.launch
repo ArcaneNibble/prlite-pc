@@ -8,7 +8,7 @@
             diagnostics_rate: 10
             serial_ports:
                 smart_arm:
-                    port_name: "/dev/ttyUSB0"
+                    port_name: "/dev/magellan_arm"
                     baud_rate: 1000000
                     min_motor_id: 1
                     max_motor_id: 30
@@ -21,19 +21,21 @@
     <rosparam file="$(find prlite_teleop)/launch/prlite_smart_arm.yaml" command="load"/>
 
     <!-- Start all SmartArm joint controllers -->
+               <!-- ax12 broken for shoulder_pan_controllerR -->
     <node name="smartarm_controller_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
           args="--manager=smartarm_motor_manager
                 --port=smart_arm
                 --type=simple
                 shoulder_pan_controllerL
-                shoulder_tilt_controllerL
                 elbow_tilt_controllerL
+                elbow_pan_controllerL
                 wrist_rotate_controllerL
+                wrist_tilt_controllerL
                 finger_right_controllerL
                 finger_left_controllerL
-                shoulder_pan_controllerR
-                shoulder_tilt_controllerR
                 elbow_tilt_controllerR
+                elbow_pan_controllerR
+                wrist_rotate_controllerR
                 wrist_rotate_controllerR
                 finger_right_controllerR
                 finger_left_controllerR

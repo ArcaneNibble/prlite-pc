@@ -53,6 +53,41 @@ enum JoystickLayoutMode {
   LAYOUT_BOTH_ARMS
 };
 
+/*
+Joystick layout
+
+MODES
+Button 5 -> front bot right -> RIGHT ARM
+Button 4 -> front bot left  -> LEFT ARM
+Button 6 -> front top left  -> BODY
+Button 7 -> front top right -> HEAD
+
+Axes[5] = 1 -> cross up (digital) -> SHOULDER TILT UP
+Axes[5] = -1 -> cross down -> SHOULDER TILT DOWN
+Axes[4] = -1 -> cross right -> shoulder pan left
+Axes[4] = 1 -> cross left -> shoulder pan right
+
+Axes[1] = 1 -> left joy up (analog) -> elbow tilt up, head tilt up, none
+Axes[1] = -1 -> left joy down -> elbow tilt down, head tilt down, none
+Axes[0] = 1 -> left joy left (analog) -> elbow pan left, head pan left, speed
+Axes[0] = -1 -> left joy right -> elbow pan right, head pan right, speed
+
+Axes[2] = 1 -> right joy up (analog) -> wrist tilt up, none, move fwd
+Axes[2] = -1 -> right joy down -> wrist tilt down, none, move back
+Axes[3] = 1 -> right joy left (analog) -> none, none, move right
+Axes[3] = -1 -> right joy right -> none, none, move left
+
+Button 1 -> O -> gripper open
+Button 3 -> Square  -> gripper close
+
+Button 0 -> triangle -> wrist rot left, torso up
+Button 2 -> X -> wrist rot right, torso down
+
+Button 9 -> start -> Arm tuck
+Button 8 -> select -> Arm toggle
+
+*/
+
 static const unsigned int BODY_LAYOUT_BUTTON = 6; // 10;
 static const unsigned int RIGHT_ARM_LAYOUT_BUTTON = 5; // 9;
 static const unsigned int LEFT_ARM_LAYOUT_BUTTON = 4; // 8;
@@ -75,17 +110,29 @@ static const unsigned int TORSO_DOWN_BUTTON = 2; // 14;
 static const unsigned int WRIST_CLOCKWISE_BUTTON = 0; // 12;
 static const unsigned int WRIST_COUNTER_BUTTON = 2; // 14;
 
-static const unsigned int VX_AXIS = 3;
-static const unsigned int VY_AXIS = 2;
-static const unsigned int VW_AXIS = 0;
+// direction to moving wheels
+static const unsigned int VX_AXIS = 1;
+static const unsigned int VY_AXIS = 0;
+static const unsigned int VW_AXIS = 2;
 
 static const unsigned int HEAD_PAN_AXIS = 0;
 static const unsigned int HEAD_TILT_AXIS = 1;
 
-static const unsigned int ARM_X_AXIS = 3;
-static const unsigned int ARM_Y_AXIS = 2;
-static const unsigned int ARM_Z_AXIS = 1;
-static const unsigned int ARM_YAW_AXIS = 0;
+static const unsigned int ARM_X_AXIS = 0;
+static const unsigned int ARM_Y_AXIS = 1;
+static const unsigned int ARM_Z_AXIS = 2;
+static const unsigned int ARM_YAW_AXIS = 3;
+
+#define BODY_MODE
+
+
+#define SHOULDER_PAN_LEFT   (joy_msg->axes[4] == 1)
+#define SHOULDER_PAN_RIGHT  (joy_msg->axes[4] == -1)
+#define SHOULDER_TILT_UP    (joy_msg->axes[5] == 1)
+#define SHOULDER_TILT_DOWN  (joy_msg->axes[5] == -1)
+
+static const unsigned int WRIST_ROTATE_CLOCK_AXIS = 0;
+static const unsigned int WRIST_ROTATE_COUNTER_AXIS = 3;
 
 // toggle
 static const unsigned int ARM_UNTUCK_BUTTON = 9;
@@ -115,7 +162,6 @@ static int kinect_follow_ = 0;
   double des_vx_;
   double des_vy_;
   double des_vw_;
-
   double vx_scale_;
   double vy_scale_;
   double vw_scale_;
@@ -141,8 +187,10 @@ static int kinect_follow_ = 0;
 
   double untuck_shoulder_pan_;
   double untuck_shoulder_tilt_; 
+  double untuck_elbow_pan_; 
   double untuck_elbow_tilt_; 
   double untuck_wrist_rotate_; 
+  double untuck_wrist_tilt_; 
   double untuck_finger_left_; 
   double untuck_finger_right_; 
 
@@ -159,8 +207,14 @@ static int kinect_follow_ = 0;
   double max_torso_;
 
   double wrist_velocity_;
+  double shoulder_pan_velocity_;
+  double shoulder_tilt_velocity_;
   double des_right_wrist_vel_;  
   double des_left_wrist_vel_;
+  double des_left_shoulder_pan_vel_;
+  double des_right_shoulder_pan_vel_;
+  double des_left_shoulder_tilt_vel_;
+  double des_right_shoulder_tilt_vel_;
 
   double walk_along_x_speed_scale_;
   double walk_along_y_speed_scale_;
@@ -245,9 +299,8 @@ public:
 
 */
     n_local.param("wrist_velocity",wrist_velocity_, 1.0);
-
-    n_local.param("walk_along_x_speed_scale", walk_along_x_speed_scale_, 9.0);
-    n_local.param("walk_along_y_speed_scale", walk_along_y_speed_scale_, 9.0);
+    n_local.param("shoulder_pan_velocity",shoulder_pan_velocity_, 1.0);
+    n_local.param("shoulder_tilt_velocity",shoulder_tilt_velocity_, 1.0);
     n_local.param("walk_along_w_speed_scale", walk_along_w_speed_scale_, 9.0);
     n_local.param("walk_along_thresh", walk_along_thresh_, .015);
     n_local.param("walk_along_x_dist_max", walk_along_x_dist_max_, .5);
@@ -445,10 +498,14 @@ public:
 	des_vy_ = 0.0;
 	des_vw_ = 0.0;
 	des_right_wrist_vel_ = 0.0;
+	des_right_shoulder_pan_vel_ = 0.0;
+	des_right_shoulder_tilt_vel_ = 0.0;
 	right_arm_vx_ = 0.0;
 	right_arm_vy_ = 0.0;
 	right_arm_vz_ = 0.0;
 	des_left_wrist_vel_ = 0.0;
+	des_left_shoulder_pan_vel_ = 0.0;
+	des_left_shoulder_tilt_vel_ = 0.0;
 	left_arm_vx_ = 0.0;
 	left_arm_vy_ = 0.0;
 	left_arm_vz_ = 0.0;
@@ -569,8 +626,8 @@ public:
 
       if(axisOk(HEAD_PAN_AXIS, joy_msg))
       {
-        // ROS_INFO("PAN AXIS");
         vel_val_pan_ = joy_msg->axes[HEAD_PAN_AXIS] * pan_scale_;
+        ROS_INFO_STREAM("PAN AXIS "<< joy_msg->axes[HEAD_PAN_AXIS]);
       }
       
       if(axisOk(HEAD_TILT_AXIS, joy_msg))
@@ -676,7 +733,27 @@ public:
           des_right_wrist_vel_ = 0.0;
           lookAnalog = true;
         }
-        
+        bool shoulder_pan_left = SHOULDER_PAN_LEFT;
+        bool shoulder_pan_right = SHOULDER_PAN_RIGHT;
+        if(shoulder_pan_left && !shoulder_pan_right) {
+          des_right_shoulder_pan_vel_ = shoulder_pan_velocity_;
+        } else if(!shoulder_pan_left && shoulder_pan_right) {
+          des_right_shoulder_pan_vel_ = -shoulder_pan_velocity_; 
+        } else {
+          des_right_shoulder_pan_vel_ = 0.0;
+          lookAnalog = true;
+        }
+
+        bool shoulder_tilt_up = SHOULDER_TILT_UP;
+        bool shoulder_tilt_down = SHOULDER_TILT_DOWN;
+        if(shoulder_tilt_up && !shoulder_tilt_down) {
+	  des_right_shoulder_tilt_vel_ = -shoulder_tilt_velocity_;        
+	} else if(!shoulder_tilt_up && shoulder_tilt_down) {
+          des_right_shoulder_tilt_vel_ = shoulder_tilt_velocity_; 
+        } else {
+          des_right_shoulder_tilt_vel_ = 0.0;
+          lookAnalog = true;
+        }
         if(lookAnalog) {
           //look at analog sticks if we aren't supposed to wrist rotate
           if(axisOk(ARM_X_AXIS, joy_msg)) {
@@ -690,7 +767,7 @@ public:
             right_arm_vy_ = 0.0;
           }
           if(axisOk(ARM_Z_AXIS, joy_msg)) {
-            right_arm_vz_ = joy_msg->axes[ARM_Z_AXIS]*arm_z_scale_;
+            right_arm_vz_ = -joy_msg->axes[ARM_Z_AXIS]*arm_z_scale_;
           } else {
             right_arm_vz_ = 0.0;
           }
@@ -703,6 +780,8 @@ public:
       }
   } else if (layout != LAYOUT_BOTH_ARMS) {
       des_right_wrist_vel_ = 0.0;
+      des_right_shoulder_pan_vel_ = 0.0;
+      des_right_shoulder_tilt_vel_ = 0.0;
       right_arm_vx_ = 0.0;
       right_arm_vy_ = 0.0;
       right_arm_vz_ = 0.0;
@@ -764,6 +843,28 @@ public:
           lookAnalog = true;
         }
         
+        bool shoulder_pan_left = SHOULDER_PAN_LEFT;
+        bool shoulder_pan_right = SHOULDER_PAN_RIGHT;
+        if(shoulder_pan_left && !shoulder_pan_right) {
+          des_left_shoulder_pan_vel_ = shoulder_pan_velocity_;
+	} else if(!shoulder_pan_left && shoulder_pan_right) {
+          des_left_shoulder_pan_vel_ = -shoulder_pan_velocity_;
+        } else {
+          des_left_shoulder_pan_vel_ = 0.0;
+          lookAnalog = true;
+        }
+
+        bool shoulder_tilt_up = SHOULDER_TILT_UP;
+        bool shoulder_tilt_down = SHOULDER_TILT_DOWN;
+        if(shoulder_tilt_up && !shoulder_tilt_down) {
+          des_left_shoulder_tilt_vel_ = -shoulder_tilt_velocity_;
+	} else if(!shoulder_tilt_up && shoulder_tilt_down) {
+          des_left_shoulder_tilt_vel_ = shoulder_tilt_velocity_;
+        } else {
+          des_left_shoulder_tilt_vel_ = 0.0;
+          lookAnalog = true;
+        }
+
         if(lookAnalog) {
           //look at analog sticks if we aren't supposed to wrist rotate
           if(axisOk(ARM_X_AXIS, joy_msg)) {
@@ -777,7 +878,7 @@ public:
             left_arm_vy_ = 0.0;
           }
           if(axisOk(ARM_Z_AXIS, joy_msg)) {
-            left_arm_vz_ = joy_msg->axes[ARM_Z_AXIS]*arm_z_scale_;
+            left_arm_vz_ = -joy_msg->axes[ARM_Z_AXIS]*arm_z_scale_;
           } else {
             left_arm_vz_ = 0.0;
           }
@@ -790,6 +891,8 @@ public:
       }
     } else if (layout != LAYOUT_BOTH_ARMS) {
       des_left_wrist_vel_ = 0.0;
+      des_left_shoulder_pan_vel_ = 0.0;
+      des_left_shoulder_tilt_vel_ = 0.0;
       left_arm_vx_ = 0.0;
       left_arm_vy_ = 0.0;
       left_arm_vz_ = 0.0;
@@ -855,7 +958,34 @@ public:
           des_right_wrist_vel_ = 0.0;
           lookAnalog = true;
         }
-        
+
+        bool shoulder_pan_left = SHOULDER_PAN_LEFT;
+        bool shoulder_pan_right = SHOULDER_PAN_RIGHT;
+        if(shoulder_pan_left && !shoulder_pan_right) {
+          des_left_shoulder_pan_vel_ = shoulder_pan_velocity_;
+          des_right_shoulder_pan_vel_ = shoulder_pan_velocity_;
+        } else if(!shoulder_pan_left && shoulder_pan_right) {
+          des_left_shoulder_pan_vel_ = shoulder_pan_velocity_;
+          des_right_shoulder_pan_vel_ = shoulder_pan_velocity_; 
+        } else {
+          des_left_shoulder_pan_vel_ = 0.0;
+          des_right_shoulder_pan_vel_ = 0.0;
+          lookAnalog = true;
+        }
+
+        bool shoulder_tilt_up = SHOULDER_TILT_UP;
+        bool shoulder_tilt_down = SHOULDER_TILT_DOWN;
+        if(shoulder_tilt_up && !shoulder_tilt_down) {
+          des_left_shoulder_tilt_vel_ = -shoulder_tilt_velocity_;
+          des_right_shoulder_tilt_vel_ = -shoulder_tilt_velocity_;
+        } else if(!shoulder_tilt_up && shoulder_tilt_down) {
+          des_left_shoulder_tilt_vel_ = shoulder_tilt_velocity_;
+          des_right_shoulder_tilt_vel_ = shoulder_tilt_velocity_; 
+        } else {
+          des_left_shoulder_tilt_vel_ = 0.0;
+          des_right_shoulder_tilt_vel_ = 0.0;
+          lookAnalog = true;
+        }
         if(lookAnalog) {
           //look at analog sticks if we aren't supposed to wrist rotate
           if(axisOk(ARM_X_AXIS, joy_msg)) {
@@ -873,8 +1003,8 @@ public:
             right_arm_vz_ = 0.0;
           }
           if(axisOk(ARM_Z_AXIS, joy_msg)) {
-            left_arm_vz_ = joy_msg->axes[ARM_Z_AXIS]*arm_z_scale_;
-            right_arm_vz_ = joy_msg->axes[ARM_Z_AXIS]*arm_z_scale_;
+            left_arm_vz_ = -joy_msg->axes[ARM_Z_AXIS]*arm_z_scale_;
+            right_arm_vz_ = -joy_msg->axes[ARM_Z_AXIS]*arm_z_scale_;
           } else {
             left_arm_vz_ = 0.0;
             right_arm_vz_ = 0.0;
@@ -892,6 +1022,10 @@ public:
     } else if (layout != LAYOUT_RIGHT_ARM && layout != LAYOUT_LEFT_ARM) {
       des_right_wrist_vel_ = 0.0;
       des_left_wrist_vel_ = 0.0;
+      des_left_shoulder_pan_vel_ = 0.0;
+      des_right_shoulder_pan_vel_ = 0.0;
+      des_left_shoulder_tilt_vel_ = 0.0;
+      des_right_shoulder_tilt_vel_ = 0.0;
       left_arm_vx_ = 0.0;
       left_arm_vy_ = 0.0;
       left_arm_vz_ = 0.0;
@@ -1197,6 +1331,11 @@ ROS_INFO("init done");
         }
         //generaljoy.gc->updateCurrentWristPositions();
         generaljoy.gc->sendWristVelCommands(des_right_wrist_vel_, des_left_wrist_vel_, SlowHz);
+        generaljoy.gc->sendShoulderCommand(des_right_shoulder_tilt_vel_, 
+                                               des_right_shoulder_pan_vel_, 
+			                       des_left_shoulder_tilt_vel_, 
+			                       des_left_shoulder_pan_vel_, 
+					       SlowHz);
         // ROS_INFO("SendARmVelCom");
         
         generaljoy.gc->sendArmVelCommands(right_arm_vx_, right_arm_vy_, right_arm_vz_, 0.0,
