@@ -30,6 +30,7 @@
 #include "geometry_msgs/Twist.h"
 #include "packets_485net/packet_485net_dgram.h"
 #include "net_485net_id_handler/SearchID.h"
+#include <unistd.h>
 
 const double X_MULT = 7.51913116; // speed is ticks per interval and interval is 1/10 sec, so should be WHEEL_TICKS_PER_METER / 10
 const double TH_MULT = 5; // tuned manually (is about right)
@@ -100,8 +101,8 @@ void state_change(void)
   base_state_enum base_state_last;
   
   //debug
-  //linact_arrived = true;
-  //linact_goal_arrived = true;
+  linact_arrived = true;
+  linact_goal_arrived = true;
 
   // Get the current time
   now = ros::Time::now();
@@ -192,6 +193,7 @@ void state_change(void)
         } else if (cmd_l != cmd_l_last || cmd_r != cmd_r_last) {
           // Change in wheel command with same linact pos
           cmdPublishWheel();
+		  base_state = wheel_start;
         } else if (cmd_l == 0 && cmd_r == 0 && !wheel_stopped) {
           // try to stop again
 		  force_wheel_update = true;
@@ -447,6 +449,8 @@ void linactCallback(const packets_485net::packet_485net_dgram& linear_actuator_s
 
 int main(int argc, char **argv)
 {
+	system("./yourmom.sh");
+
   /**
    * The ros::init() function needs to see argc and argv so that it can perform
    * any ROS arguments and name remapping that were provided at the command line. For programmatic
@@ -485,6 +489,7 @@ int main(int argc, char **argv)
   base_state_time = ros::Time::now();
   
   idlookup = n.serviceClient<net_485net_id_handler::SearchID>("search_id", true);
+  idlookup.waitForExistence();
 
   ros::Subscriber cmd_sub = n.subscribe("cmd_vel", 1000, cmdCallback);
   ros::Subscriber wheel_sub = n.subscribe("net_485net_incoming_dgram", 1000, wheelCallback);

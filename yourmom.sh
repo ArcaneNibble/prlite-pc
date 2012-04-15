@@ -1,0 +1,4 @@
+rostopic pub /net_485net_outgoing_dgram packets_485net/packet_485net_dgram -1 '{header: {seq: 0, stamp: 0, frame_id: "asdf"}, source: 240, destination: 8, sport: 7, dport: 1, data: [0,0,5,0,0,0,25,0,0,0,3,0,1]}'
+rostopic pub /net_485net_outgoing_dgram packets_485net/packet_485net_dgram -1 '{header: {seq: 0, stamp: 0, frame_id: "asdf"}, source: 240, destination: 9, sport: 7, dport: 1, data: [0,0,5,0,0,0,25,0,0,0,3,0,1]}'
+rostopic pub /net_485net_outgoing_dgram packets_485net/packet_485net_dgram -1 '{header: {seq: 0, stamp: 0, frame_id: "asdf"}, source: 240, destination: 10, sport: 7, dport: 1, data: [0,0,5,0,0,0,25,0,0,0,3,0,255]}'
+rostopic pub /net_485net_outgoing_dgram packets_485net/packet_485net_dgram -1 '{header: {seq: 0, stamp: 0, frame_id: "asdf"}, source: 240, destination: 11, sport: 7, dport: 1, data: [0,0,5,0,0,0,25,0,0,0,3,0,255]}'
