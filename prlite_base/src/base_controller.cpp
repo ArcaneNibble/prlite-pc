@@ -34,9 +34,9 @@
 
 const double X_MULT = 7.51913116; // speed is ticks per interval and interval is 1/10 sec, so should be WHEEL_TICKS_PER_METER / 10
 const double TH_MULT = 5; // tuned manually (is about right)
-const uint16_t LINACT_0 = 940;
-const uint16_t LINACT_45 = 500;
-const uint16_t LINACT_90 = 62;
+const uint16_t LINACT_0 = 915;
+const uint16_t LINACT_45 = 530;
+const uint16_t LINACT_90 = 70;
 const uint16_t LINACT_PRECISION = 15;
 const ros::Duration WHEEL_TO(5.0);
 const ros::Duration LINACT_TO(5.0);
@@ -101,8 +101,8 @@ void state_change(void)
   base_state_enum base_state_last;
   
   //debug
-  linact_arrived = true;
-  linact_goal_arrived = true;
+  //linact_arrived = true;
+  //linact_goal_arrived = true;
 
   // Get the current time
   now = ros::Time::now();
@@ -237,10 +237,10 @@ void cmdPublishLinact(void)
 	
 	itmp = linact_goal - LINACT_PRECISION;
 	linact_cmd.data.push_back(itmp & 0xFF);
-	linact_cmd.data.push_back((itmp >> 16) & 0xFF);
+	linact_cmd.data.push_back((itmp >> 8) & 0xFF);
 	itmp = linact_goal + LINACT_PRECISION;
 	linact_cmd.data.push_back(itmp & 0xFF);
-	linact_cmd.data.push_back((itmp >> 16) & 0xFF);
+	linact_cmd.data.push_back((itmp >> 8) & 0xFF);
 	
   ROS_INFO("linact %d", linact_goal);
   linact_pub.publish(linact_cmd);
