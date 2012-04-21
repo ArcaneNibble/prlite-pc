@@ -81,7 +81,13 @@ bool wheel_started[4] = {false, false, false, false};
 bool linact_arrived = true;
 bool linact_goal_arrived = true;
 
+#define DIST_FROM_LIMIT	50
+#define MOVING_LAST_N	5
+#define NOT_MOVING_VAL	1
+bool linact_does_not_seem_to_be_moving = false;
+
 void cmdPublishLinact(void);
+void cmdPublishLinactStop(void);
 void cmdPublishWheel(void);
 
 bool state_timeout(base_state_enum state, ros::Time *now, ros::Duration timeout)
@@ -158,6 +164,13 @@ void state_change(void)
         } else if (!linact_arrived) {  // linact is moving
           base_state = linact_moving;  // TODO: any emergency stop?
           if (rosinfodbg) ROS_INFO("LINACT MOVING");
+		  if(linact_does_not_seem_to_be_moving)
+		  {
+			linact_does_not_seem_to_be_moving = false;
+			ROS_INFO("Placing a bet that linear actuator is stopped");
+			cmdPublishLinactStop();
+			base_state = ready;
+		  }
         } else if (state_timeout(linact_moving, &now, LINACT_FINISH_TO)) {
           // TODO: make timeout more precise based on starting / end point
           ROS_INFO("ERR: LINACT FINISH TIMEOUT");
@@ -266,6 +279,24 @@ void cmdPublishLinact(void)
   ROS_INFO("base linact %d", linact_goal);
   linact_pub.publish(linact_cmd);
   linact_goal_last = linact_goal;
+}
+
+void cmdPublishLinactStop(void)
+{
+	packets_485net::packet_485net_dgram linact_cmd;
+	linact_cmd.destination = lookup_id("lin-act", "wheel rotate");
+	linact_cmd.source = 0xF0;
+	linact_cmd.sport = 7;
+	linact_cmd.dport = 1;
+	
+	linact_cmd.data.push_back(0);
+	linact_cmd.data.push_back(0);
+	linact_cmd.data.push_back(0xff);
+	linact_cmd.data.push_back(0x03);
+	
+	ROS_INFO("stopping linact");
+	linact_pub.publish(linact_cmd);
+	linact_goal_last = linact_goal;
 }
 
 // only routine that can change cmd_l_last, cmd_r_last
@@ -461,6 +492,8 @@ void wheelCallback(const packets_485net::packet_485net_dgram& ws)
 void linactCallback(const packets_485net::packet_485net_dgram& linear_actuator_status)
 {
 	uint16_t itmp;
+	static int notmoving = 0;
+	static int last_pos = -1;
 	if(linear_actuator_status.source != lookup_id("lin-act", "wheel rotate"))
 		return;
 	if(!(linear_actuator_status.destination == 0xF0 || linear_actuator_status.destination == 0x00))
@@ -473,6 +506,23 @@ void linactCallback(const packets_485net::packet_485net_dgram& linear_actuator_s
   itmp = linear_actuator_status.data[4] | ((linear_actuator_status.data[5]) << 8);
   //linact_arrived = true; // hack for if linear actuator isn't working
   linact_goal_arrived = (itmp >= linact_goal - LINACT_PRECISION && itmp <= linact_goal + LINACT_PRECISION);
+  
+	//if we are within +- NOT_MOVING_VAL of the previous value, we probably aren't moving
+	if((itmp >= last_pos - NOT_MOVING_VAL) && (itmp <= last_pos + NOT_MOVING_VAL))
+		notmoving++;
+	else
+		notmoving = 0;
+	last_pos = itmp;
+  
+	if(notmoving >= MOVING_LAST_N && ((itmp > 0x400 - DIST_FROM_LIMIT) || (itmp < DIST_FROM_LIMIT)))
+	{
+		ROS_INFO("By the alignment of the planets, I conclude that the linact isn't actually moving.");
+		linact_does_not_seem_to_be_moving = true;
+		notmoving = 0;
+	}
+	else
+		linact_does_not_seem_to_be_moving = false;
+  
   state_change();
 }
 
