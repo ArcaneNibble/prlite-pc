@@ -7,7 +7,7 @@
     <node name="joystick_service" pkg="joy" type="joy_node" 
 args="" output="screen"/>
 
-    <include file="$(find prlite_base)/controller.launch" />
+    <!-- include file="$(find prlite_base)/controller.launch" -->
     <!--
     -->
     <!-- Start the low-level serial driver and controller manager -->
@@ -16,7 +16,7 @@ args="" output="screen"/>
     <include file="$(find ax12_controller_core)/launch/controller_manager.launch" />
     
     <!-- Start the smart_arm controller -->
-    <include file="$(find smart_arm_controller)/launch/prlite.launch" />
+    <!-- <include file="$(find smart_arm_controller)/launch/prlite.launch" /-->
     <include file="$(find prlite_kinematics)/launch/dual_armik.launch" />
 
     <!-- node pkg="prlite_teleop" type="ax12_to_pr2_state_msgs.py" name="ax12_to_pr2" /-->

@@ -31,6 +31,7 @@
 #include <kdl/frames.hpp>
 #include <prlite_kinematics/SphereCoordinate.h>
 #include <prlite_kinematics/some_status_thing.h>
+#include "prlite_ax12controller.h"
 
 #include <XnOpenNI.h>
 #include <XnCodecIDs.h>
@@ -40,7 +41,8 @@
 // Defines
 //---------------------------------------------------------------------------
 
-#define SAMPLE_XML_PATH "/ros/stacks/ni/openni/lib/SamplesConfig.xml"
+// #define SAMPLE_XML_PATH "/ros/stacks/ni/openni/lib/SamplesConfig.xml"
+#define SAMPLE_XML_PATH "/home/ros/ros/prlite/prlite_teleop/launch/SamplesConfig.xml"
 
 #define CHECK_RC(nRetVal, what)										\
 if (nRetVal != XN_STATUS_OK)									\
@@ -163,6 +165,8 @@ void XN_CALLBACK_TYPE UserCalibration_CalibrationEnd(xn::SkeletonCapability& cap
 // ros::Rate loop_rate(10);
 static ros::Publisher leftArmPublisher;
 static ros::Publisher rightArmPublisher;
+static prlite_ax12commander *ax12;
+
 
 int kinect_init() {
     ros::NodeHandle nh;
@@ -176,6 +180,11 @@ int kinect_init() {
 	prlite_kinematics::some_status_thing status;
 	status.lulz = 0;	//initialized/reset
 	yourmom.publish(status);
+
+	ax12 = new prlite_ax12commander;
+        ax12->init();
+
+
 /* set by joystick
     coord.radius = 35.0;
     coord.phi = 0.0;
@@ -329,7 +338,7 @@ void kinect_get_pos(double *center_x, double *center_y, double *center_z)
                 m = rFootOrientation.orientation.elements;
                 KDL::Rotation rFootO(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]);
 
-	            double qx = 0.0, qy = 0.0, qz = 0.0, qw = 0.0;
+	        // double qx = 0.0, qy = 0.0, qz = 0.0, qw = 0.0;
 
 		// Get Points in 3D space
 		XnPoint3D torso = torsoPosition.position;
@@ -388,8 +397,106 @@ void kinect_get_pos(double *center_x, double *center_y, double *center_z)
                 leftArmPublisher.publish(rCoord);
                 rightArmPublisher.publish(lCoord);
 
+                // ---------- START HACK #2 -----------------
+
+#if 0
+
+                double left_shoulder_tilt = atan2(lShould.X - lElbow.X, lShould.Z - lElbow.Z);
+                double left_shoulder_pan = atan2(lShould.Y - lElbow.Y, lShould.X - lElbow.X);
+                double left_elbow_tilt = atan2(lElbow.X - lWrist.X, lElbow.Z- lWrist.Z);
+                double left_elbow_pan = atan2(lElbow.Y - lWrist.Y, lElbow.X- lWrist.X);
+                double left_wrist_tilt = left_shoulder_tilt - left_elbow_tilt ;
+                double right_shoulder_pan = atan2(rShould.X - rElbow.X, rShould.Z - rElbow.Z);
+                double right_shoulder_tilt = atan2(rShould.Y - rElbow.Y, rShould.X - rElbow.X);
+                double right_elbow_pan = atan2(rElbow.X - rWrist.X, rElbow.Z- rWrist.Z);
+                double right_elbow_tilt = atan2(rElbow.Y - rWrist.Y, rElbow.X- rWrist.X);
+                double right_wrist_tilt = right_shoulder_tilt-right_elbow_tilt;
+
+
+		// max and min arch checked by Joint Command
+/*
+                JointCommand( prlite_ax12commander::shoulderpanR, right_shoulder_pan);
+                // JointCommand( prlite_ax12commander::shouldertiltR, right_shoulder_tilt);
+                JointCommand( prlite_ax12commander::elbowtiltR, right_elbowtilt);
+                JointCommand( prlite_ax12commander::elbowpanR, right_elbowpan);
+*/
+ROS_INFO("User %d: Left (%lf,%lf,%lf,%lf, %lf,%lf,%lf,%lf)", i, lShould.X, lElbow.X, lShould.Z,  lElbow.Z, lElbow.X, lWrist.X, lElbow.Z, lWrist.Z );
+                ax12->JointCommand( prlite_ax12commander::shoulderpan, left_shoulder_pan);
+ROS_INFO("User %d: Left (%lf,%lf,%lf, %lf), Right (%lf,%lf,%lf,%lf)", i, left_shoulder_pan, left_shoulder_tilt, left_elbow_pan,  left_elbow_tilt, 0.0,0.0,0.0,0.0);
+                ax12->JointCommand( prlite_ax12commander::shoulderpan, left_shoulder_pan);
+                // JointCommand( prlite_ax12commander::shouldertilt, left_shoulder_tilt);
+                ax12->JointCommand( prlite_ax12commander::elbowtilt, left_elbow_tilt);
+                ax12->JointCommand( prlite_ax12commander::elbowpan, left_elbow_pan);
+	
+		// figure out desired tilt and compute desired LinAct length to get that tilt
+/*
+sin A = opp/hyp
+cos A = adj/hyp
+*/
+/* constants in inches */
+#define BAR_LEN (4.3 - .315)   /* Upper arm bar that LinAct connects to */
+#define LINACT_DWN (9.9)       /* length of LinAct when retracted */
+#define LINACT_UP (13.9)       /* length of LinAct when extended */
+#define HYPOTENUSE (14.968)    /* Len from bottom LinAct hole to Shoulder Joint 
+*/
+#define LINACT_TO_TOP (14.715) /* len from bottom LinAct hole to top lazy susan 
+*/
+#define BRACKET_TO_BAR (1.26)  /* From LinAct hole to upper arm bar */
+/* additional angle caused by LinAct bracket */
+#define ADD_BRACKET_ANGLE (atan(BRACKET_TO_BAR / BAR_LEN))
+/* extra angle caused by LinAct bottom and Shoulder hinge not lining up */
+#define FIXED_LA_ANGLE  (acos(LINACT_TO_TOP / HYPOTENUSE))
+#define FIXED_LA_ANGLE2  (asin(LINACT_TO_TOP / HYPOTENUSE))
+/* for shorthand */
+#define B BAR_LEN
+#define H HYPOTENUSE 
+#define L (linact_len + LINACT_DWN)
+
+#define TMP_ANGLE (acos( (B*B - L*L + H*H) / H))
+/* shoulder angle in radians based on linact_len */
+#define SHLDR_ANGLE (TMP_ANGLE + ADD_BRACKET_ANGLE - FIXED_LA_ANGLE)
+
+/* linact_len based on shoulder angle */
+#define desired_linact_len(shdrangle) sqrt(B*B + H*H - H*cos(shdrangle - ADD_BRACKET_ANGLE + FIXED_LA_ANGLE))
+
+#define TMP2_ANGLE (asin( (B*B - L*L + H*H) / H))
+/* linact_angle based on shoulder angle */
+#define LINACT_ANGLE (TMP2_ANGLE + FIXED_LA_ANGLE2)
+
+#define LINACT_VEL (.5)  /* inches per second */
+/* Let u = arccos(x) then du = -1/(1-x²) dx in radians per sec */
+#define SHLDR_ANGLE_VEL (-1/(1-pow(((B*B-L*L+H*H)/H),2))*(-LINACT_VEL*LINACT_VEL/H))
+
+		double left_shoulder_linact = desired_linact_len(left_shoulder_tilt)/4 * 1000;
+		double right_shoulder_linact = desired_linact_len(left_shoulder_tilt)/4 * 1000;
+                static double last_left_shoulder_pan = left_shoulder_pan;
+                static double last_left_elbow_pan = left_elbow_pan;
+                static double last_left_wrist_tilt = left_wrist_tilt;
+                static double last_right_shoulder_pan = right_shoulder_pan;
+                static double last_right_elbow_pan = right_elbow_pan;
+                static double last_right_wrist_tilt = right_wrist_tilt;
+                static int gripper_toggle_count = 0;
+
+                if ( last_left_shoulder_pan - left_shoulder_pan > .1
+                  || last_left_elbow_pan - left_elbow_pan > .1
+                  || last_left_wrist_tilt - left_wrist_tilt > .1)
+                   gripper_toggle_count = 0;
+                else
+                   gripper_toggle_count++;
+                last_left_shoulder_pan = left_shoulder_pan;
+                last_left_elbow_pan = left_elbow_pan;
+                last_left_wrist_tilt = left_wrist_tilt;
+                if (gripper_toggle_count > 10000) {
+                  ROS_INFO("Toggle grippers");
+                  ax12->ToggleGrippers();
+                }
+ROS_INFO("User %d: Left (%lf), Right (%lf)", i, left_shoulder_linact, right_shoulder_linact);
+                ax12->setShoulderGoal(right_shoulder_linact, left_shoulder_linact);
+
+#endif
                 // ---------- END HACK -----------------
 
+#if 0
                 // Publish Transform
                 static tf::TransformBroadcaster br;
                 tf::Transform transform;
@@ -486,6 +593,7 @@ void kinect_get_pos(double *center_x, double *center_y, double *center_z)
                 transform.setOrigin(tf::Vector3(rFoot.X / ADJUST_VALUE, rFoot.Y / ADJUST_VALUE, rFoot.Z / ADJUST_VALUE));
                 transform.setRotation(tf::Quaternion(qx, qy, qz, qw));
                 br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", rfoot_name.str().c_str()));
+#endif
 			}
 		}
 		// ros::spinOnce();

@@ -88,4 +88,6 @@ void ArmCommand(
        double r_x_vel, double r_y_vel, double r_z_vel,
        double l_x_vel, double l_y_vel, double l_z_vel);
 void HeadCommand(double pan_vel, double tilt_vel);
+void ToggleGrippers();
+
 };

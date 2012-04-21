@@ -13,150 +13,187 @@
 #include "packets_485net/packet_485net_dgram.h"
 
 #include <prlite_kinematics/SphereCoordinate.h>
-/*
-#include <prlite_kinematics/some_status_thing.h>
-*/
 
 const double X_MULT = 7.51913116; // speed is ticks per interval and interval is 1/10 sec, so should be WHEEL_TICKS_PER_METER / 10
 const double TH_MULT = 5;
-const uint16_t TORSO_DOWN = 990;
+const uint16_t TORSO_UP = 1000;
 const uint16_t TORSO_MID= 500;
-const uint16_t TORSO_UP = 100;
-const uint16_t ARM_DOWN = 990;
-const uint16_t ARM_UP = 100;
+const uint16_t TORSO_DOWN = 0;
+const uint16_t ARM_DOWN = 1000;
+const uint16_t ARM_UP = 0;
 const uint16_t LINACT_PRECISION = 15;
 
 ros::Publisher linact_pub;
-
-/*
-double tuck_shoulder_pan_;
-double tuck_shoulder_tilt_;
-double tuck_elbow_tilt_;
-double tuck_wrist_rotate_;
-double tuck_finger_left_;
-double tuck_finger_right_;
-
-double untuck_shoulder_pan_;
-double untuck_shoulder_tilt_;
-double untuck_elbow_tilt_;
-double untuck_wrist_rotate_;
-double untuck_finger_left_;
-double untuck_finger_right_;
-*/
-
-
-bool linact_arrived = false;
-bool linact_new_goal = false;
-int linact_goal = TORSO_DOWN;
-int linact_goal_last = 10000;
 ros::Subscriber linact_sub;
 ros::Publisher leftArmPublisher;
 ros::Publisher rightArmPublisher;
-#define LINACT_TORSO 0x0C 
-#define LINACT_WHEELS 0x0D 
-#define LINACT_RIGHT_ARM 0x0E 
-#define LINACT_LEFT_ARM 0x0F 
+#define LINACT_TORSO        0
+#define LINACT_WHEELS       1
+#define LINACT_RIGHT_ARM    2
+#define LINACT_LEFT_ARM     3
+#define NUM_LINACT          4
+#define LINACT_TORSO_ID     0x0C 
+#define LINACT_WHEELS_ID    0x0D 
+#define LINACT_RIGHT_ARM_ID 0x0E 
+#define LINACT_LEFT_ARM_ID  0x0F 
+int linact_id[NUM_LINACT] = 
+{LINACT_TORSO_ID, LINACT_WHEELS_ID, LINACT_RIGHT_ARM_ID, LINACT_LEFT_ARM_ID};
+bool linact_arrived[NUM_LINACT];
+bool linact_new_goal[NUM_LINACT];
+bool linact_goal_last[NUM_LINACT];
+int linact_goal[NUM_LINACT] = {TORSO_DOWN, 1000, ARM_DOWN, ARM_DOWN};
 
-void LinactPublish(int linact_id)
+void LinactPublish(int this_linact)
 {
-  if (linact_arrived && linact_goal == linact_goal_last)
+	uint16_t itmp;
+
+  if (linact_arrived[this_linact] 
+     && linact_goal[this_linact] == linact_goal_last[this_linact])
   {
     // publish wheel commands
+    ROS_INFO("same goal: linact %d at %d", this_linact, linact_goal[this_linact]);
   }
   else 
   {
-    if (linact_goal != linact_goal_last)
+    if (linact_goal[this_linact] != linact_goal_last[this_linact])
     {
-      uint16_t itmp;
-
       // publish linear actuator command
       packets_485net::packet_485net_dgram linact_cmd;
-      linact_cmd.destination = linact_id;
-	  linact_cmd.source = 0xF0;
-	  linact_cmd.sport = 7;
-	  linact_cmd.dport = 1;
-	  
-	  itmp = linact_goal - LINACT_PRECISION;
-	  linact_cmd.data[0] = itmp & 0xFF;
-	  linact_cmd.data[1] = (itmp >> 16) & 0xFF;
-	  itmp = linact_goal + LINACT_PRECISION;
-	  linact_cmd.data[2] = itmp & 0xFF;
-	  linact_cmd.data[3] = (itmp >> 16) & 0xFF;
-	  
+      linact_cmd.destination = linact_id[this_linact];
+          linact_cmd.source = 0xF0;
+          linact_cmd.sport = 7;
+          linact_cmd.dport = 1;
+
+          itmp = linact_goal[this_linact] > LINACT_PRECISION ? linact_goal[this_linact] - LINACT_PRECISION : 0;
+          linact_cmd.data.push_back(itmp & 0xFF);
+          linact_cmd.data.push_back((itmp >> 8) & 0xFF);
+          itmp = linact_goal[this_linact] < (1023-LINACT_PRECISION) ? linact_goal[this_linact] + LINACT_PRECISION : 1023;
+          linact_cmd.data.push_back(itmp & 0xFF);
+          linact_cmd.data.push_back((itmp >> 8) & 0xFF);
+
       linact_pub.publish(linact_cmd);
-      linact_goal_last = linact_goal;
-      linact_new_goal = true;
-      linact_arrived = false;
-      ROS_INFO("linact %d", linact_goal);
+      linact_goal_last[this_linact] = linact_goal[this_linact];
+      linact_new_goal[this_linact] = true;
+      linact_arrived[this_linact] = false;
+      ROS_INFO("linact %d at %d", this_linact, linact_goal[this_linact]);
     }
   }
 }
 
 void LinactCallback(const packets_485net::packet_485net_dgram& linear_actuator_status)
 {
-	if(linear_actuator_status.source != LINACT_TORSO 
-	  && linear_actuator_status.source != LINACT_WHEELS 
-	  && linear_actuator_status.source != LINACT_RIGHT_ARM 
-	  && linear_actuator_status.source != LINACT_LEFT_ARM)
-		return;
-	if(!(linear_actuator_status.destination == 0xF0 || linear_actuator_status.destination == 0x00))
-		return;
-	if(linear_actuator_status.dport != 7)
-		return;
-  linact_arrived = linear_actuator_status.data[4+2];
-  if (linact_new_goal) // if new linear actuator goal then linact_arrived may take a few frames to update
-  {
-    if (!linact_arrived)
-      linact_new_goal = false;
-    else
-      linact_arrived = false;
-  }
-  //linact_arrived = true; // hack for if linear actuator isn't working
-  LinactPublish(linear_actuator_status.source);
+    int this_linact = NUM_LINACT;
+    int i;
+
+    for (i = 0; i < NUM_LINACT; i++) { 
+      if(linear_actuator_status.source == linact_id[i]) {
+        this_linact = i;
+        break;
+      }
+    }
+    if (this_linact == NUM_LINACT) {
+      // ROS_INFO("invalid source %d", linear_actuator_status.source);
+      return;
+    }
+    if(!(linear_actuator_status.destination == 0xF0
+       || linear_actuator_status.destination == 0x00))
+	return;
+    if(linear_actuator_status.dport != 7) {
+      ROS_INFO("invalid dport");
+      return;
+    }
+    if(linear_actuator_status.data.size() != 7) {
+      ROS_INFO("invalid size");
+      return;
+    }
+    linact_arrived[this_linact] = linear_actuator_status.data[4+2];
+    if (linact_new_goal[this_linact]) 
+      // if new linear actuator goal then linact_arrived may take a 
+      // few frames to update
+    {
+      if (!linact_arrived[this_linact])
+        linact_new_goal[this_linact] = false;
+      else
+        linact_arrived[this_linact] = false;
+    }
+    // hack for if linear actuator isn't working
+    //linact_arrived[this_linact] = true; 
+    LinactPublish(this_linact);
 }
 
 
 void LinactInit(void)
 {
   ros::NodeHandle n;
+  int i;
 
   linact_sub = n.subscribe("net_485net_incoming_dgram", 1000, LinactCallback);
   linact_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
-
+  for (i = 0 ; i < NUM_LINACT; i++) {
+    linact_goal_last[i] = 10000;
+    linact_arrived[i] = false; 
+    linact_new_goal[i] = false; 
+  }
 }
 
 void prlite_ax12commander::setTorsoGoal(int goal)
 {
-  if (0 == goal) return;
-  linact_goal -= goal*LINACT_PRECISION;
-  if (linact_goal < TORSO_UP)
-    linact_goal = TORSO_UP;
-  else if (linact_goal > TORSO_DOWN)
-    linact_goal = TORSO_DOWN;
+  static int direction = 0;
 
-  ROS_INFO_STREAM("Torso: " << linact_goal);
-  LinactPublish(LINACT_TORSO);
+  if (0 == goal) return;
+  linact_goal[LINACT_TORSO] -= goal*LINACT_PRECISION;
+  if (linact_goal[LINACT_TORSO] > TORSO_UP)
+    linact_goal[LINACT_TORSO] = TORSO_UP;
+  else if (linact_goal[LINACT_TORSO] < TORSO_DOWN)
+    linact_goal[LINACT_TORSO] = TORSO_DOWN;
+  if (
+     !(direction == goal 
+     && !linact_arrived[LINACT_TORSO]
+     && linact_new_goal[LINACT_TORSO]
+     )) {
+    LinactPublish(LINACT_TORSO);
+    direction = goal;
+  } else {
+    ROS_INFO("skip torso ");
+  }
+  ROS_INFO_STREAM("Torso: " << linact_goal[LINACT_TORSO]);
 }
 
 void prlite_ax12commander::setShoulderGoal(int right_goal, int left_goal)
 {
-  if (0 == right_goal) return;
-  if (0 == left_goal) return;
-  // right_goal -= right_goal*LINACT_PRECISION;
-  // left_goal -= left_goal*LINACT_PRECISION;
-  if (right_goal < ARM_UP)
-    right_goal = ARM_UP;
-  else if (right_goal > ARM_DOWN)
-    right_goal = ARM_DOWN;
-  if (left_goal < ARM_UP)
-    left_goal = ARM_UP;
-  else if (left_goal > ARM_DOWN)
-    left_goal = ARM_DOWN;
+  static int direction[2] = {0, 0};
 
-  ROS_INFO_STREAM("Right Shoulder: " << right_goal);
-  ROS_INFO_STREAM("Left Shoulder: " << left_goal);
-  // LinactPublish(LINACT_RIGHT_ARM);
-  LinactPublish(LINACT_LEFT_ARM);
+  if(0 == left_goal && 0 == right_goal) return;
+  linact_goal[LINACT_RIGHT_ARM] -= right_goal*LINACT_PRECISION;
+  linact_goal[LINACT_LEFT_ARM] -= left_goal*LINACT_PRECISION;
+  if (linact_goal[LINACT_RIGHT_ARM] < ARM_UP)
+    linact_goal[LINACT_RIGHT_ARM] = ARM_UP;
+  else if (linact_goal[LINACT_RIGHT_ARM] > ARM_DOWN)
+    linact_goal[LINACT_RIGHT_ARM] = ARM_DOWN;
+  if (linact_goal[LINACT_LEFT_ARM] < ARM_UP)
+    linact_goal[LINACT_LEFT_ARM] = ARM_UP;
+  else if (linact_goal[LINACT_LEFT_ARM] > ARM_DOWN)
+    linact_goal[LINACT_LEFT_ARM] = ARM_DOWN;
+  if (
+     !(direction[0] == right_goal && !linact_arrived[LINACT_RIGHT_ARM]
+     && linact_new_goal[LINACT_RIGHT_ARM]
+     )) {
+    LinactPublish(LINACT_RIGHT_ARM);
+    direction[0] = right_goal;
+  } else {
+    // ROS_INFO("skip right Shoulder ");
+  }
+  if (
+     !(direction[1] == left_goal && !linact_arrived[LINACT_LEFT_ARM]
+     && linact_new_goal[LINACT_LEFT_ARM]
+     )) {
+    LinactPublish(LINACT_LEFT_ARM);
+    direction[1] = left_goal;
+  } else {
+    // ROS_INFO("skip Left Shoulder ");
+  }
+  // ROS_INFO_STREAM("Left Shoulder: " << linact_goal[LINACT_LEFT_ARM] 
+  //    << "  Right Shoulder: " << linact_goal[LINACT_RIGHT_ARM]);
 }
 
 static std::string prlite_ax12controllername[] = {
@@ -414,6 +451,12 @@ void prlite_ax12commander::init()
         prlite_ax12joint[i].minpos = -2;
         prlite_ax12joint[i].maxpos =  2;
       }
+      if (i == prlite_ax12commander::elbowtiltR ||
+         i == prlite_ax12commander::elbowtilt) {
+        prlite_ax12joint[i].minpos = -.7;
+        prlite_ax12joint[i].maxpos =  3.14;
+      }
+
       if (i == prlite_ax12commander::shoulderpanR ||
          i == prlite_ax12commander::shoulderpan) {
         prlite_ax12joint[i].minpos = -1.50;
@@ -447,70 +490,56 @@ void prlite_ax12commander::init()
       // arms safley put back position
       prlite_ax12joint[prlite_ax12commander::shoulderpan].tuck =  0.0;
       // prlite_ax12joint[prlite_ax12commander::shouldertilt].tuck =  1.75;
-      prlite_ax12joint[prlite_ax12commander::elbowpan].tuck = .01;
-      prlite_ax12joint[prlite_ax12commander::elbowtilt].tuck = .01;
+      prlite_ax12joint[prlite_ax12commander::elbowpan].tuck = .00;
+      prlite_ax12joint[prlite_ax12commander::elbowtilt].tuck = 1.4;
       prlite_ax12joint[prlite_ax12commander::wristrot].tuck =  0.0;
-      prlite_ax12joint[prlite_ax12commander::wristtilt].tuck =  0.0;
-      prlite_ax12joint[prlite_ax12commander::lfinger].tuck =  0.9;
-      prlite_ax12joint[prlite_ax12commander::rfinger].tuck =  -0.9;
+      prlite_ax12joint[prlite_ax12commander::wristtilt].tuck =  -1.7;
+      prlite_ax12joint[prlite_ax12commander::lfinger].tuck =  0.1;
+      prlite_ax12joint[prlite_ax12commander::rfinger].tuck =  -0.1;
 
-      prlite_ax12joint[prlite_ax12commander::shoulderpanR].tuck =  0.0;
+      prlite_ax12joint[prlite_ax12commander::shoulderpan].tuck =  0.0;
       // prlite_ax12joint[prlite_ax12commander::shouldertiltR].tuck =  1.75;
-      prlite_ax12joint[prlite_ax12commander::elbowtiltR].tuck =  -.01;
-      prlite_ax12joint[prlite_ax12commander::elbowpanR].tuck =  -.01;
+      prlite_ax12joint[prlite_ax12commander::elbowpanR].tuck =  0.0;
+      prlite_ax12joint[prlite_ax12commander::elbowtiltR].tuck =  1.4;
       prlite_ax12joint[prlite_ax12commander::wristrotR].tuck =  0.0;
-      prlite_ax12joint[prlite_ax12commander::wristtiltR].tuck =  0.0;
-      prlite_ax12joint[prlite_ax12commander::lfingerR].tuck =  -0.9;
-      prlite_ax12joint[prlite_ax12commander::rfingerR].tuck =  0.9;
+      prlite_ax12joint[prlite_ax12commander::wristtiltR].tuck =  -1.7;
+      prlite_ax12joint[prlite_ax12commander::lfingerR].tuck =  -0.1;
+      prlite_ax12joint[prlite_ax12commander::rfingerR].tuck =  0.1;
 
-      // cobra position
+      // cobra position or keep same as tuck
       prlite_ax12joint[prlite_ax12commander::shoulderpan].untuck =  0.0;
       // prlite_ax12joint[prlite_ax12commander::shouldertilt].untuck =  1.75;
-      prlite_ax12joint[prlite_ax12commander::elbowtilt].untuck =  -1.75;
-      prlite_ax12joint[prlite_ax12commander::elbowpan].untuck =  -1.75;
+      prlite_ax12joint[prlite_ax12commander::elbowpan].untuck =  0.0;
+      prlite_ax12joint[prlite_ax12commander::elbowtilt].untuck =  1.4;
       prlite_ax12joint[prlite_ax12commander::wristrot].untuck =  0.0;
-      prlite_ax12joint[prlite_ax12commander::wristtilt].untuck =  0.0;
+      prlite_ax12joint[prlite_ax12commander::wristtilt].untuck =  -1.7;
       prlite_ax12joint[prlite_ax12commander::lfinger].untuck =  0.1;
       prlite_ax12joint[prlite_ax12commander::rfinger].untuck =  -0.1;
 
-      // prlite_ax12joint[prlite_ax12commander::shoulderpanR].untuck =  0.0;
+      prlite_ax12joint[prlite_ax12commander::shoulderpanR].untuck =  0.0;
       // prlite_ax12joint[prlite_ax12commander::shouldertiltR].untuck =  1.75;
-      prlite_ax12joint[prlite_ax12commander::elbowtiltR].untuck =  -1.75;
-      prlite_ax12joint[prlite_ax12commander::elbowpanR].untuck =  -1.75;
+      prlite_ax12joint[prlite_ax12commander::elbowpanR].untuck =  0.0;
+      prlite_ax12joint[prlite_ax12commander::elbowtiltR].untuck =  1.4;
       prlite_ax12joint[prlite_ax12commander::wristrotR].untuck =  0.0;
-      prlite_ax12joint[prlite_ax12commander::wristtiltR].untuck =  0.0;
+      prlite_ax12joint[prlite_ax12commander::wristtiltR].untuck =  -1.7;
       prlite_ax12joint[prlite_ax12commander::lfingerR].untuck =  -0.1;
       prlite_ax12joint[prlite_ax12commander::rfingerR].untuck =  0.1;
 
       // hands up position
-/* OLD : wrong
-      prlite_ax12joint[shoulderpan].kinect_callobrate =  1.50;
-      prlite_ax12joint[shouldertilt].kinect_callobrate =  1.15;
-      prlite_ax12joint[elbowtilt].kinect_callobrate =  .65;
-      prlite_ax12joint[wristrot].kinect_callobrate =  0.0;
-      prlite_ax12joint[lfinger].kinect_callobrate =  0.9;
-      prlite_ax12joint[rfinger].kinect_callobrate =  -0.9;
-
-      prlite_ax12joint[shoulderpanR].kinect_callobrate =  -1.50;
-      prlite_ax12joint[shouldertiltR].kinect_callobrate =  1.15;
-      prlite_ax12joint[elbowtiltR].kinect_callobrate =  .65;
-      prlite_ax12joint[wristrotR].kinect_callobrate =  0.0;
-      prlite_ax12joint[lfingerR].kinect_callobrate =  -0.9;
-      prlite_ax12joint[rfingerR].kinect_callobrate =  0.9;
-*/
-      prlite_ax12joint[shoulderpan].kinect_callobrate =  1.50;
+      prlite_ax12joint[shoulderpan].kinect_callobrate =  -1.50;
       // prlite_ax12joint[shouldertilt].kinect_callobrate =  -0.275868;
-      prlite_ax12joint[elbowpan].kinect_callobrate =  1.75;
-      prlite_ax12joint[elbowtilt].kinect_callobrate =  1.75;
-      prlite_ax12joint[wristrot].kinect_callobrate =  -1.1;
-      prlite_ax12joint[wristrot].kinect_callobrate =  -1.1;
+      prlite_ax12joint[elbowpan].kinect_callobrate =  0;
+      prlite_ax12joint[elbowtilt].kinect_callobrate =  0.15;
+      prlite_ax12joint[wristrot].kinect_callobrate =  0;
+      prlite_ax12joint[wristrot].kinect_callobrate =  0;
       prlite_ax12joint[lfinger].kinect_callobrate =  0.9;
       prlite_ax12joint[rfinger].kinect_callobrate =  -0.9;
 
-      prlite_ax12joint[shoulderpanR].kinect_callobrate =  -1.50;
+      prlite_ax12joint[shoulderpanR].kinect_callobrate =  1.50;
       // prlite_ax12joint[shouldertiltR].kinect_callobrate =  -0.275868;
-      prlite_ax12joint[elbowtiltR].kinect_callobrate =  1.75;
-      prlite_ax12joint[wristrotR].kinect_callobrate =  0.9;
+      prlite_ax12joint[elbowpanR].kinect_callobrate =  0;
+      prlite_ax12joint[elbowtiltR].kinect_callobrate =  0.15;
+      prlite_ax12joint[wristrotR].kinect_callobrate =  0;
       prlite_ax12joint[wristtiltR].kinect_callobrate =  0.9;
       prlite_ax12joint[lfingerR].kinect_callobrate =  -0.9;
       prlite_ax12joint[rfingerR].kinect_callobrate =  0.9;
@@ -544,10 +573,12 @@ void prlite_ax12commander::set_desired_pos(int joint, double desired_pos)
   if (joint == lfingerR  || joint == rfingerR)
           desired_pos *= -1;
   if (prlite_ax12joint[joint].desiredpos == desired_pos) return;
-  if (!(joint == 8 && desired_pos >= -.1 && desired_pos <= .1))
-    ROS_INFO_STREAM("set_desired_pos " << joint << " " << desired_pos);
+/*
+  if (joint == 8 && desired_pos >= -.1 && desired_pos <= .1)
+    return;  // joystick misbehaves 
+*/
+  ROS_INFO_STREAM("set_desired_pos " << joint << " " << desired_pos);
   desired_pos_pub.data = desired_pos;
-  if (/* joint != lfingerR && joint != rfingerR */ true)  // bad motors
     prlite_ax12joint[joint].controller.publish(desired_pos_pub);
   prlite_ax12joint[joint].desiredpos = desired_pos;
 }
@@ -559,7 +590,8 @@ void prlite_ax12commander::tuck()
    for (i = 0; i <= prlite_ax12commander::rfingerR; i ++) {
      set_desired_pos(i, prlite_ax12joint[i].tuck);
      // ros::Duration(0.1).sleep();
-  }
+   }
+   setShoulderGoal(0.0, 0.0);
 }
 
 void prlite_ax12commander::untuck()
@@ -569,7 +601,8 @@ void prlite_ax12commander::untuck()
    for (i = 0; i <= prlite_ax12commander::rfingerR; i ++) {
      set_desired_pos(i, prlite_ax12joint[i].untuck);
      // ros::Duration(0.1).sleep();
-  }
+   }
+   setShoulderGoal(0.0, 0.0);
 }
 
 void prlite_ax12commander::kinect_callobration_pos()
@@ -579,7 +612,8 @@ void prlite_ax12commander::kinect_callobration_pos()
    for (i = 0; i <= prlite_ax12commander::rfingerR; i ++) {
      set_desired_pos(i, prlite_ax12joint[i].kinect_callobrate);
      // ros::Duration(0.1).sleep();
-  }
+   }
+   setShoulderGoal(1000, 1000);
 }
 
 
@@ -701,8 +735,8 @@ void prlite_ax12commander::WristCommand(double right_wrist_vel, double left_wris
 
 void prlite_ax12commander::ShoulderCommand(double right_shoulderpan_vel, double left_shoulderpan_vel)
 {
-   JointCommand( prlite_ax12commander::shoulderpanR, right_shoulderpan_vel);
-   JointCommand( prlite_ax12commander::shoulderpan, left_shoulderpan_vel);
+   // JointCommand( prlite_ax12commander::shoulderpanR, right_shoulderpan_vel);
+   // JointCommand( prlite_ax12commander::shoulderpan, left_shoulderpan_vel);
 }
 
 void prlite_ax12commander::ArmCommand(
@@ -723,3 +757,21 @@ void prlite_ax12commander::HeadCommand(double pan_vel, double tilt_vel)
    JointCommand( prlite_ax12commander::kinecttilt, tilt_vel);
 }
 
+void prlite_ax12commander::ToggleGrippers() 
+{
+  static const double GRIPPER_OPEN_POSITION = 0.9;
+  static const double GRIPPER_CLOSE_POSITION = 0.1;
+  static int open = false;
+
+  if (open) {
+    open = false;
+    set_desired_pos(prlite_ax12commander::rfingerR,GRIPPER_OPEN_POSITION);
+    set_desired_pos(prlite_ax12commander::lfingerR,-1*GRIPPER_OPEN_POSITION);
+    move_to_desired_pos();
+  } else {
+    open = true;
+    set_desired_pos(prlite_ax12commander::rfingerR,GRIPPER_CLOSE_POSITION);
+    set_desired_pos(prlite_ax12commander::lfingerR,-1*GRIPPER_CLOSE_POSITION);
+    move_to_desired_pos();
+  }
+}

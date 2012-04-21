@@ -644,9 +644,9 @@ public:
       ROS_INFO_STREAM("Up is " << up);
       
       if(down && !up) {
-        des_torso_vel_ = -1;
-      } else if(!down && up) {
         des_torso_vel_ = 1;
+      } else if(!down && up) {
+        des_torso_vel_ = -1;
       } else {
 	//ROS_INFO_STREAM("Setting des vel to 0.0");
         des_torso_vel_ = 0.0;
@@ -1326,6 +1326,7 @@ ROS_INFO("init done");
         }
         //generaljoy.gc->updateCurrentWristPositions();
         generaljoy.gc->sendWristVelCommands(des_right_wrist_vel_, des_left_wrist_vel_, SlowHz);
+	//ROS_INFO_STREAM("Robert: about to update shoulder " << des_left_shoulder_tilt_vel_);
         generaljoy.gc->sendShoulderCommand(des_right_shoulder_tilt_vel_, 
                                                des_right_shoulder_pan_vel_, 
 			                       des_left_shoulder_tilt_vel_, 

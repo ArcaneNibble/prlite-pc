@@ -96,7 +96,7 @@ GeneralCommander::GeneralCommander(bool control_body,
   }
   if(control_body_) {
     // torso_pub_ = n_.advertise<trajectory_msgs::JointTrajectory>("torso_controller/command", 1);
-    base_pub_ = n_.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
+    base_pub_ = n_.advertise<geometry_msgs::Twist>("cmd_vel", 1);
   }
   if(control_rarm_) {
   } else {
@@ -288,6 +288,7 @@ void GeneralCommander::sendShoulderCommand(
 void GeneralCommander::sendGripperCommand(WhichArm which, bool close) {
   double position, max_effort;
 
+  max_effort = GRIPPER_CLOSE_MAX_EFFORT;
   if(!control_rarm_ && !control_larm_) return;
   if(!control_rarm_ && which == ARMS_RIGHT) return;
   if(!control_larm_ && which == ARMS_LEFT) return;
