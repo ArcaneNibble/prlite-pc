@@ -103,8 +103,8 @@ void state_change(void)
   base_state_enum base_state_last;
   
   //debug
-  linact_arrived = true;
-  linact_goal_arrived = true;
+  //linact_arrived = true;
+  //linact_goal_arrived = true;
 
   // Get the current time
   now = ros::Time::now();
