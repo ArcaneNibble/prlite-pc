@@ -317,31 +317,39 @@ void cmdPublishWheel(void)
 	
 	wheel_cmd.source = 0xF0;
 	wheel_cmd.sport = 7;
-	wheel_cmd.dport = 2;
+	wheel_cmd.dport = 6;
     if (LINACT_90 == linact_goal)
     {
       ROS_INFO("LINACT_90");
       // move sideways (positive cmd_l/cmd_r means go left)
+	  
       // back wheels
+	  wheel_cmd.data.push_back(5);
+	  wheel_cmd.data.push_back(lookup_id("wheel-cnt", "back left"));
+	  wheel_cmd.data.push_back(1);
       wheel_cmd.data.push_back(cmd_l & 0xFF);
       wheel_cmd.data.push_back((cmd_l >> 8) & 0xFF);
-	  wheel_cmd.destination = lookup_id("wheel-cnt", "front right");
-      cmd_pub.publish(wheel_cmd);
 	  
-      wheel_cmd.data[0] = (-cmd_l) & 0xFF;
-      wheel_cmd.data[1] = ((-cmd_l) >> 8) & 0xFF;
-	  wheel_cmd.destination = lookup_id("wheel-cnt", "front left");
-      cmd_pub.publish(wheel_cmd);
+	  wheel_cmd.data.push_back(5);
+	  wheel_cmd.data.push_back(lookup_id("wheel-cnt", "back right"));
+	  wheel_cmd.data.push_back(1);
+      wheel_cmd.data.push_back((-cmd_l) & 0xFF);
+      wheel_cmd.data.push_back(((-cmd_l) >> 8) & 0xFF);
 	  
       // front wheels
-      wheel_cmd.data[0] = cmd_r & 0xFF;
-      wheel_cmd.data[1] = (cmd_r >> 8) & 0xFF;
-	  wheel_cmd.destination = lookup_id("wheel-cnt", "back right");
-      cmd_pub.publish(wheel_cmd);
+	  wheel_cmd.data.push_back(5);
+	  wheel_cmd.data.push_back(lookup_id("wheel-cnt", "front right"));
+	  wheel_cmd.data.push_back(1);
+      wheel_cmd.data.push_back(cmd_r & 0xFF);
+      wheel_cmd.data.push_back((cmd_r >> 8) & 0xFF);
 	  
-      wheel_cmd.data[0] = (-cmd_r) & 0xFF;
-      wheel_cmd.data[1] = ((-cmd_r) >> 8) & 0xFF;
-	  wheel_cmd.destination = lookup_id("wheel-cnt", "back left");
+	  wheel_cmd.data.push_back(0);
+	  wheel_cmd.data.push_back(lookup_id("wheel-cnt", "front left"));
+	  wheel_cmd.data.push_back(1);
+      wheel_cmd.data.push_back((-cmd_r) & 0xFF);
+      wheel_cmd.data.push_back(((-cmd_r) >> 8) & 0xFF);
+	  
+	  wheel_cmd.destination = lookup_id("multicast", "all wheels");
       cmd_pub.publish(wheel_cmd);
     }
     else
@@ -349,7 +357,6 @@ void cmdPublishWheel(void)
       ROS_INFO("MOVE F/B");
       // move forwards/backwards or spin in place
 	  
-	  wheel_cmd.dport = 6;
 	  wheel_cmd.data.push_back(5);
 	  wheel_cmd.data.push_back(lookup_id("wheel-cnt", "front left"));
 	  wheel_cmd.data.push_back(1);
