@@ -32,6 +32,8 @@
 #include "net_485net_id_handler/SearchID.h"
 #include <unistd.h>
 
+#define MAX_LINACT 0x3FF
+
 const double X_MULT = 7.51913116; // speed is ticks per interval and interval is 1/10 sec, so should be WHEEL_TICKS_PER_METER / 10
 const double TH_MULT = 5; // tuned manually (is about right)
 const uint16_t LINACT_0 = 915;
@@ -235,10 +237,10 @@ void cmdPublishLinact(void)
 	linact_cmd.sport = 7;
 	linact_cmd.dport = 1;
 	
-	itmp = linact_goal - LINACT_PRECISION;
+	itmp = linact_goal > LINACT_PRECISION ? linact_goal - LINACT_PRECISION : 0;
 	linact_cmd.data.push_back(itmp & 0xFF);
 	linact_cmd.data.push_back((itmp >> 8) & 0xFF);
-	itmp = linact_goal + LINACT_PRECISION;
+	itmp = linact_goal + LINACT_PRECISION < MAX_LINACT ? linact_goal + LINACT_PRECISION : MAX_LINACT;
 	linact_cmd.data.push_back(itmp & 0xFF);
 	linact_cmd.data.push_back((itmp >> 8) & 0xFF);
 	
