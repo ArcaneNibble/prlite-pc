@@ -9,6 +9,7 @@
             serial_ports:
                 smart_arm:
                     port_name: "/dev/magellan_arm"
+                    # port_name: "/dev/ttyUSB2"
                     baud_rate: 1000000
                     min_motor_id: 1
                     max_motor_id: 30

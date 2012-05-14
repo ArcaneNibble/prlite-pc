@@ -64,7 +64,7 @@ int16_t cmd_r_last = 10000;
 bool cmd_90_last = false;
 bool force_wheel_update = false;
 
-bool rosinfodbg = false;
+bool rosinfodbg = true;
 
 // base states
 enum base_state_enum {ready, linact_start, linact_moving, wheel_start, wheel_moving};
@@ -81,7 +81,7 @@ bool wheel_started[4] = {false, false, false, false};
 bool linact_arrived = true;
 bool linact_goal_arrived = true;
 
-#define DIST_FROM_LIMIT	50
+#define DIST_FROM_LIMIT	110
 #define MOVING_LAST_N	5
 #define NOT_MOVING_VAL	1
 bool linact_does_not_seem_to_be_moving = false;
@@ -506,6 +506,8 @@ void linactCallback(const packets_485net::packet_485net_dgram& linear_actuator_s
   itmp = linear_actuator_status.data[4] | ((linear_actuator_status.data[5]) << 8);
   //linact_arrived = true; // hack for if linear actuator isn't working
   linact_goal_arrived = (itmp >= linact_goal - LINACT_PRECISION && itmp <= linact_goal + LINACT_PRECISION);
+	
+	ROS_INFO("base: linact is at %d\n", itmp);
   
 	//if we are within +- NOT_MOVING_VAL of the previous value, we probably aren't moving
 	if((itmp >= last_pos - NOT_MOVING_VAL) && (itmp <= last_pos + NOT_MOVING_VAL))
@@ -513,6 +515,7 @@ void linactCallback(const packets_485net::packet_485net_dgram& linear_actuator_s
 	else
 		notmoving = 0;
 	last_pos = itmp;
+	ROS_INFO("base: not moving for %d\n", notmoving);
   
 	if(notmoving >= MOVING_LAST_N && ((itmp > 0x400 - DIST_FROM_LIMIT) || (itmp < DIST_FROM_LIMIT)))
 	{

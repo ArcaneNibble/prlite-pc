@@ -24,8 +24,8 @@ elbow_pan_controllerL:
         id: 21
         # init: 512 - WRONG HW CONFIG?
         init: 256
-        min: 0
-        max: 1023
+        min:  440
+        max:  1024
 
 elbow_tilt_controllerL:
     controller:
@@ -37,7 +37,7 @@ elbow_tilt_controllerL:
     motor_master:
         id: 16
         init: 192
-        min: 0
+        min: 226
         max: 1023
     motor_slave:
         id: 8
@@ -52,8 +52,8 @@ wrist_tilt_controllerL:
     motor_master:
         id: 9
         init: 512
-        min: 0
-        max: 1023
+        min: 226
+        max: 798
     motor_slave:
         id: 11
 
@@ -66,6 +66,7 @@ wrist_rotate_controllerL:
     joint_speed: 1.17
     motor:
         id: 6
+        init: 500
         min: 0
         max: 1023
 
@@ -120,7 +121,7 @@ elbow_tilt_controllerR:
     motor_master:
         id: 13
         init: 192
-        min: 0
+        min: 226
         max: 1023
     motor_slave:
         id: 3
@@ -135,8 +136,9 @@ elbow_pan_controllerR:
     motor:
         id: 19
         init: 512
-        min: 0
-        max: 1023
+        min:  286
+        max:  818
+
 
 wrist_tilt_controllerR:
     controller:
@@ -148,8 +150,8 @@ wrist_tilt_controllerR:
     motor_master:
         id: 4
         init: 512
-        min: 0
-        max: 1023
+        min: 226
+        max: 798
     motor_slave:
         id: 14
 

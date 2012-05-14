@@ -28,20 +28,20 @@ ros::Subscriber linact_sub;
 ros::Publisher leftArmPublisher;
 ros::Publisher rightArmPublisher;
 #define LINACT_TORSO        0
-#define LINACT_WHEELS       1
-#define LINACT_RIGHT_ARM    2
-#define LINACT_LEFT_ARM     3
-#define NUM_LINACT          4
+#define LINACT_RIGHT_ARM    1
+#define LINACT_LEFT_ARM     2
+// #define LINACT_WHEELS       3
+#define NUM_LINACT          3
 #define LINACT_TORSO_ID     0x0C 
-#define LINACT_WHEELS_ID    0x0D 
 #define LINACT_RIGHT_ARM_ID 0x0E 
 #define LINACT_LEFT_ARM_ID  0x0F 
+#define LINACT_WHEELS_ID    0xAA 
 int linact_id[NUM_LINACT] = 
-{LINACT_TORSO_ID, LINACT_WHEELS_ID, LINACT_RIGHT_ARM_ID, LINACT_LEFT_ARM_ID};
+{LINACT_TORSO_ID, LINACT_RIGHT_ARM_ID, LINACT_LEFT_ARM_ID};
 bool linact_arrived[NUM_LINACT];
 bool linact_new_goal[NUM_LINACT];
 bool linact_goal_last[NUM_LINACT];
-int linact_goal[NUM_LINACT] = {TORSO_DOWN, 1000, ARM_DOWN, ARM_DOWN};
+int linact_goal[NUM_LINACT] = {TORSO_DOWN, ARM_DOWN, ARM_DOWN};
 
 void LinactPublish(int this_linact)
 {
@@ -577,6 +577,14 @@ void prlite_ax12commander::set_desired_pos(int joint, double desired_pos)
   if (joint == 8 && desired_pos >= -.1 && desired_pos <= .1)
     return;  // joystick misbehaves 
 */
+  if (joint == shoulderpan || joint == shoulderpanR)
+    return;  // for now prevent overloads
+
+  /* hack for weird ax12 pan elbow off by 90 deg */
+/*
+  if (joint == elbowpan)
+    desired_pos += 1.3; 
+*/
   ROS_INFO_STREAM("set_desired_pos " << joint << " " << desired_pos);
   desired_pos_pub.data = desired_pos;
     prlite_ax12joint[joint].controller.publish(desired_pos_pub);
@@ -591,7 +599,7 @@ void prlite_ax12commander::tuck()
      set_desired_pos(i, prlite_ax12joint[i].tuck);
      // ros::Duration(0.1).sleep();
    }
-   setShoulderGoal(0.0, 0.0);
+   // setShoulderGoal(0.0, 0.0);
 }
 
 void prlite_ax12commander::untuck()
@@ -602,7 +610,7 @@ void prlite_ax12commander::untuck()
      set_desired_pos(i, prlite_ax12joint[i].untuck);
      // ros::Duration(0.1).sleep();
    }
-   setShoulderGoal(0.0, 0.0);
+   // setShoulderGoal(0.0, 0.0);
 }
 
 void prlite_ax12commander::kinect_callobration_pos()
@@ -613,7 +621,7 @@ void prlite_ax12commander::kinect_callobration_pos()
      set_desired_pos(i, prlite_ax12joint[i].kinect_callobrate);
      // ros::Duration(0.1).sleep();
    }
-   setShoulderGoal(1000, 1000);
+   // setShoulderGoal(1000, 1000);
 }
 
 

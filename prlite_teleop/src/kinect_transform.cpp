@@ -85,7 +85,7 @@ bool kinect_arms_up() { return arms_up;}
 void XN_CALLBACK_TYPE User_NewUser(xn::UserGenerator& generator, XnUserID nId, void* pCookie)
 {
         arms_up = true;
-        systemret = system("espeak --stdout \"Hello.  Put your arms up like this.\" | aplay &");
+        // systemret = system("espeak --stdout \"Hello.  Put your arms up like this.\" | aplay &");
 	printf("New User %d\n", nId);
 	// New user found
 	if (g_bNeedPose)
@@ -101,7 +101,7 @@ void XN_CALLBACK_TYPE User_NewUser(xn::UserGenerator& generator, XnUserID nId, v
 // Callback: An existing user was lost
 void XN_CALLBACK_TYPE User_LostUser(xn::UserGenerator& generator, XnUserID nId, void* pCookie)
 {
-        systemret = system("espeak --stdout \"Where did you go?\" | aplay &");
+        // systemret = system("espeak --stdout \"Where did you go?\" | aplay &");
 	printf("Lost user %d\n", nId);
 		
 /*
@@ -138,7 +138,7 @@ void XN_CALLBACK_TYPE UserCalibration_CalibrationEnd(xn::SkeletonCapability& cap
 	if (bSuccess)
 	{
 		// Calibration succeeded
-                systemret = system("espeak --stdout \"Great.  Now move your arms slowly and I will mimic you.\" | aplay &");
+                // systemret = system("espeak --stdout \"Great.  Now move your arms slowly and I will mimic you.\" | aplay &");
 		printf("Calibration complete, start tracking user %d\n", nId);
 		g_UserGenerator.GetSkeletonCap().StartTracking(nId);
 		
@@ -149,7 +149,7 @@ void XN_CALLBACK_TYPE UserCalibration_CalibrationEnd(xn::SkeletonCapability& cap
 	else
 	{
 		// Calibration failed
-                systemret = system("espeak --stdout \"Calibration failed.\" | aplay &");
+                // systemret = system("espeak --stdout \"Calibration failed.\" | aplay &");
 		printf("Calibration failed for user %d\n", nId);
 		if (g_bNeedPose)
 		{
@@ -363,6 +363,7 @@ void kinect_get_pos(double *center_x, double *center_y, double *center_z)
                 *center_z = torsoPosition.position.Z / 1000.0;
 
                 // ---------- ARM CONTROLLER HACK ------------------
+#if 0
 
                 // Calculate arm length of user
                 double lenL = calc3DDist( lShould, lElbow ) + calc3DDist( lElbow, lWrist );
@@ -379,6 +380,8 @@ void kinect_get_pos(double *center_x, double *center_y, double *center_z)
 
                 lCoord.theta = -atan2(lShould.X - lWrist.X, lShould.Z - lWrist.Z);
                 rCoord.theta = -atan2(rShould.X - rWrist.X, rShould.Z - rWrist.Z);
+/*
+*/
                 if(lCoord.theta > 1.0) lCoord.theta = 1.0;
                 if(lCoord.theta < -1.0) lCoord.theta = -1.0;
                 if(rCoord.theta > 1.0) rCoord.theta = 1.0;
@@ -386,6 +389,8 @@ void kinect_get_pos(double *center_x, double *center_y, double *center_z)
 
                 lCoord.phi = -atan2(lShould.Y - lWrist.Y, lShould.X - lWrist.X);
                 rCoord.phi = -atan2(rShould.Y - rWrist.Y, rShould.X - rWrist.X);
+/*
+*/
                 if(lCoord.phi > 1.25) lCoord.phi = 1.25;
                 if(lCoord.phi < -0.33) lCoord.phi = -0.33;
                 if(rCoord.phi > 1.2) rCoord.phi = 1.25;
@@ -396,8 +401,31 @@ void kinect_get_pos(double *center_x, double *center_y, double *center_z)
                 // Publish to arms
                 leftArmPublisher.publish(rCoord);
                 rightArmPublisher.publish(lCoord);
+#endif
 
-                // ---------- START HACK #2 -----------------
+                // ---------- START HACK #2a -----------------
+
+                double right_elbow_pan = atan2(lShould.X - lElbow.X, lShould.Z - lElbow.Z);
+                double right_elbow_tilt = atan2(lShould.Y - lElbow.Y, lShould.X - lElbow.X);
+                double right_wrist_tilt = -1*atan2(lElbow.X - lWrist.X, lElbow.Z- lWrist.Z);
+                
+                double left_elbow_pan = atan2(rShould.X - rElbow.X, rShould.Z - rElbow.Z);
+                double left_elbow_tilt = atan2(rShould.Y - rElbow.Y, rShould.X - rElbow.X);
+                double left_wrist_tilt = atan2(rElbow.Y - rWrist.Y, rElbow.X- rWrist.X);
+
+
+		// max and min arch checked by Joint Command
+ROS_INFO("User %d: Left (%lf,%lf,%lf,%lf, %lf,%lf,%lf,%lf)", i, lShould.X, lElbow.X, lShould.Z,  lElbow.Z, lElbow.X, lWrist.X, lElbow.Z, lWrist.Z );
+ROS_INFO("User %d: Left (%lf,%lf,%lf), Right (%lf,%lf,%lf)", i, left_elbow_pan,  left_elbow_tilt, left_wrist_tilt, right_elbow_pan, right_elbow_tilt, right_wrist_tilt);
+                ax12->JointCommand( prlite_ax12commander::elbowpanR, right_elbow_pan);
+                ax12->JointCommand( prlite_ax12commander::elbowtiltR, right_elbow_tilt);
+                ax12->JointCommand( prlite_ax12commander::wristtiltR, right_wrist_tilt);
+                ax12->JointCommand( prlite_ax12commander::elbowpan, left_elbow_pan);
+                ax12->JointCommand( prlite_ax12commander::elbowtilt, left_elbow_tilt);
+                ax12->JointCommand( prlite_ax12commander::wristtilt, left_wrist_tilt);
+	
+	
+                // ---------- START HACK #2b -----------------
 
 #if 0
 

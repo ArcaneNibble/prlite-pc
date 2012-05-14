@@ -2,20 +2,24 @@ armik:
     n0:
         arm_segment1_len: 15
         arm_segment2_len: 20
-        rotation: "/shoulder_pan_controllerL/command"
-        shoulder: "/shoulder_tilt_controllerL/command"
-        shoulderi: false
-        elbow: "/elbow_tilt_controllerL/command"
+        rotation: "/elbow_pan_controllerL/command"
+        invert1: true
+        shoulder: "/elbow_tilt_controllerL/command"
+        invert2: true
+        elbow: "/wrist_tilt_controllerL/command"
+        invert3: false
         wrist: "/wrist_rotate_controllerL/command"
         finger_left: "/finger_left_controllerL/command"
         finger_right: "/finger_right_controllerL/command"
     n1:
         arm_segment1_len: 15
         arm_segment2_len: 20
-        rotation: "/shoulder_pan_controllerR/command"
-        shoulder: "/shoulder_tilt_controllerR/command"
-        shoulderi: true
-        elbow: "/elbow_tilt_controllerR/command"
+        rotation: "/elbow_pan_controllerR/command"
+        invert1: true
+        shoulder: "/elbow_tilt_controllerR/command"
+        invert2: true
+        elbow: "/wrist_tilt_controllerR/command"
+        invert3: false
         wrist: "/wrist_rotate_controllerR/command"
         finger_left: "/finger_left_controllerR/command"
         finger_right: "/finger_right_controllerR/command"

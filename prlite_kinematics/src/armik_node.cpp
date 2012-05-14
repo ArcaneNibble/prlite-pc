@@ -25,7 +25,9 @@ ros::Publisher fingerleftcontroller;
 ros::Publisher fingerrightcontroller;
 ros::Publisher wristrotatecontroller;
 
-bool isShoulderInverted = false;
+bool invert1 = false;
+bool invert2 = false;
+bool invert3 = false;
 
 void armcoord_callback( const prlite_kinematics::SphereCoordinate::ConstPtr& coord ) {
     int result = solveIK(*coord, &positions);
@@ -33,13 +35,13 @@ void armcoord_callback( const prlite_kinematics::SphereCoordinate::ConstPtr& coo
     else {
         std_msgs::Float64 jointPosition;
 
-        jointPosition.data = positions.rotation;
+        jointPosition.data = positions.rotation * (invert1 ? -1 : 1);
         shoulderpancontroller.publish(jointPosition);
 
-        jointPosition.data = positions.shoulder * (isShoulderInverted ? -1 : 1);
+        jointPosition.data = positions.shoulder * (invert2 ? -1 : 1);
         shouldertiltcontroller.publish(jointPosition);
         
-        jointPosition.data = positions.elbow - positions.shoulder; // This factors out the tilt from the first joint
+        jointPosition.data = (positions.elbow - positions.shoulder) * (invert3 ? -1 : 1);
         elbowtiltcontroller.publish(jointPosition);
         
         ROS_INFO("(%f,%f,%f); shoulder: %f, elbow: %f, rotation: %f", coord->radius, coord->theta, coord->phi, positions.shoulder, positions.elbow, positions.rotation);
@@ -136,9 +138,17 @@ int main (int argc, char **argv) {
     nh.getParam(as2.str(), as2v);
     positions.arm_segment2 = as2v; 
 
-    std::stringstream sinv;
-    sinv << prefix.str() << "shoulderi";
-    nh.getParam(sinv.str(), isShoulderInverted);
+    std::stringstream sinv1;
+    sinv1 << prefix.str() << "invert1";
+    nh.getParam(sinv1.str(), invert1);
+
+    std::stringstream sinv2;
+    sinv2 << prefix.str() << "invert2";
+    nh.getParam(sinv2.str(), invert2);
+
+    std::stringstream sinv3;
+    sinv3 << prefix.str() << "invert3";
+    nh.getParam(sinv3.str(), invert3);
 
     /* Data Subscriptions */
     std::stringstream coord_listen;

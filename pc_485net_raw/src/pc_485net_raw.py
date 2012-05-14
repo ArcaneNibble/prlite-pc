@@ -57,7 +57,7 @@ def decode_blob(blob):
 			#0 can never be a source address
 			#otherwise we always pick up runs of 00 as valid packets
 		#1/21/12: hack to look large to small instead
-		asdfrange = range(3, min(len(blob)-i, 64))
+		asdfrange = range(3, min(len(blob)-i, 32))
 		asdfrange.reverse()
 		for l in asdfrange:
 			#the range needs to be at least 3 for normal packets

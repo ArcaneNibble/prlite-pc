@@ -17,7 +17,9 @@ args="" output="screen"/>
     
     <!-- Start the smart_arm controller -->
     <!-- <include file="$(find smart_arm_controller)/launch/prlite.launch" /-->
+<!--
     <include file="$(find prlite_kinematics)/launch/dual_armik.launch" />
+-->
 
     <!-- node pkg="prlite_teleop" type="ax12_to_pr2_state_msgs.py" name="ax12_to_pr2" /-->
 
