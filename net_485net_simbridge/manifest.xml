@@ -1,0 +1,16 @@
+<package>
+  <description brief="net_485net_simbridge">
+
+     net_485net_simbridge
+
+  </description>
+  <author>robert</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/net_485net_simbridge</url>
+  <depend package="rospy"/>
+  <depend package="packets_485net"/>
+
+</package>
+
+
