@@ -310,7 +310,7 @@ void kinect_get_pos(double *center_x, double *center_y, double *center_z)
 	            XnFloat* m = torsoOrientation.orientation.elements;
 	            KDL::Rotation torsoO(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]);
                 m = lShoulderOrientation.orientation.elements;
-                KDL::Rotation lShouldO(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]);
+                KDL::Rotation lShouldO(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]);/
                 m = rShoulderOrientation.orientation.elements;
                 KDL::Rotation rShouldO(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]);
                 m = lHipOrientation.orientation.elements;
@@ -417,12 +417,12 @@ void kinect_get_pos(double *center_x, double *center_y, double *center_z)
 		// max and min arch checked by Joint Command
 ROS_INFO("User %d: Left (%lf,%lf,%lf,%lf, %lf,%lf,%lf,%lf)", i, lShould.X, lElbow.X, lShould.Z,  lElbow.Z, lElbow.X, lWrist.X, lElbow.Z, lWrist.Z );
 ROS_INFO("User %d: Left (%lf,%lf,%lf), Right (%lf,%lf,%lf)", i, left_elbow_pan,  left_elbow_tilt, left_wrist_tilt, right_elbow_pan, right_elbow_tilt, right_wrist_tilt);
-                ax12->JointCommand( prlite_ax12commander::elbowpanR, right_elbow_pan);
-                ax12->JointCommand( prlite_ax12commander::elbowtiltR, right_elbow_tilt);
-                ax12->JointCommand( prlite_ax12commander::wristtiltR, right_wrist_tilt);
-                ax12->JointCommand( prlite_ax12commander::elbowpan, left_elbow_pan);
-                ax12->JointCommand( prlite_ax12commander::elbowtilt, left_elbow_tilt);
-                ax12->JointCommand( prlite_ax12commander::wristtilt, left_wrist_tilt);
+                ax12->JointGoal( prlite_ax12commander::elbowpanR, right_elbow_pan);
+                ax12->JointGoal( prlite_ax12commander::elbowtiltR, right_elbow_tilt);
+                ax12->JointGoal( prlite_ax12commander::wristtiltR, right_wrist_tilt);
+                ax12->JointGoal( prlite_ax12commander::elbowpan, left_elbow_pan);
+                ax12->JointGoal( prlite_ax12commander::elbowtilt, left_elbow_tilt);
+                ax12->JointGoal( prlite_ax12commander::wristtilt, left_wrist_tilt);
 	
 	
                 // ---------- START HACK #2b -----------------
@@ -449,12 +449,12 @@ ROS_INFO("User %d: Left (%lf,%lf,%lf), Right (%lf,%lf,%lf)", i, left_elbow_pan, 
                 JointCommand( prlite_ax12commander::elbowpanR, right_elbowpan);
 */
 ROS_INFO("User %d: Left (%lf,%lf,%lf,%lf, %lf,%lf,%lf,%lf)", i, lShould.X, lElbow.X, lShould.Z,  lElbow.Z, lElbow.X, lWrist.X, lElbow.Z, lWrist.Z );
-                ax12->JointCommand( prlite_ax12commander::shoulderpan, left_shoulder_pan);
+                ax12->JointGoal( prlite_ax12commander::shoulderpan, left_shoulder_pan);
 ROS_INFO("User %d: Left (%lf,%lf,%lf, %lf), Right (%lf,%lf,%lf,%lf)", i, left_shoulder_pan, left_shoulder_tilt, left_elbow_pan,  left_elbow_tilt, 0.0,0.0,0.0,0.0);
-                ax12->JointCommand( prlite_ax12commander::shoulderpan, left_shoulder_pan);
-                // JointCommand( prlite_ax12commander::shouldertilt, left_shoulder_tilt);
-                ax12->JointCommand( prlite_ax12commander::elbowtilt, left_elbow_tilt);
-                ax12->JointCommand( prlite_ax12commander::elbowpan, left_elbow_pan);
+                ax12->JointGoal( prlite_ax12commander::shoulderpan, left_shoulder_pan);
+                // JointGoal( prlite_ax12commander::shouldertilt, left_shoulder_tilt);
+                ax12->JointGoal( prlite_ax12commander::elbowtilt, left_elbow_tilt);
+                ax12->JointGoal( prlite_ax12commander::elbowpan, left_elbow_pan);
 	
 		// figure out desired tilt and compute desired LinAct length to get that tilt
 /*

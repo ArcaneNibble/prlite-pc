@@ -23,6 +23,9 @@ const uint16_t ARM_DOWN = 1000;
 const uint16_t ARM_UP = 0;
 const uint16_t LINACT_PRECISION = 15;
 
+#define AX12_FEEDBACK 0
+
+ros::Subscriber joint_state_sub;
 ros::Publisher linact_pub;
 ros::Subscriber linact_sub;
 ros::Publisher leftArmPublisher;
@@ -378,19 +381,19 @@ void joint_state_callback(const dynamixel_msgs::JointState& joint_msg_ptr)
 {
     int joint;
 
-    if (joint_msg_ptr.name == "shoulder_pan_joint") {
+    if (joint_msg_ptr.name == "shoulder_pan_jointL") {
         joint = 0;
-    } else if (joint_msg_ptr.name == "elbow_pan_joint") {
+    } else if (joint_msg_ptr.name == "elbow_pan_jointL") {
         joint = 1;
-    } else if (joint_msg_ptr.name == "elbow_tilt_joint") {
+    } else if (joint_msg_ptr.name == "elbow_tilt_jointL") {
         joint = 2;
-    } else if (joint_msg_ptr.name == "wrist_rotate_joint") {
+    } else if (joint_msg_ptr.name == "wrist_rotate_jointL") {
         joint = 3;
-    } else if (joint_msg_ptr.name == "wrist_tilt_joint") {
+    } else if (joint_msg_ptr.name == "wrist_tilt_jointL") {
         joint = 4;
-    } else if (joint_msg_ptr.name == "finger_left_joint") {
+    } else if (joint_msg_ptr.name == "finger_left_jointL") {
         joint = 5;
-    } else if (joint_msg_ptr.name == "finger_right_joint") {
+    } else if (joint_msg_ptr.name == "finger_right_jointL") {
         joint = 6;
     } else if (joint_msg_ptr.name == "shoulder_pan_jointR") {
         joint = 7;
@@ -414,8 +417,12 @@ void joint_state_callback(const dynamixel_msgs::JointState& joint_msg_ptr)
         joint = 16;
     } else {
        joint = -1;
+       ROS_INFO_STREAM("JOINT STATE CALLBACK ERROR: "<< joint_msg_ptr.name);
+       return;
     }
 
+    if (prlite_ax12joint[joint].joint_state.current_pos != joint_msg_ptr.current_pos)
+       ROS_INFO_STREAM("state callback " << joint << " " << joint_msg_ptr.current_pos);
     prlite_ax12joint[joint].joint_state = joint_msg_ptr;
 }
 
@@ -435,7 +442,10 @@ void prlite_ax12commander::init()
 
       leftArmPublisher = n.advertise<prlite_kinematics::SphereCoordinate>("/armik/n0/position", 1000);
       rightArmPublisher = n.advertise<prlite_kinematics::SphereCoordinate>("/armik/n1/position", 1000);
-
+      controller = prlite_ax12controllername[i] + "state";
+#ifdef AX12_FEEDBACK 
+      prlite_ax12joint[i].subscriber = n.subscribe(controller, 1000, joint_state_callback);
+#endif
     }
 
    prlite_ax12commander::get_params();
@@ -584,44 +594,57 @@ void prlite_ax12commander::set_desired_pos(int joint, double desired_pos)
 /*
   if (joint == elbowpan)
     desired_pos += 1.3; 
-*/
   ROS_INFO_STREAM("set_desired_pos " << joint << " " << desired_pos);
+*/
   desired_pos_pub.data = desired_pos;
     prlite_ax12joint[joint].controller.publish(desired_pos_pub);
   prlite_ax12joint[joint].desiredpos = desired_pos;
 }
 
-void prlite_ax12commander::tuck()
+
+#define POS_TYPE_TUCK   0
+#define POS_TYPE_UNTUCK 1
+#define POS_TYPE_KINECT 2
+void prlite_ax12commander::set_all_joints(int pos_type)
 {
    int i;
+   int j = 10;
+   int desired_state;
+   int ret;
+   double val;
+ 
+   do {
+     desired_state = 1;
+     for (i = 0; i <= prlite_ax12commander::rfingerR; i ++) {
+       if (pos_type == POS_TYPE_TUCK) 
+         val = prlite_ax12joint[i].tuck;
+       else if (pos_type == POS_TYPE_UNTUCK) 
+         val = prlite_ax12joint[i].untuck;
+       else if (pos_type == POS_TYPE_KINECT) 
+         val = prlite_ax12joint[i].kinect_callobrate;
+       ret = JointGoal(i, val);
+       if (ret >= 0)
+         desired_state *= ret;
+       else
+         ROS_INFO_STREAM("ERROR: set all joints mode " << pos_type << " joint " << i );
+     }
+     ros::Duration(0.2).sleep(); // 50 hz
+   } while (desired_state == 0 && j-- > 0);
+}
 
-   for (i = 0; i <= prlite_ax12commander::rfingerR; i ++) {
-     set_desired_pos(i, prlite_ax12joint[i].tuck);
-     // ros::Duration(0.1).sleep();
-   }
-   // setShoulderGoal(0.0, 0.0);
+void prlite_ax12commander::tuck()
+{
+  set_all_joints(POS_TYPE_TUCK);
 }
 
 void prlite_ax12commander::untuck()
 {
-   int i;
-
-   for (i = 0; i <= prlite_ax12commander::rfingerR; i ++) {
-     set_desired_pos(i, prlite_ax12joint[i].untuck);
-     // ros::Duration(0.1).sleep();
-   }
-   // setShoulderGoal(0.0, 0.0);
+  set_all_joints(POS_TYPE_UNTUCK);
 }
 
 void prlite_ax12commander::kinect_callobration_pos()
 {
-   int i;
-
-   for (i = 0; i <= prlite_ax12commander::rfingerR; i ++) {
-     set_desired_pos(i, prlite_ax12joint[i].kinect_callobrate);
-     // ros::Duration(0.1).sleep();
-   }
-   // setShoulderGoal(1000, 1000);
+  set_all_joints(POS_TYPE_KINECT);
 }
 
 
@@ -732,7 +755,11 @@ void prlite_ax12commander::JointCommand(int joint, double vel)
         pos = prlite_ax12joint[joint].minpos;
       if (pos > prlite_ax12joint[joint].maxpos)
         pos = prlite_ax12joint[joint].maxpos;
+#ifdef AX12_FEEDBACK
+      JointGoal(joint, pos);
+#else
       set_desired_pos(joint, pos);
+#endif
 } 
 
 void prlite_ax12commander::WristCommand(double right_wrist_vel, double left_wrist_vel)
@@ -783,3 +810,57 @@ void prlite_ax12commander::ToggleGrippers()
     move_to_desired_pos();
   }
 }
+
+// set joint goal & gradually move to it based on current pos.
+// need to call in a loop.
+int prlite_ax12commander::JointGoal(int joint, double goal)
+{
+    double pos;
+    double multiplier = 1;
+#define AX12_DELTA  .15
+#ifdef AX12_FEEDBACK
+    prlite_ax12joint[joint].desiredpos = goal;
+    if (joint == 14)
+      multiplier = 1; 
+    if (prlite_ax12joint[joint].joint_state.current_pos < goal) {
+      pos = prlite_ax12joint[joint].joint_state.current_pos + AX12_DELTA*multiplier;
+      if (pos > goal) pos = goal;
+    } else if (prlite_ax12joint[joint].joint_state.current_pos > goal) {
+      pos = prlite_ax12joint[joint].joint_state.current_pos - AX12_DELTA*multiplier;
+      if (pos < goal) pos = goal;
+    } else
+      pos = goal;
+    /*
+      factor in motor_temps[], is_moving
+    */
+    if (prlite_ax12joint[joint].joint_state.current_pos == 0 &&
+        prlite_ax12joint[joint].joint_state.error == 0 &&
+        prlite_ax12joint[joint].joint_state.velocity == 0 &&
+        prlite_ax12joint[joint].joint_state.load == 0 &&
+        prlite_ax12joint[joint].joint_state.is_moving == 0) {
+        // not yet initialized
+        return -3;
+    }
+    if (pos == prlite_ax12joint[joint].desiredpos &&
+        !(prlite_ax12joint[joint].joint_state.is_moving)) {
+        // ROS_INFO_STREAM("JointGoal " << joint << " stuck " << prlite_ax12joint[joint].joint_state.current_pos << " " << pos << " " << goal);
+        return -1;  // not moving;  hit a min/max?
+    } else if (( prlite_ax12joint[joint].joint_state.motor_temps[0] > 70)
+       ||  ((joint == 0 || joint == 2 || joint == 4 || joint == 7 || joint ==  9
+            || joint == 11) &&
+           (prlite_ax12joint[joint].joint_state.motor_temps[1] > 70))) {
+        ROS_INFO_STREAM("JointGoal " << joint << " overheat " << prlite_ax12joint[joint].joint_state.motor_temps[0]);
+        return -2;
+    }
+    if (pos != goal) {
+      ROS_INFO_STREAM("JointGoal " << joint << " " << prlite_ax12joint[joint].joint_state.current_pos << " " << pos << " " << goal);
+      set_desired_pos(joint, pos);
+    }
+    // ROS_INFO_STREAM("JG " << joint );
+    if (pos == goal) return(1);
+    else return (0);
+#else
+    set_desired_pos(joint,goal);
+    return(1);
+#endif
+} 

@@ -1,0 +1,5 @@
+pkill -f roscore 
+pkill -f pc_485net_raw.py
+pkill -f 485net_packet_sorter.py
+pkill -f id_server.py
+pkill -f base_controller

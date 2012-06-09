@@ -89,5 +89,8 @@ void ArmCommand(
        double l_x_vel, double l_y_vel, double l_z_vel);
 void HeadCommand(double pan_vel, double tilt_vel);
 void ToggleGrippers();
+int JointGoal(int joint, double goal);
+void set_all_joints(int pos_type);
+
 
 };
