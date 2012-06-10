@@ -310,7 +310,7 @@ void kinect_get_pos(double *center_x, double *center_y, double *center_z)
 	            XnFloat* m = torsoOrientation.orientation.elements;
 	            KDL::Rotation torsoO(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]);
                 m = lShoulderOrientation.orientation.elements;
-                KDL::Rotation lShouldO(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]);/
+                KDL::Rotation lShouldO(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]);
                 m = rShoulderOrientation.orientation.elements;
                 KDL::Rotation rShouldO(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]);
                 m = lHipOrientation.orientation.elements;
