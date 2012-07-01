@@ -9,5 +9,5 @@ sleep 5
 sleep 5
 ./prlite_base/bin/base_controller &
 sleep 5
-cd /opt/ros/electric/stacks/prlite/prlite_teleop/launch
-roslaunch prlite_electric.launch 
+#cd /opt/ros/electric/stacks/prlite/prlite_teleop/launch
+#roslaunch prlite_electric.launch 

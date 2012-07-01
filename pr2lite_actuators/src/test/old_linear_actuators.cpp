@@ -5,9 +5,13 @@
 
 #include <sstream>
 #include <cstdlib>
+#include <cmath>
 
 #include "std_msgs/String.h"
 #include "packets_485net/packet_485net_dgram.h"
+
+#define BASE_LENGTH 9.9f
+#define SWING 4.0f
 
 const uint16_t TORSO_UP = 1000;
 const uint16_t TORSO_MID= 500;
@@ -18,11 +22,8 @@ const uint16_t LINACT_PRECISION = 15;
 
 #define AX12_FEEDBACK 0
 
-ros::Subscriber joint_state_sub;
 ros::Publisher linact_pub;
 ros::Subscriber linact_sub;
-ros::Publisher leftArmPublisher;
-ros::Publisher rightArmPublisher;
 
 #define LINACT_TORSO        0
 #define LINACT_RIGHT_ARM    1
@@ -55,6 +56,7 @@ void LinactPublish(int this_linact)
     if (linact_goal[this_linact] != linact_goal_last[this_linact])
     {
       // publish linear actuator command
+        ROS_INFO("[ACTUATOR ID %d] herp derp", this_linact);
       packets_485net::packet_485net_dgram linact_cmd;
       linact_cmd.destination = linact_id[this_linact];
           linact_cmd.source = 0xF0;
@@ -114,7 +116,9 @@ void LinactCallback(const packets_485net::packet_485net_dgram& linear_actuator_s
         linact_arrived[this_linact] = false;
     }
     // hack for if linear actuator isn't working
-    //linact_arrived[this_linact] = true; 
+    //linact_arrived[this_linact] = true;
+    
+    ROS_INFO("[ACTUATOR ID %d] publish!", this_linact); 
     LinactPublish(this_linact);
 }
 
@@ -133,66 +137,6 @@ void LinactCallback(const packets_485net::packet_485net_dgram& linear_actuator_s
   }
 }*/
 
-void setTorsoGoal(int goal)
-{
-  static int direction = 0;
-
-  if (0 == goal) return;
-  linact_goal[LINACT_TORSO] -= goal*LINACT_PRECISION;
-  if (linact_goal[LINACT_TORSO] > TORSO_UP)
-    linact_goal[LINACT_TORSO] = TORSO_UP;
-  else if (linact_goal[LINACT_TORSO] < TORSO_DOWN)
-    linact_goal[LINACT_TORSO] = TORSO_DOWN;
-  if (
-     !(direction == goal 
-     && !linact_arrived[LINACT_TORSO]
-     && linact_new_goal[LINACT_TORSO]
-     )) {
-    LinactPublish(LINACT_TORSO);
-    direction = goal;
-  } else {
-    ROS_INFO("skip torso ");
-  }
-  ROS_INFO_STREAM("Torso: " << linact_goal[LINACT_TORSO]);
-}
-
-void setShoulderGoal(int right_goal, int left_goal)
-{
-  static int direction[2] = {0, 0};
-
-  if(0 == left_goal && 0 == right_goal) return;
-  linact_goal[LINACT_RIGHT_ARM] -= right_goal*LINACT_PRECISION;
-  linact_goal[LINACT_LEFT_ARM] -= left_goal*LINACT_PRECISION;
-  if (linact_goal[LINACT_RIGHT_ARM] < ARM_UP)
-    linact_goal[LINACT_RIGHT_ARM] = ARM_UP;
-  else if (linact_goal[LINACT_RIGHT_ARM] > ARM_DOWN)
-    linact_goal[LINACT_RIGHT_ARM] = ARM_DOWN;
-  if (linact_goal[LINACT_LEFT_ARM] < ARM_UP)
-    linact_goal[LINACT_LEFT_ARM] = ARM_UP;
-  else if (linact_goal[LINACT_LEFT_ARM] > ARM_DOWN)
-    linact_goal[LINACT_LEFT_ARM] = ARM_DOWN;
-  if (
-     !(direction[0] == right_goal && !linact_arrived[LINACT_RIGHT_ARM]
-     && linact_new_goal[LINACT_RIGHT_ARM]
-     )) {
-    LinactPublish(LINACT_RIGHT_ARM);
-    direction[0] = right_goal;
-  } else {
-    // ROS_INFO("skip right Shoulder ");
-  }
-  if (
-     !(direction[1] == left_goal && !linact_arrived[LINACT_LEFT_ARM]
-     && linact_new_goal[LINACT_LEFT_ARM]
-     )) {
-    LinactPublish(LINACT_LEFT_ARM);
-    direction[1] = left_goal;
-  } else {
-    // ROS_INFO("skip Left Shoulder ");
-  }
-  // ROS_INFO_STREAM("Left Shoulder: " << linact_goal[LINACT_LEFT_ARM] 
-  //    << "  Right Shoulder: " << linact_goal[LINACT_RIGHT_ARM]);
-}
-
 int main (int argc, char** argv)
 {
     ros::init(argc, argv, "linact_test");
@@ -207,7 +151,53 @@ int main (int argc, char** argv)
         linact_new_goal[i] = false; 
     }
 
-    setShoulderGoal(10, 10);
+    /*while(ros::ok())
+    {
+        for(float f = 25.0; f < 65.0; f += 5.0)
+        {
+            double length = sqrt(-162.2 * cos((87.58 - f) * M_PI / 180.0) + 256.0) - BASE_LENGTH;
+            length *= (1000.0f / SWING);
+
+            if(length < 10.0f) length = 10.0f;
+            if(length >  1000.0f) length = 1000.0f;
+
+            linact_goal[LINACT_LEFT_ARM] = (int) length;
+            linact_goal[LINACT_RIGHT_ARM] = (int) length;
+            LinactPublish(LINACT_LEFT_ARM);
+            LinactPublish(LINACT_RIGHT_ARM);
+
+            ros::spinOnce();
+            ros::Duration(2.0).sleep();
+       }
+
+        for(float f = 65.0; f > 25.0; f -= 5.0)
+        {
+            double length = sqrt(-162.2 * cos((87.58 - f) * M_PI / 180.0) + 256.0) - BASE_LENGTH;
+            length *= (1000.0f / SWING);
+
+            if(length < 10.0f) length = 10.0f;
+            if(length >  1000.0f) length = 1000.0f;
+
+            linact_goal[LINACT_LEFT_ARM] = (int) length;
+            linact_goal[LINACT_RIGHT_ARM] = (int) length;
+            LinactPublish(LINACT_LEFT_ARM);    
+            LinactPublish(LINACT_RIGHT_ARM);
+
+            ros::spinOnce();
+            ros::Duration(2.0).sleep();
+        }
+    }*/
+
+    double length = sqrt(-162.2 * cos((87.58 - atof(argv[1])) * M_PI / 180.0) + 256.0) - BASE_LENGTH;
+    length *= (1000.0f / SWING);
+
+    if(length < 10.0f) length = 10.0f;
+    if(length >  1000.0f) length = 1000.0f;
+
+    linact_goal[LINACT_LEFT_ARM] = (int) length;
+    linact_goal[LINACT_RIGHT_ARM] = (int) length;
+    LinactPublish(LINACT_LEFT_ARM);    
+    LinactPublish(LINACT_RIGHT_ARM);
 
     ros::spin();
 

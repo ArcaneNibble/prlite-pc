@@ -1,0 +1,9 @@
+<launch>
+    <!-- load the linear actuator parameters -->
+    <rosparam command="load" file="$(find pr2lite_actuators)/config/pr2lite_actuators.yaml" />
+
+    <!-- launch the linear actuator server -->
+    <node name="linact_server" pkg="pr2lite_actuators" type="linact_server">
+        <param name="plugins" value="$(find pr2lite_actuators)/lib/liblinactrawplugin.so"/>
+    </node>
+</launch>

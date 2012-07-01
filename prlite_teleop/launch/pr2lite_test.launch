@@ -1,0 +1,6 @@
+<launch>
+    <!-- Start the avr rs485 network -->
+    <node name="485net_driver" pkg="pc_485net_raw" type="pc_485net_raw.py" />
+    <node name="packet_handler" pkg="net_485net_packet_handler" type="485net_packet_sorter.py" />
+    <node name="id_handler" pkg="net_485net_id_handler" type="id_server.py" />
+</launch>
