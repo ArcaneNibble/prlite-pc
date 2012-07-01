@@ -55,13 +55,6 @@ joint_limits:
     has_acceleration_limits: true
     max_acceleration: 1
     angle_wraparound: false
-  left_gripper_right_joint:
-    has_position_limits: true
-    has_velocity_limits: true
-    max_velocity: 1.17
-    has_acceleration_limits: true
-    max_acceleration: 1
-    angle_wraparound: false
   right_shoulder_pan_joint:
     has_position_limits: true
     has_velocity_limits: true
@@ -112,13 +105,6 @@ joint_limits:
     max_acceleration: 1
     angle_wraparound: false
   right_wrist_roll_joint:
-    has_position_limits: true
-    has_velocity_limits: true
-    max_velocity: 1.17
-    has_acceleration_limits: true
-    max_acceleration: 1
-    angle_wraparound: false
-  right_gripper_right_joint:
     has_position_limits: true
     has_velocity_limits: true
     max_velocity: 1.17

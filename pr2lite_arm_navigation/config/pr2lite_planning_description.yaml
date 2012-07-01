@@ -5,11 +5,11 @@ multi_dof_joints:
     child_frame_id: base_footprint
 groups:
   - name: left_arm
-    base_link: left_shoulder_pan_link
-    tip_link: left_gripper_right_link
+    base_link: top_shelf_link
+    tip_link: left_wrist_roll_link
   - name: right_arm
-    base_link: right_shoulder_pan_link
-    tip_link: right_gripper_right_link
+    base_link: top_shelf_link
+    tip_link: right_wrist_roll_link
 default_collision_operations:
   - object1: base_footprint
     object2: base_link
@@ -76,6 +76,60 @@ default_collision_operations:
     operation: disable  # Adjacent in collision
   - object1: left_wrist_roll_link
     object2: left_gripper_right_link
+    operation: disable  # Adjacent in collision
+  - object1: top_shelf_link
+    object2: neck_link
+    operation: disable  # Adjacent in collision
+  - object1: neck_link
+    object2: lidar_bar_link
+    operation: disable  # Adjacent in collision
+  - object1: lidar_bar_link
+    object2: lidar_tilt_link
+    operation: disable  # Adjacent in collision
+  - object1: lidar_tilt_link
+    object2: lidar_base_link
+    operation: disable  # Adjacent in collision
+  - object1: lidar_base_link
+    object2: hokuyo_tilt_mount_link
+    operation: disable  # Adjacent in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Adjacent in collision
+  - object1: neck_link
+    object2: top_neck_link
+    operation: disable  # Adjacent in collision
+  - object1: top_neck_link
+    object2: head_base_link
+    operation: disable  # Adjacent in collision
+  - object1: head_base_link
+    object2: head_side_link
+    operation: disable  # Adjacent in collision
+  - object1: head_side_link
+    object2: kinect_side_link
+    operation: disable  # Adjacent in collision
+  - object1: kinect_side_link
+    object2: kinect_base_link
+    operation: disable  # Adjacent in collision
+  - object1: kinect_base_link
+    object2: kinect_link
+    operation: disable  # Adjacent in collision
+  - object1: kinect_link
+    object2: kinect_depth_frame
+    operation: disable  # Adjacent in collision
+  - object1: kinect_depth_frame
+    object2: kinect_depth_optical_frame
+    operation: disable  # Adjacent in collision
+  - object1: kinect_link
+    object2: kinect_rgb_frame
+    operation: disable  # Adjacent in collision
+  - object1: kinect_rgb_frame
+    object2: kinect_rgb_optical_frame
+    operation: disable  # Adjacent in collision
+  - object1: kinect_base_link
+    object2: standoff1_kinect_link
+    operation: disable  # Adjacent in collision
+  - object1: kinect_base_link
+    object2: standoff2_kinect_link
     operation: disable  # Adjacent in collision
   - object1: top_shelf_link
     object2: right_arm_shelf_link
@@ -266,9 +320,6 @@ default_collision_operations:
   - object1: left_arm_shelf_link
     object2: left_upper_arm_link
     operation: disable  # Always in collision
-  - object1: left_elbow_flex_link
-    object2: left_upper_arm_link
-    operation: disable  # Always in collision
   - object1: left_shoulder_pan_link
     object2: left_upper_arm_link
     operation: disable  # Always in collision
@@ -276,9 +327,6 @@ default_collision_operations:
     object2: right_shoulder_link
     operation: disable  # Always in collision
   - object1: right_arm_shelf_link
-    object2: right_upper_arm_link
-    operation: disable  # Always in collision
-  - object1: right_elbow_flex_link
     object2: right_upper_arm_link
     operation: disable  # Always in collision
   - object1: right_shoulder_pan_link
@@ -293,17 +341,8 @@ default_collision_operations:
   - object1: base_link
     object2: bottom_outer_torso_link
     operation: disable  # Default in collision
-  - object1: right_upper_arm_link
-    object2: right_elbow_pan_link
-    operation: disable  # Default in collision
-  - object1: left_upper_arm_link
-    object2: left_elbow_pan_link
-    operation: disable  # Default in collision
-  - object1: left_elbow_pan_link
-    object2: left_forearm_link
-    operation: disable  # Often in collision
-  - object1: right_elbow_pan_link
-    object2: right_forearm_link
+  - object1: hokuyo_tilt_mount_link
+    object2: lidar_bar_link
     operation: disable  # Often in collision
   - object1: base_footprint
     object2: bl_anchor_rod_link
@@ -381,10 +420,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: base_footprint
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: base_footprint
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: base_footprint
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: base_footprint
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: base_footprint
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: base_footprint
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: base_footprint
     object2: inner_torso_bottom_link
@@ -393,22 +444,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: base_footprint
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: base_footprint
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: base_footprint
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: base_footprint
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: base_footprint
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: base_footprint
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: base_footprint
-    object2: left_forearm_link
-    operation: disable  # Never in collision
-  - object1: base_footprint
-    object2: left_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: base_footprint
-    object2: left_gripper_right_link
     operation: disable  # Never in collision
   - object1: base_footprint
     object2: left_lower_linear_actuator_link
@@ -432,28 +477,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: base_footprint
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: base_footprint
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: base_footprint
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: base_footprint
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: base_footprint
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: base_footprint
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: base_footprint
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: base_footprint
-    object2: right_forearm_link
-    operation: disable  # Never in collision
-  - object1: base_footprint
-    object2: right_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: base_footprint
-    object2: right_gripper_right_link
     operation: disable  # Never in collision
   - object1: base_footprint
     object2: right_lower_linear_actuator_link
@@ -477,10 +513,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: base_footprint
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: base_footprint
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: base_footprint
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: base_footprint
     object2: top_shelf_link
@@ -555,22 +594,34 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: base_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: base_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: base_link
     object2: hokuyo_link
+    operation: disable  # Never in collision
+  - object1: base_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: base_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: base_link
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: base_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: base_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: base_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: base_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: base_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: base_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: base_link
-    object2: left_forearm_link
     operation: disable  # Never in collision
   - object1: base_link
     object2: left_lower_linear_actuator_link
@@ -594,16 +645,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: base_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: base_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: base_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: base_link
+    object2: neck_link
+    operation: disable  # Never in collision
+  - object1: base_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: base_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: base_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: base_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: base_link
     object2: right_lower_linear_actuator_link
@@ -625,6 +679,15 @@ default_collision_operations:
     operation: disable  # Never in collision
   - object1: base_link
     object2: right_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: base_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: base_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: base_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: base_link
     object2: top_shelf_link
@@ -690,10 +753,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: bl_anchor_rod_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: bl_anchor_rod_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: bl_anchor_rod_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: bl_anchor_rod_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: bl_anchor_rod_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: bl_anchor_rod_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: bl_anchor_rod_link
     object2: inner_torso_bottom_link
@@ -702,16 +777,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: bl_anchor_rod_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: bl_anchor_rod_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: bl_anchor_rod_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: bl_anchor_rod_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: bl_anchor_rod_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: bl_anchor_rod_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: bl_anchor_rod_link
-    object2: left_forearm_link
     operation: disable  # Never in collision
   - object1: bl_anchor_rod_link
     object2: left_lower_linear_actuator_link
@@ -735,22 +810,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: bl_anchor_rod_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: bl_anchor_rod_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: bl_anchor_rod_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: bl_anchor_rod_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: bl_anchor_rod_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: bl_anchor_rod_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: bl_anchor_rod_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: bl_anchor_rod_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: bl_anchor_rod_link
     object2: right_lower_linear_actuator_link
@@ -774,7 +846,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: bl_anchor_rod_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: bl_anchor_rod_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: bl_anchor_rod_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: bl_anchor_rod_link
     object2: top_shelf_link
@@ -849,10 +927,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: bl_base_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: bl_base_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: bl_base_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: bl_base_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: bl_base_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: bl_base_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: bl_base_link
     object2: inner_torso_bottom_link
@@ -861,16 +951,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: bl_base_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: bl_base_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: bl_base_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: bl_base_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: bl_base_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: bl_base_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: bl_base_link
-    object2: left_forearm_link
     operation: disable  # Never in collision
   - object1: bl_base_link
     object2: left_lower_linear_actuator_link
@@ -894,25 +984,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: bl_base_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: bl_base_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: bl_base_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: bl_base_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: bl_base_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: bl_base_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: bl_base_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: bl_base_link
-    object2: right_forearm_link
-    operation: disable  # Never in collision
-  - object1: bl_base_link
-    object2: right_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: bl_base_link
-    object2: right_gripper_right_link
     operation: disable  # Never in collision
   - object1: bl_base_link
     object2: right_lower_linear_actuator_link
@@ -936,10 +1020,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: bl_base_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: bl_base_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: bl_base_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: bl_base_link
     object2: top_shelf_link
@@ -1017,10 +1104,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: bl_caster_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: bl_caster_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: bl_caster_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: bl_caster_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: bl_caster_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: bl_caster_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: bl_caster_link
     object2: inner_torso_bottom_link
@@ -1029,16 +1128,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: bl_caster_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: bl_caster_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: bl_caster_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: bl_caster_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: bl_caster_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: bl_caster_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: bl_caster_link
-    object2: left_forearm_link
     operation: disable  # Never in collision
   - object1: bl_caster_link
     object2: left_lower_linear_actuator_link
@@ -1062,22 +1161,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: bl_caster_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: bl_caster_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: bl_caster_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: bl_caster_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: bl_caster_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: bl_caster_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: bl_caster_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: bl_caster_link
-    object2: right_forearm_link
-    operation: disable  # Never in collision
-  - object1: bl_caster_link
-    object2: right_gripper_right_link
     operation: disable  # Never in collision
   - object1: bl_caster_link
     object2: right_lower_linear_actuator_link
@@ -1101,10 +1197,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: bl_caster_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: bl_caster_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: bl_caster_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: bl_caster_link
     object2: top_shelf_link
@@ -1164,10 +1263,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: bl_push_rod_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: bl_push_rod_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: bl_push_rod_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: bl_push_rod_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: bl_push_rod_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: bl_push_rod_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: bl_push_rod_link
     object2: inner_torso_bottom_link
@@ -1176,16 +1287,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: bl_push_rod_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: bl_push_rod_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: bl_push_rod_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: bl_push_rod_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: bl_push_rod_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: bl_push_rod_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: bl_push_rod_link
-    object2: left_forearm_link
     operation: disable  # Never in collision
   - object1: bl_push_rod_link
     object2: left_lower_linear_actuator_link
@@ -1209,19 +1320,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: bl_push_rod_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: bl_push_rod_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: bl_push_rod_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: bl_push_rod_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: bl_push_rod_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: bl_push_rod_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: bl_push_rod_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: bl_push_rod_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: bl_push_rod_link
     object2: right_lower_linear_actuator_link
@@ -1245,10 +1356,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: bl_push_rod_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: bl_push_rod_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: bl_push_rod_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: bl_push_rod_link
     object2: top_shelf_link
@@ -1317,10 +1431,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: bl_wheel_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: bl_wheel_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: bl_wheel_link
     object2: inner_torso_bottom_link
@@ -1329,16 +1455,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: bl_wheel_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: bl_wheel_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: bl_wheel_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: bl_wheel_link
-    object2: left_forearm_link
     operation: disable  # Never in collision
   - object1: bl_wheel_link
     object2: left_lower_linear_actuator_link
@@ -1362,28 +1488,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: bl_wheel_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: bl_wheel_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: bl_wheel_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: bl_wheel_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: bl_wheel_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: bl_wheel_link
-    object2: right_forearm_link
-    operation: disable  # Never in collision
-  - object1: bl_wheel_link
-    object2: right_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: bl_wheel_link
-    object2: right_gripper_right_link
     operation: disable  # Never in collision
   - object1: bl_wheel_link
     object2: right_lower_linear_actuator_link
@@ -1407,10 +1524,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: bl_wheel_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: bl_wheel_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: bl_wheel_link
     object2: top_shelf_link
@@ -1482,10 +1602,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: bl_wheel_motor_block_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_motor_block_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_motor_block_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: bl_wheel_motor_block_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_motor_block_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_motor_block_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: bl_wheel_motor_block_link
     object2: inner_torso_bottom_link
@@ -1494,16 +1626,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: bl_wheel_motor_block_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_motor_block_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_motor_block_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_motor_block_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: bl_wheel_motor_block_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: bl_wheel_motor_block_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: bl_wheel_motor_block_link
-    object2: left_forearm_link
     operation: disable  # Never in collision
   - object1: bl_wheel_motor_block_link
     object2: left_lower_linear_actuator_link
@@ -1527,22 +1659,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: bl_wheel_motor_block_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_motor_block_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_motor_block_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_motor_block_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: bl_wheel_motor_block_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: bl_wheel_motor_block_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: bl_wheel_motor_block_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: bl_wheel_motor_block_link
-    object2: right_forearm_link
-    operation: disable  # Never in collision
-  - object1: bl_wheel_motor_block_link
-    object2: right_gripper_right_link
     operation: disable  # Never in collision
   - object1: bl_wheel_motor_block_link
     object2: right_lower_linear_actuator_link
@@ -1566,10 +1695,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: bl_wheel_motor_block_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: bl_wheel_motor_block_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: bl_wheel_motor_block_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: bl_wheel_motor_block_link
     object2: top_shelf_link
@@ -1638,16 +1770,37 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: bottom_outer_torso_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: bottom_outer_torso_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: bottom_outer_torso_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: bottom_outer_torso_link
     object2: hokuyo_mount_link
     operation: disable  # Never in collision
   - object1: bottom_outer_torso_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: bottom_outer_torso_link
+    object2: hokuyo_tilt_mount_link
+    operation: disable  # Never in collision
+  - object1: bottom_outer_torso_link
     object2: inner_torso_bottom_link
     operation: disable  # Never in collision
   - object1: bottom_outer_torso_link
     object2: inner_torso_top_link
+    operation: disable  # Never in collision
+  - object1: bottom_outer_torso_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: bottom_outer_torso_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: bottom_outer_torso_link
+    object2: kinect_side_link
     operation: disable  # Never in collision
   - object1: bottom_outer_torso_link
     object2: left_arm_shelf_link
@@ -1671,6 +1824,18 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: bottom_outer_torso_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: bottom_outer_torso_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: bottom_outer_torso_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: bottom_outer_torso_link
+    object2: neck_link
+    operation: disable  # Never in collision
+  - object1: bottom_outer_torso_link
     object2: right_arm_shelf_link
     operation: disable  # Never in collision
   - object1: bottom_outer_torso_link
@@ -1690,6 +1855,15 @@ default_collision_operations:
     operation: disable  # Never in collision
   - object1: bottom_outer_torso_link
     object2: right_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: bottom_outer_torso_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: bottom_outer_torso_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: bottom_outer_torso_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: bottom_outer_torso_link
     object2: wheel_linear_actuator_link
@@ -1734,10 +1908,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: br_anchor_rod_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: br_anchor_rod_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: br_anchor_rod_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: br_anchor_rod_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: br_anchor_rod_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: br_anchor_rod_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: br_anchor_rod_link
     object2: inner_torso_bottom_link
@@ -1746,16 +1932,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: br_anchor_rod_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: br_anchor_rod_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: br_anchor_rod_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: br_anchor_rod_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: br_anchor_rod_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: br_anchor_rod_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: br_anchor_rod_link
-    object2: left_forearm_link
     operation: disable  # Never in collision
   - object1: br_anchor_rod_link
     object2: left_lower_linear_actuator_link
@@ -1779,16 +1965,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: br_anchor_rod_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: br_anchor_rod_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: br_anchor_rod_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: br_anchor_rod_link
+    object2: neck_link
+    operation: disable  # Never in collision
+  - object1: br_anchor_rod_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: br_anchor_rod_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: br_anchor_rod_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: br_anchor_rod_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: br_anchor_rod_link
     object2: right_lower_linear_actuator_link
@@ -1812,10 +2001,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: br_anchor_rod_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: br_anchor_rod_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: br_anchor_rod_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: br_anchor_rod_link
     object2: top_shelf_link
@@ -1869,10 +2061,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: br_base_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: br_base_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: br_base_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: br_base_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: br_base_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: br_base_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: br_base_link
     object2: inner_torso_bottom_link
@@ -1881,22 +2085,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: br_base_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: br_base_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: br_base_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: br_base_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: br_base_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: br_base_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: br_base_link
-    object2: left_forearm_link
-    operation: disable  # Never in collision
-  - object1: br_base_link
-    object2: left_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: br_base_link
-    object2: left_gripper_right_link
     operation: disable  # Never in collision
   - object1: br_base_link
     object2: left_lower_linear_actuator_link
@@ -1920,22 +2118,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: br_base_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: br_base_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: br_base_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: br_base_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: br_base_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: br_base_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: br_base_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: br_base_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: br_base_link
     object2: right_lower_linear_actuator_link
@@ -1959,10 +2154,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: br_base_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: br_base_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: br_base_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: br_base_link
     object2: top_shelf_link
@@ -2019,10 +2217,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: br_caster_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: br_caster_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: br_caster_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: br_caster_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: br_caster_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: br_caster_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: br_caster_link
     object2: inner_torso_bottom_link
@@ -2031,19 +2241,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: br_caster_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: br_caster_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: br_caster_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: br_caster_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: br_caster_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: br_caster_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: br_caster_link
-    object2: left_forearm_link
-    operation: disable  # Never in collision
-  - object1: br_caster_link
-    object2: left_gripper_right_link
     operation: disable  # Never in collision
   - object1: br_caster_link
     object2: left_lower_linear_actuator_link
@@ -2067,22 +2274,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: br_caster_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: br_caster_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: br_caster_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: br_caster_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: br_caster_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: br_caster_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: br_caster_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: br_caster_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: br_caster_link
     object2: right_lower_linear_actuator_link
@@ -2106,7 +2310,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: br_caster_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: br_caster_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: br_caster_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: br_caster_link
     object2: top_shelf_link
@@ -2151,10 +2361,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: br_push_rod_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: br_push_rod_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: br_push_rod_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: br_push_rod_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: br_push_rod_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: br_push_rod_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: br_push_rod_link
     object2: inner_torso_bottom_link
@@ -2163,19 +2385,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: br_push_rod_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: br_push_rod_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: br_push_rod_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: br_push_rod_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: br_push_rod_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: br_push_rod_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: br_push_rod_link
-    object2: left_forearm_link
-    operation: disable  # Never in collision
-  - object1: br_push_rod_link
-    object2: left_gripper_left_link
     operation: disable  # Never in collision
   - object1: br_push_rod_link
     object2: left_lower_linear_actuator_link
@@ -2199,22 +2418,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: br_push_rod_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: br_push_rod_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: br_push_rod_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: br_push_rod_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: br_push_rod_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: br_push_rod_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: br_push_rod_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: br_push_rod_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: br_push_rod_link
     object2: right_lower_linear_actuator_link
@@ -2238,7 +2454,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: br_push_rod_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: br_push_rod_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: br_push_rod_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: br_push_rod_link
     object2: top_shelf_link
@@ -2286,10 +2508,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: br_wheel_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: br_wheel_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: br_wheel_link
     object2: inner_torso_bottom_link
@@ -2298,22 +2532,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: br_wheel_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: br_wheel_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: br_wheel_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: br_wheel_link
-    object2: left_forearm_link
-    operation: disable  # Never in collision
-  - object1: br_wheel_link
-    object2: left_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: br_wheel_link
-    object2: left_gripper_right_link
     operation: disable  # Never in collision
   - object1: br_wheel_link
     object2: left_lower_linear_actuator_link
@@ -2337,22 +2565,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: br_wheel_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: br_wheel_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: br_wheel_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: br_wheel_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: br_wheel_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: br_wheel_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: br_wheel_link
     object2: right_lower_linear_actuator_link
@@ -2376,10 +2601,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: br_wheel_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: br_wheel_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: br_wheel_link
     object2: top_shelf_link
@@ -2430,10 +2658,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: br_wheel_motor_block_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_motor_block_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_motor_block_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: br_wheel_motor_block_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_motor_block_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_motor_block_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: br_wheel_motor_block_link
     object2: inner_torso_bottom_link
@@ -2442,22 +2682,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: br_wheel_motor_block_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_motor_block_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_motor_block_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_motor_block_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: br_wheel_motor_block_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: br_wheel_motor_block_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: br_wheel_motor_block_link
-    object2: left_forearm_link
-    operation: disable  # Never in collision
-  - object1: br_wheel_motor_block_link
-    object2: left_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: br_wheel_motor_block_link
-    object2: left_gripper_right_link
     operation: disable  # Never in collision
   - object1: br_wheel_motor_block_link
     object2: left_lower_linear_actuator_link
@@ -2481,22 +2715,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: br_wheel_motor_block_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: br_wheel_motor_block_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_motor_block_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_motor_block_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: br_wheel_motor_block_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: br_wheel_motor_block_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: br_wheel_motor_block_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: br_wheel_motor_block_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: br_wheel_motor_block_link
     object2: right_lower_linear_actuator_link
@@ -2520,7 +2751,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: br_wheel_motor_block_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_motor_block_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: br_wheel_motor_block_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: br_wheel_motor_block_link
     object2: top_shelf_link
@@ -2559,10 +2796,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: fl_anchor_rod_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: fl_anchor_rod_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: fl_anchor_rod_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: fl_anchor_rod_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: fl_anchor_rod_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: fl_anchor_rod_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: fl_anchor_rod_link
     object2: inner_torso_bottom_link
@@ -2571,16 +2820,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: fl_anchor_rod_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: fl_anchor_rod_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: fl_anchor_rod_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: fl_anchor_rod_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fl_anchor_rod_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fl_anchor_rod_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fl_anchor_rod_link
-    object2: left_forearm_link
     operation: disable  # Never in collision
   - object1: fl_anchor_rod_link
     object2: left_lower_linear_actuator_link
@@ -2604,22 +2853,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fl_anchor_rod_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: fl_anchor_rod_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: fl_anchor_rod_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: fl_anchor_rod_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: fl_anchor_rod_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fl_anchor_rod_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fl_anchor_rod_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fl_anchor_rod_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: fl_anchor_rod_link
     object2: right_lower_linear_actuator_link
@@ -2643,7 +2889,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fl_anchor_rod_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: fl_anchor_rod_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: fl_anchor_rod_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: fl_anchor_rod_link
     object2: top_shelf_link
@@ -2679,10 +2931,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: fl_base_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: fl_base_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: fl_base_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: fl_base_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: fl_base_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: fl_base_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: fl_base_link
     object2: inner_torso_bottom_link
@@ -2691,16 +2955,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: fl_base_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: fl_base_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: fl_base_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: fl_base_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fl_base_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fl_base_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fl_base_link
-    object2: left_forearm_link
     operation: disable  # Never in collision
   - object1: fl_base_link
     object2: left_lower_linear_actuator_link
@@ -2724,28 +2988,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fl_base_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: fl_base_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: fl_base_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: fl_base_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: fl_base_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fl_base_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fl_base_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fl_base_link
-    object2: right_forearm_link
-    operation: disable  # Never in collision
-  - object1: fl_base_link
-    object2: right_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: fl_base_link
-    object2: right_gripper_right_link
     operation: disable  # Never in collision
   - object1: fl_base_link
     object2: right_lower_linear_actuator_link
@@ -2769,10 +3024,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fl_base_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: fl_base_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: fl_base_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: fl_base_link
     object2: top_shelf_link
@@ -2811,10 +3069,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: fl_caster_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: fl_caster_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: fl_caster_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: fl_caster_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: fl_caster_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: fl_caster_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: fl_caster_link
     object2: inner_torso_bottom_link
@@ -2823,16 +3093,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: fl_caster_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: fl_caster_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: fl_caster_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: fl_caster_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fl_caster_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fl_caster_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fl_caster_link
-    object2: left_forearm_link
     operation: disable  # Never in collision
   - object1: fl_caster_link
     object2: left_lower_linear_actuator_link
@@ -2856,19 +3126,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fl_caster_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: fl_caster_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: fl_caster_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: fl_caster_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: fl_caster_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fl_caster_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fl_caster_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fl_caster_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: fl_caster_link
     object2: right_lower_linear_actuator_link
@@ -2892,10 +3162,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fl_caster_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: fl_caster_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: fl_caster_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: fl_caster_link
     object2: top_shelf_link
@@ -2931,10 +3204,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: fl_push_rod_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: fl_push_rod_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: fl_push_rod_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: fl_push_rod_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: fl_push_rod_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: fl_push_rod_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: fl_push_rod_link
     object2: inner_torso_bottom_link
@@ -2943,16 +3228,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: fl_push_rod_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: fl_push_rod_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: fl_push_rod_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: fl_push_rod_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fl_push_rod_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fl_push_rod_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fl_push_rod_link
-    object2: left_forearm_link
     operation: disable  # Never in collision
   - object1: fl_push_rod_link
     object2: left_lower_linear_actuator_link
@@ -2976,22 +3261,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fl_push_rod_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: fl_push_rod_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: fl_push_rod_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: fl_push_rod_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: fl_push_rod_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fl_push_rod_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fl_push_rod_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fl_push_rod_link
-    object2: right_forearm_link
-    operation: disable  # Never in collision
-  - object1: fl_push_rod_link
-    object2: right_gripper_right_link
     operation: disable  # Never in collision
   - object1: fl_push_rod_link
     object2: right_lower_linear_actuator_link
@@ -3015,10 +3297,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fl_push_rod_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: fl_push_rod_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: fl_push_rod_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: fl_push_rod_link
     object2: top_shelf_link
@@ -3051,10 +3336,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: fl_wheel_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: fl_wheel_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: fl_wheel_link
     object2: inner_torso_bottom_link
@@ -3063,16 +3360,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: fl_wheel_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fl_wheel_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fl_wheel_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fl_wheel_link
-    object2: left_forearm_link
     operation: disable  # Never in collision
   - object1: fl_wheel_link
     object2: left_lower_linear_actuator_link
@@ -3096,22 +3393,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fl_wheel_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: fl_wheel_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fl_wheel_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fl_wheel_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fl_wheel_link
-    object2: right_forearm_link
-    operation: disable  # Never in collision
-  - object1: fl_wheel_link
-    object2: right_gripper_right_link
     operation: disable  # Never in collision
   - object1: fl_wheel_link
     object2: right_lower_linear_actuator_link
@@ -3135,10 +3429,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fl_wheel_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: fl_wheel_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: fl_wheel_link
     object2: top_shelf_link
@@ -3171,10 +3468,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: fl_wheel_motor_block_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_motor_block_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_motor_block_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: fl_wheel_motor_block_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_motor_block_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_motor_block_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: fl_wheel_motor_block_link
     object2: inner_torso_bottom_link
@@ -3183,16 +3492,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: fl_wheel_motor_block_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_motor_block_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_motor_block_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_motor_block_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fl_wheel_motor_block_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fl_wheel_motor_block_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fl_wheel_motor_block_link
-    object2: left_forearm_link
     operation: disable  # Never in collision
   - object1: fl_wheel_motor_block_link
     object2: left_lower_linear_actuator_link
@@ -3216,22 +3525,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fl_wheel_motor_block_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_motor_block_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_motor_block_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_motor_block_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: fl_wheel_motor_block_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fl_wheel_motor_block_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fl_wheel_motor_block_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fl_wheel_motor_block_link
-    object2: right_forearm_link
-    operation: disable  # Never in collision
-  - object1: fl_wheel_motor_block_link
-    object2: right_gripper_right_link
     operation: disable  # Never in collision
   - object1: fl_wheel_motor_block_link
     object2: right_lower_linear_actuator_link
@@ -3255,10 +3561,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fl_wheel_motor_block_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: fl_wheel_motor_block_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: fl_wheel_motor_block_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: fl_wheel_motor_block_link
     object2: top_shelf_link
@@ -3285,10 +3594,22 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: fr_anchor_rod_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: fr_anchor_rod_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: fr_anchor_rod_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: fr_anchor_rod_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: fr_anchor_rod_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: fr_anchor_rod_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: fr_anchor_rod_link
     object2: inner_torso_bottom_link
@@ -3297,16 +3618,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: fr_anchor_rod_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: fr_anchor_rod_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_anchor_rod_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: fr_anchor_rod_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fr_anchor_rod_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fr_anchor_rod_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fr_anchor_rod_link
-    object2: left_forearm_link
     operation: disable  # Never in collision
   - object1: fr_anchor_rod_link
     object2: left_lower_linear_actuator_link
@@ -3330,19 +3651,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fr_anchor_rod_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: fr_anchor_rod_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: fr_anchor_rod_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: fr_anchor_rod_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: fr_anchor_rod_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fr_anchor_rod_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fr_anchor_rod_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fr_anchor_rod_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: fr_anchor_rod_link
     object2: right_lower_linear_actuator_link
@@ -3366,10 +3687,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fr_anchor_rod_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: fr_anchor_rod_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_anchor_rod_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: fr_anchor_rod_link
     object2: top_shelf_link
@@ -3387,10 +3711,22 @@ default_collision_operations:
     object2: fr_wheel_link
     operation: disable  # Never in collision
   - object1: fr_base_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: fr_base_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: fr_base_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: fr_base_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: fr_base_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: fr_base_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: fr_base_link
     object2: inner_torso_bottom_link
@@ -3399,22 +3735,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: fr_base_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: fr_base_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_base_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: fr_base_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fr_base_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fr_base_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fr_base_link
-    object2: left_forearm_link
-    operation: disable  # Never in collision
-  - object1: fr_base_link
-    object2: left_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: fr_base_link
-    object2: left_gripper_right_link
     operation: disable  # Never in collision
   - object1: fr_base_link
     object2: left_lower_linear_actuator_link
@@ -3438,22 +3768,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fr_base_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: fr_base_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: fr_base_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: fr_base_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: fr_base_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fr_base_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fr_base_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fr_base_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: fr_base_link
     object2: right_lower_linear_actuator_link
@@ -3477,7 +3804,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fr_base_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_base_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_base_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: fr_base_link
     object2: top_shelf_link
@@ -3498,10 +3831,22 @@ default_collision_operations:
     object2: fr_wheel_link
     operation: disable  # Never in collision
   - object1: fr_caster_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: fr_caster_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: fr_caster_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: fr_caster_link
     object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: fr_caster_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: fr_caster_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: fr_caster_link
     object2: inner_torso_bottom_link
@@ -3510,19 +3855,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: fr_caster_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: fr_caster_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_caster_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: fr_caster_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fr_caster_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fr_caster_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fr_caster_link
-    object2: left_forearm_link
-    operation: disable  # Never in collision
-  - object1: fr_caster_link
-    object2: left_gripper_left_link
     operation: disable  # Never in collision
   - object1: fr_caster_link
     object2: left_lower_linear_actuator_link
@@ -3546,22 +3888,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fr_caster_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: fr_caster_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: fr_caster_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: fr_caster_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: fr_caster_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fr_caster_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fr_caster_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fr_caster_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: fr_caster_link
     object2: right_lower_linear_actuator_link
@@ -3585,7 +3924,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fr_caster_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_caster_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_caster_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: fr_caster_link
     object2: top_shelf_link
@@ -3606,34 +3951,40 @@ default_collision_operations:
     object2: fr_wheel_motor_block_link
     operation: disable  # Never in collision
   - object1: fr_push_rod_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: fr_push_rod_link
+    object2: head_side_link
+    operation: disable  # Never in collision
+  - object1: fr_push_rod_link
     object2: hokuyo_link
     operation: disable  # Never in collision
   - object1: fr_push_rod_link
     object2: hokuyo_mount_link
     operation: disable  # Never in collision
   - object1: fr_push_rod_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: fr_push_rod_link
+    object2: hokuyo_tilt_mount_link
+    operation: disable  # Never in collision
+  - object1: fr_push_rod_link
     object2: inner_torso_bottom_link
     operation: disable  # Never in collision
   - object1: fr_push_rod_link
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: fr_push_rod_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: fr_push_rod_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_push_rod_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: fr_push_rod_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fr_push_rod_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fr_push_rod_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fr_push_rod_link
-    object2: left_forearm_link
-    operation: disable  # Never in collision
-  - object1: fr_push_rod_link
-    object2: left_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: fr_push_rod_link
-    object2: left_gripper_right_link
     operation: disable  # Never in collision
   - object1: fr_push_rod_link
     object2: left_lower_linear_actuator_link
@@ -3657,22 +4008,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fr_push_rod_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: fr_push_rod_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: fr_push_rod_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: fr_push_rod_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: fr_push_rod_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fr_push_rod_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fr_push_rod_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fr_push_rod_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: fr_push_rod_link
     object2: right_lower_linear_actuator_link
@@ -3696,7 +4044,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fr_push_rod_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_push_rod_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_push_rod_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: fr_push_rod_link
     object2: top_shelf_link
@@ -3709,6 +4063,12 @@ default_collision_operations:
     operation: disable  # Never in collision
   - object1: fr_push_rod_link
     object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_link
+    object2: head_side_link
     operation: disable  # Never in collision
   - object1: fr_wheel_link
     object2: hokuyo_link
@@ -3717,28 +4077,28 @@ default_collision_operations:
     object2: hokuyo_mount_link
     operation: disable  # Never in collision
   - object1: fr_wheel_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_link
+    object2: hokuyo_tilt_mount_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_link
     object2: inner_torso_bottom_link
     operation: disable  # Never in collision
   - object1: fr_wheel_link
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: fr_wheel_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fr_wheel_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fr_wheel_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fr_wheel_link
-    object2: left_forearm_link
-    operation: disable  # Never in collision
-  - object1: fr_wheel_link
-    object2: left_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: fr_wheel_link
-    object2: left_gripper_right_link
     operation: disable  # Never in collision
   - object1: fr_wheel_link
     object2: left_lower_linear_actuator_link
@@ -3762,22 +4122,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fr_wheel_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: fr_wheel_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: fr_wheel_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fr_wheel_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fr_wheel_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fr_wheel_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: fr_wheel_link
     object2: right_lower_linear_actuator_link
@@ -3801,7 +4158,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fr_wheel_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: fr_wheel_link
     object2: top_shelf_link
@@ -3814,6 +4177,12 @@ default_collision_operations:
     operation: disable  # Never in collision
   - object1: fr_wheel_link
     object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_motor_block_link
+    object2: head_base_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_motor_block_link
+    object2: head_side_link
     operation: disable  # Never in collision
   - object1: fr_wheel_motor_block_link
     object2: hokuyo_link
@@ -3822,28 +4191,28 @@ default_collision_operations:
     object2: hokuyo_mount_link
     operation: disable  # Never in collision
   - object1: fr_wheel_motor_block_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_motor_block_link
+    object2: hokuyo_tilt_mount_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_motor_block_link
     object2: inner_torso_bottom_link
     operation: disable  # Never in collision
   - object1: fr_wheel_motor_block_link
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: fr_wheel_motor_block_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_motor_block_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_motor_block_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_motor_block_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fr_wheel_motor_block_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fr_wheel_motor_block_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fr_wheel_motor_block_link
-    object2: left_forearm_link
-    operation: disable  # Never in collision
-  - object1: fr_wheel_motor_block_link
-    object2: left_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: fr_wheel_motor_block_link
-    object2: left_gripper_right_link
     operation: disable  # Never in collision
   - object1: fr_wheel_motor_block_link
     object2: left_lower_linear_actuator_link
@@ -3867,22 +4236,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fr_wheel_motor_block_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: fr_wheel_motor_block_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_motor_block_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_motor_block_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: fr_wheel_motor_block_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: fr_wheel_motor_block_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: fr_wheel_motor_block_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: fr_wheel_motor_block_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: fr_wheel_motor_block_link
     object2: right_lower_linear_actuator_link
@@ -3906,7 +4272,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: fr_wheel_motor_block_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_motor_block_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: fr_wheel_motor_block_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: fr_wheel_motor_block_link
     object2: top_shelf_link
@@ -3919,6 +4291,165 @@ default_collision_operations:
     operation: disable  # Never in collision
   - object1: fr_wheel_motor_block_link
     object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: hokuyo_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: inner_torso_bottom_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: inner_torso_top_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: left_arm_shelf_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: left_lower_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: left_shoulder_caster_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: left_shoulder_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: left_shoulder_pan_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: left_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: left_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: neck_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: right_arm_shelf_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: right_lower_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: right_shoulder_caster_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: right_shoulder_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: right_shoulder_pan_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: right_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: right_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: top_shelf_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: torso_lift_link
+    operation: disable  # Never in collision
+  - object1: head_base_link
+    object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: hokuyo_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: hokuyo_mount_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: inner_torso_bottom_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: inner_torso_top_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: left_arm_shelf_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: left_lower_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: left_shoulder_caster_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: left_shoulder_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: left_shoulder_pan_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: left_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: left_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: neck_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: right_arm_shelf_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: right_lower_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: right_shoulder_caster_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: right_shoulder_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: right_shoulder_pan_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: right_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: right_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: top_neck_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: torso_lift_link
+    operation: disable  # Never in collision
+  - object1: head_side_link
+    object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: hokuyo_link
     object2: inner_torso_bottom_link
@@ -3927,22 +4458,16 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: hokuyo_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_link
     object2: left_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: hokuyo_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: hokuyo_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: hokuyo_link
-    object2: left_forearm_link
-    operation: disable  # Never in collision
-  - object1: hokuyo_link
-    object2: left_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: hokuyo_link
-    object2: left_gripper_right_link
     operation: disable  # Never in collision
   - object1: hokuyo_link
     object2: left_lower_linear_actuator_link
@@ -3966,25 +4491,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: hokuyo_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: hokuyo_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: hokuyo_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: hokuyo_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: hokuyo_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: hokuyo_link
-    object2: right_forearm_link
-    operation: disable  # Never in collision
-  - object1: hokuyo_link
-    object2: right_gripper_right_link
     operation: disable  # Never in collision
   - object1: hokuyo_link
     object2: right_lower_linear_actuator_link
@@ -4008,7 +4527,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: hokuyo_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: hokuyo_link
     object2: top_shelf_link
@@ -4021,6 +4546,12 @@ default_collision_operations:
     operation: disable  # Never in collision
   - object1: hokuyo_link
     object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_mount_link
+    object2: hokuyo_tilt_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_mount_link
+    object2: hokuyo_tilt_mount_link
     operation: disable  # Never in collision
   - object1: hokuyo_mount_link
     object2: inner_torso_bottom_link
@@ -4029,18 +4560,18 @@ default_collision_operations:
     object2: inner_torso_top_link
     operation: disable  # Never in collision
   - object1: hokuyo_mount_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_mount_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_mount_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_mount_link
     object2: left_arm_shelf_link
     operation: disable  # Never in collision
   - object1: hokuyo_mount_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: hokuyo_mount_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: hokuyo_mount_link
-    object2: left_forearm_link
-    operation: disable  # Never in collision
-  - object1: hokuyo_mount_link
     object2: left_lower_linear_actuator_link
     operation: disable  # Never in collision
   - object1: hokuyo_mount_link
@@ -4062,19 +4593,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: hokuyo_mount_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_mount_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_mount_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_mount_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: hokuyo_mount_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: hokuyo_mount_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: hokuyo_mount_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: hokuyo_mount_link
-    object2: right_forearm_link
     operation: disable  # Never in collision
   - object1: hokuyo_mount_link
     object2: right_lower_linear_actuator_link
@@ -4098,6 +4629,15 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: hokuyo_mount_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_mount_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_mount_link
+    object2: top_neck_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_mount_link
     object2: top_shelf_link
     operation: disable  # Never in collision
   - object1: hokuyo_mount_link
@@ -4108,6 +4648,174 @@ default_collision_operations:
     operation: disable  # Never in collision
   - object1: hokuyo_mount_link
     object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: inner_torso_bottom_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: inner_torso_top_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: left_arm_shelf_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: left_lower_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: left_shoulder_caster_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: left_shoulder_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: left_shoulder_pan_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: left_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: left_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: neck_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: right_arm_shelf_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: right_lower_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: right_shoulder_caster_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: right_shoulder_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: right_shoulder_pan_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: right_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: right_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: top_neck_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: top_shelf_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: torso_lift_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: torso_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_link
+    object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: inner_torso_bottom_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: inner_torso_top_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: left_arm_shelf_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: left_lower_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: left_shoulder_caster_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: left_shoulder_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: left_shoulder_pan_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: left_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: left_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: neck_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: right_arm_shelf_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: right_lower_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: right_shoulder_caster_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: right_shoulder_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: right_shoulder_pan_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: right_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: right_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: top_neck_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: torso_lift_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: torso_link
+    operation: disable  # Never in collision
+  - object1: hokuyo_tilt_mount_link
+    object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_bottom_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_bottom_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_bottom_link
+    object2: kinect_side_link
     operation: disable  # Never in collision
   - object1: inner_torso_bottom_link
     object2: left_arm_shelf_link
@@ -4134,6 +4842,18 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: inner_torso_bottom_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_bottom_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_bottom_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_bottom_link
+    object2: neck_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_bottom_link
     object2: right_arm_shelf_link
     operation: disable  # Never in collision
   - object1: inner_torso_bottom_link
@@ -4158,21 +4878,33 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: inner_torso_bottom_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_bottom_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_bottom_link
+    object2: top_neck_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_bottom_link
     object2: top_shelf_link
     operation: disable  # Never in collision
   - object1: inner_torso_bottom_link
     object2: torso_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_top_link
+    object2: kinect_base_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_top_link
+    object2: kinect_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_top_link
+    object2: kinect_side_link
     operation: disable  # Never in collision
   - object1: inner_torso_top_link
     object2: left_arm_shelf_link
     operation: disable  # Never in collision
   - object1: inner_torso_top_link
-    object2: left_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: inner_torso_top_link
-    object2: left_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: inner_torso_top_link
     object2: left_lower_linear_actuator_link
     operation: disable  # Never in collision
   - object1: inner_torso_top_link
@@ -4194,13 +4926,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: inner_torso_top_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_top_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_top_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_top_link
+    object2: neck_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_top_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: inner_torso_top_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: inner_torso_top_link
-    object2: right_elbow_pan_link
     operation: disable  # Never in collision
   - object1: inner_torso_top_link
     object2: right_lower_linear_actuator_link
@@ -4224,6 +4962,15 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: inner_torso_top_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_top_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_top_link
+    object2: top_neck_link
+    operation: disable  # Never in collision
+  - object1: inner_torso_top_link
     object2: top_shelf_link
     operation: disable  # Never in collision
   - object1: inner_torso_top_link
@@ -4235,14 +4982,161 @@ default_collision_operations:
   - object1: inner_torso_top_link
     object2: wheel_linear_actuator_link
     operation: disable  # Never in collision
-  - object1: left_arm_shelf_link
-    object2: left_elbow_flex_link
+  - object1: kinect_base_link
+    object2: left_lower_linear_actuator_link
     operation: disable  # Never in collision
-  - object1: left_arm_shelf_link
-    object2: left_elbow_pan_link
+  - object1: kinect_base_link
+    object2: left_shoulder_caster_link
     operation: disable  # Never in collision
-  - object1: left_arm_shelf_link
-    object2: left_forearm_link
+  - object1: kinect_base_link
+    object2: left_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: kinect_base_link
+    object2: left_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: kinect_base_link
+    object2: neck_link
+    operation: disable  # Never in collision
+  - object1: kinect_base_link
+    object2: right_lower_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: kinect_base_link
+    object2: right_shoulder_caster_link
+    operation: disable  # Never in collision
+  - object1: kinect_base_link
+    object2: right_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: kinect_base_link
+    object2: right_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: kinect_base_link
+    object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: kinect_side_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: left_arm_shelf_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: left_lower_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: left_shoulder_caster_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: left_shoulder_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: left_shoulder_pan_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: left_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: left_upper_arm_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: left_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: neck_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: right_arm_shelf_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: right_lower_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: right_shoulder_caster_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: right_shoulder_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: right_shoulder_pan_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: right_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: right_upper_arm_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: right_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: top_neck_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: top_shelf_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: torso_lift_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: torso_link
+    operation: disable  # Never in collision
+  - object1: kinect_link
+    object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: kinect_side_link
+    object2: left_lower_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: kinect_side_link
+    object2: left_shoulder_caster_link
+    operation: disable  # Never in collision
+  - object1: kinect_side_link
+    object2: left_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: kinect_side_link
+    object2: left_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: kinect_side_link
+    object2: neck_link
+    operation: disable  # Never in collision
+  - object1: kinect_side_link
+    object2: right_lower_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: kinect_side_link
+    object2: right_shoulder_caster_link
+    operation: disable  # Never in collision
+  - object1: kinect_side_link
+    object2: right_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: kinect_side_link
+    object2: right_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: kinect_side_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: kinect_side_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: kinect_side_link
+    object2: top_neck_link
+    operation: disable  # Never in collision
+  - object1: kinect_side_link
+    object2: torso_lift_link
+    operation: disable  # Never in collision
+  - object1: kinect_side_link
+    object2: wheel_linear_actuator_link
     operation: disable  # Never in collision
   - object1: left_arm_shelf_link
     object2: left_lower_linear_actuator_link
@@ -4257,13 +5151,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: left_arm_shelf_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: left_arm_shelf_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: left_arm_shelf_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: left_arm_shelf_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: left_arm_shelf_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: left_arm_shelf_link
-    object2: right_elbow_pan_link
     operation: disable  # Never in collision
   - object1: left_arm_shelf_link
     object2: right_lower_linear_actuator_link
@@ -4287,6 +5187,9 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: left_arm_shelf_link
+    object2: top_neck_link
+    operation: disable  # Never in collision
+  - object1: left_arm_shelf_link
     object2: torso_lift_link
     operation: disable  # Never in collision
   - object1: left_arm_shelf_link
@@ -4294,210 +5197,6 @@ default_collision_operations:
     operation: disable  # Never in collision
   - object1: left_arm_shelf_link
     object2: wheel_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: left_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: left_gripper_right_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: left_lower_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: left_shoulder_caster_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: left_shoulder_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: left_shoulder_pan_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: left_upper_arm_hinge_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: left_upper_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: left_wrist_flex_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: left_wrist_roll_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: right_lower_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: right_shoulder_caster_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: right_shoulder_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: right_shoulder_pan_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: right_upper_arm_hinge_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: right_upper_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_flex_link
-    object2: wheel_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: left_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: left_gripper_right_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: left_lower_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: left_shoulder_caster_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: left_shoulder_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: left_shoulder_pan_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: left_upper_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: left_wrist_flex_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: left_wrist_roll_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: right_lower_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: right_shoulder_caster_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: right_shoulder_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: right_shoulder_pan_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: right_upper_arm_hinge_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: right_upper_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: top_shelf_link
-    operation: disable  # Never in collision
-  - object1: left_elbow_pan_link
-    object2: wheel_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_forearm_link
-    object2: left_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: left_forearm_link
-    object2: left_gripper_right_link
-    operation: disable  # Never in collision
-  - object1: left_forearm_link
-    object2: left_lower_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_forearm_link
-    object2: left_shoulder_caster_link
-    operation: disable  # Never in collision
-  - object1: left_forearm_link
-    object2: left_shoulder_link
-    operation: disable  # Never in collision
-  - object1: left_forearm_link
-    object2: left_shoulder_pan_link
-    operation: disable  # Never in collision
-  - object1: left_forearm_link
-    object2: left_upper_arm_hinge_link
-    operation: disable  # Never in collision
-  - object1: left_forearm_link
-    object2: left_upper_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_forearm_link
-    object2: left_wrist_roll_link
-    operation: disable  # Never in collision
-  - object1: left_forearm_link
-    object2: right_lower_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_forearm_link
-    object2: right_shoulder_caster_link
-    operation: disable  # Never in collision
-  - object1: left_forearm_link
-    object2: right_upper_arm_hinge_link
-    operation: disable  # Never in collision
-  - object1: left_forearm_link
-    object2: right_upper_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_forearm_link
-    object2: wheel_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_left_link
-    object2: left_gripper_right_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_left_link
-    object2: left_lower_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_left_link
-    object2: left_shoulder_caster_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_left_link
-    object2: left_upper_arm_hinge_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_left_link
-    object2: left_upper_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_left_link
-    object2: left_wrist_flex_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_left_link
-    object2: right_lower_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_left_link
-    object2: right_shoulder_caster_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_left_link
-    object2: right_upper_arm_hinge_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_left_link
-    object2: right_upper_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_right_link
-    object2: left_lower_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_right_link
-    object2: left_shoulder_caster_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_right_link
-    object2: left_upper_arm_hinge_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_right_link
-    object2: left_upper_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_right_link
-    object2: left_wrist_flex_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_right_link
-    object2: right_lower_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_right_link
-    object2: right_shoulder_caster_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_right_link
-    object2: right_upper_arm_hinge_link
-    operation: disable  # Never in collision
-  - object1: left_gripper_right_link
-    object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: left_lower_linear_actuator_link
     object2: left_shoulder_link
@@ -4512,28 +5211,19 @@ default_collision_operations:
     object2: left_upper_arm_link
     operation: disable  # Never in collision
   - object1: left_lower_linear_actuator_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: left_lower_linear_actuator_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: left_lower_linear_actuator_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: left_lower_linear_actuator_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: left_lower_linear_actuator_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: left_lower_linear_actuator_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: left_lower_linear_actuator_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: left_lower_linear_actuator_link
-    object2: right_forearm_link
-    operation: disable  # Never in collision
-  - object1: left_lower_linear_actuator_link
-    object2: right_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: left_lower_linear_actuator_link
-    object2: right_gripper_right_link
     operation: disable  # Never in collision
   - object1: left_lower_linear_actuator_link
     object2: right_lower_linear_actuator_link
@@ -4557,10 +5247,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: left_lower_linear_actuator_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: left_lower_linear_actuator_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: left_lower_linear_actuator_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: left_lower_linear_actuator_link
     object2: top_shelf_link
@@ -4587,28 +5280,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: left_shoulder_caster_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: left_shoulder_caster_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: left_shoulder_caster_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: left_shoulder_caster_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: left_shoulder_caster_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: left_shoulder_caster_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: left_shoulder_caster_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: left_shoulder_caster_link
-    object2: right_forearm_link
-    operation: disable  # Never in collision
-  - object1: left_shoulder_caster_link
-    object2: right_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: left_shoulder_caster_link
-    object2: right_gripper_right_link
     operation: disable  # Never in collision
   - object1: left_shoulder_caster_link
     object2: right_lower_linear_actuator_link
@@ -4632,10 +5316,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: left_shoulder_caster_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: left_shoulder_caster_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: left_shoulder_caster_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: left_shoulder_caster_link
     object2: top_shelf_link
@@ -4656,16 +5343,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: left_shoulder_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: left_shoulder_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: left_shoulder_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: left_shoulder_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: left_shoulder_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: left_shoulder_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: left_shoulder_link
-    object2: right_elbow_pan_link
     operation: disable  # Never in collision
   - object1: left_shoulder_link
     object2: right_lower_linear_actuator_link
@@ -4687,6 +5377,9 @@ default_collision_operations:
     operation: disable  # Never in collision
   - object1: left_shoulder_link
     object2: right_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: left_shoulder_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: left_shoulder_link
     object2: top_shelf_link
@@ -4707,16 +5400,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: left_shoulder_pan_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
+    operation: disable  # Never in collision
+  - object1: left_shoulder_pan_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: left_shoulder_pan_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: left_shoulder_pan_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: left_shoulder_pan_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: left_shoulder_pan_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: left_shoulder_pan_link
-    object2: right_elbow_pan_link
     operation: disable  # Never in collision
   - object1: left_shoulder_pan_link
     object2: right_lower_linear_actuator_link
@@ -4738,6 +5434,15 @@ default_collision_operations:
     operation: disable  # Never in collision
   - object1: left_shoulder_pan_link
     object2: right_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: left_shoulder_pan_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: left_shoulder_pan_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: left_shoulder_pan_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: left_shoulder_pan_link
     object2: top_shelf_link
@@ -4755,28 +5460,19 @@ default_collision_operations:
     object2: left_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: left_upper_arm_hinge_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: left_upper_arm_hinge_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: left_upper_arm_hinge_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: left_upper_arm_hinge_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: left_upper_arm_hinge_link
     object2: right_arm_shelf_link
-    operation: disable  # Never in collision
-  - object1: left_upper_arm_hinge_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: left_upper_arm_hinge_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: left_upper_arm_hinge_link
-    object2: right_forearm_link
-    operation: disable  # Never in collision
-  - object1: left_upper_arm_hinge_link
-    object2: right_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: left_upper_arm_hinge_link
-    object2: right_gripper_right_link
     operation: disable  # Never in collision
   - object1: left_upper_arm_hinge_link
     object2: right_lower_linear_actuator_link
@@ -4800,10 +5496,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: left_upper_arm_hinge_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: left_upper_arm_hinge_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: left_upper_arm_hinge_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: left_upper_arm_hinge_link
     object2: top_shelf_link
@@ -4816,6 +5515,9 @@ default_collision_operations:
     operation: disable  # Never in collision
   - object1: left_upper_arm_hinge_link
     object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: left_upper_arm_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: left_upper_arm_link
     object2: right_arm_shelf_link
@@ -4842,30 +5544,21 @@ default_collision_operations:
     object2: wheel_linear_actuator_link
     operation: disable  # Never in collision
   - object1: left_upper_linear_actuator_link
-    object2: left_wrist_flex_link
+    object2: lidar_bar_link
     operation: disable  # Never in collision
   - object1: left_upper_linear_actuator_link
-    object2: left_wrist_roll_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: left_upper_linear_actuator_link
+    object2: lidar_tilt_link
+    operation: disable  # Never in collision
+  - object1: left_upper_linear_actuator_link
+    object2: neck_link
     operation: disable  # Never in collision
   - object1: left_upper_linear_actuator_link
     object2: right_arm_shelf_link
     operation: disable  # Never in collision
   - object1: left_upper_linear_actuator_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: left_upper_linear_actuator_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: left_upper_linear_actuator_link
-    object2: right_forearm_link
-    operation: disable  # Never in collision
-  - object1: left_upper_linear_actuator_link
-    object2: right_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: left_upper_linear_actuator_link
-    object2: right_gripper_right_link
-    operation: disable  # Never in collision
-  - object1: left_upper_linear_actuator_link
     object2: right_lower_linear_actuator_link
     operation: disable  # Never in collision
   - object1: left_upper_linear_actuator_link
@@ -4887,10 +5580,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: left_upper_linear_actuator_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: left_upper_linear_actuator_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: left_upper_linear_actuator_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: left_upper_linear_actuator_link
     object2: top_shelf_link
@@ -4904,53 +5600,179 @@ default_collision_operations:
   - object1: left_upper_linear_actuator_link
     object2: wheel_linear_actuator_link
     operation: disable  # Never in collision
-  - object1: left_wrist_flex_link
+  - object1: lidar_bar_link
+    object2: lidar_base_link
+    operation: disable  # Never in collision
+  - object1: lidar_bar_link
+    object2: right_arm_shelf_link
+    operation: disable  # Never in collision
+  - object1: lidar_bar_link
     object2: right_lower_linear_actuator_link
     operation: disable  # Never in collision
-  - object1: left_wrist_flex_link
+  - object1: lidar_bar_link
     object2: right_shoulder_caster_link
     operation: disable  # Never in collision
-  - object1: left_wrist_flex_link
+  - object1: lidar_bar_link
+    object2: right_shoulder_link
+    operation: disable  # Never in collision
+  - object1: lidar_bar_link
+    object2: right_shoulder_pan_link
+    operation: disable  # Never in collision
+  - object1: lidar_bar_link
     object2: right_upper_arm_hinge_link
     operation: disable  # Never in collision
-  - object1: left_wrist_flex_link
+  - object1: lidar_bar_link
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
-  - object1: left_wrist_flex_link
+  - object1: lidar_bar_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: lidar_bar_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: lidar_bar_link
+    object2: top_neck_link
+    operation: disable  # Never in collision
+  - object1: lidar_bar_link
+    object2: top_shelf_link
+    operation: disable  # Never in collision
+  - object1: lidar_bar_link
+    object2: torso_lift_link
+    operation: disable  # Never in collision
+  - object1: lidar_bar_link
+    object2: torso_link
+    operation: disable  # Never in collision
+  - object1: lidar_bar_link
     object2: wheel_linear_actuator_link
     operation: disable  # Never in collision
-  - object1: left_wrist_roll_link
+  - object1: lidar_base_link
+    object2: neck_link
+    operation: disable  # Never in collision
+  - object1: lidar_base_link
+    object2: right_arm_shelf_link
+    operation: disable  # Never in collision
+  - object1: lidar_base_link
     object2: right_lower_linear_actuator_link
     operation: disable  # Never in collision
-  - object1: left_wrist_roll_link
+  - object1: lidar_base_link
     object2: right_shoulder_caster_link
     operation: disable  # Never in collision
-  - object1: left_wrist_roll_link
+  - object1: lidar_base_link
+    object2: right_shoulder_link
+    operation: disable  # Never in collision
+  - object1: lidar_base_link
+    object2: right_shoulder_pan_link
+    operation: disable  # Never in collision
+  - object1: lidar_base_link
     object2: right_upper_arm_hinge_link
     operation: disable  # Never in collision
-  - object1: left_wrist_roll_link
+  - object1: lidar_base_link
+    object2: right_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: lidar_base_link
+    object2: top_neck_link
+    operation: disable  # Never in collision
+  - object1: lidar_base_link
+    object2: torso_lift_link
+    operation: disable  # Never in collision
+  - object1: lidar_base_link
+    object2: torso_link
+    operation: disable  # Never in collision
+  - object1: lidar_base_link
+    object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: lidar_tilt_link
+    object2: neck_link
+    operation: disable  # Never in collision
+  - object1: lidar_tilt_link
+    object2: right_arm_shelf_link
+    operation: disable  # Never in collision
+  - object1: lidar_tilt_link
+    object2: right_lower_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: lidar_tilt_link
+    object2: right_shoulder_caster_link
+    operation: disable  # Never in collision
+  - object1: lidar_tilt_link
+    object2: right_shoulder_link
+    operation: disable  # Never in collision
+  - object1: lidar_tilt_link
+    object2: right_shoulder_pan_link
+    operation: disable  # Never in collision
+  - object1: lidar_tilt_link
+    object2: right_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: lidar_tilt_link
+    object2: right_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: lidar_tilt_link
+    object2: top_neck_link
+    operation: disable  # Never in collision
+  - object1: lidar_tilt_link
+    object2: top_shelf_link
+    operation: disable  # Never in collision
+  - object1: lidar_tilt_link
+    object2: torso_lift_link
+    operation: disable  # Never in collision
+  - object1: lidar_tilt_link
+    object2: torso_link
+    operation: disable  # Never in collision
+  - object1: lidar_tilt_link
+    object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: neck_link
+    object2: right_arm_shelf_link
+    operation: disable  # Never in collision
+  - object1: neck_link
+    object2: right_lower_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: neck_link
+    object2: right_shoulder_caster_link
+    operation: disable  # Never in collision
+  - object1: neck_link
+    object2: right_shoulder_link
+    operation: disable  # Never in collision
+  - object1: neck_link
+    object2: right_shoulder_pan_link
+    operation: disable  # Never in collision
+  - object1: neck_link
+    object2: right_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: neck_link
+    object2: right_upper_arm_link
+    operation: disable  # Never in collision
+  - object1: neck_link
+    object2: right_upper_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: neck_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: neck_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: neck_link
+    object2: torso_lift_link
+    operation: disable  # Never in collision
+  - object1: neck_link
+    object2: torso_link
+    operation: disable  # Never in collision
+  - object1: neck_link
+    object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: right_arm_shelf_link
+    object2: right_lower_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: right_arm_shelf_link
+    object2: right_shoulder_caster_link
+    operation: disable  # Never in collision
+  - object1: right_arm_shelf_link
+    object2: right_upper_arm_hinge_link
+    operation: disable  # Never in collision
+  - object1: right_arm_shelf_link
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: right_arm_shelf_link
-    object2: right_elbow_flex_link
-    operation: disable  # Never in collision
-  - object1: right_arm_shelf_link
-    object2: right_elbow_pan_link
-    operation: disable  # Never in collision
-  - object1: right_arm_shelf_link
-    object2: right_forearm_link
-    operation: disable  # Never in collision
-  - object1: right_arm_shelf_link
-    object2: right_lower_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: right_arm_shelf_link
-    object2: right_shoulder_caster_link
-    operation: disable  # Never in collision
-  - object1: right_arm_shelf_link
-    object2: right_upper_arm_hinge_link
-    operation: disable  # Never in collision
-  - object1: right_arm_shelf_link
-    object2: right_upper_linear_actuator_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: right_arm_shelf_link
     object2: torso_lift_link
@@ -4960,138 +5782,6 @@ default_collision_operations:
     operation: disable  # Never in collision
   - object1: right_arm_shelf_link
     object2: wheel_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_flex_link
-    object2: right_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_flex_link
-    object2: right_gripper_right_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_flex_link
-    object2: right_lower_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_flex_link
-    object2: right_shoulder_caster_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_flex_link
-    object2: right_shoulder_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_flex_link
-    object2: right_shoulder_pan_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_flex_link
-    object2: right_upper_arm_hinge_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_flex_link
-    object2: right_upper_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_flex_link
-    object2: right_wrist_flex_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_flex_link
-    object2: right_wrist_roll_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_flex_link
-    object2: top_shelf_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_flex_link
-    object2: wheel_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_pan_link
-    object2: right_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_pan_link
-    object2: right_gripper_right_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_pan_link
-    object2: right_lower_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_pan_link
-    object2: right_shoulder_caster_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_pan_link
-    object2: right_shoulder_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_pan_link
-    object2: right_shoulder_pan_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_pan_link
-    object2: right_upper_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_pan_link
-    object2: right_wrist_flex_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_pan_link
-    object2: right_wrist_roll_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_pan_link
-    object2: top_shelf_link
-    operation: disable  # Never in collision
-  - object1: right_elbow_pan_link
-    object2: wheel_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: right_forearm_link
-    object2: right_gripper_left_link
-    operation: disable  # Never in collision
-  - object1: right_forearm_link
-    object2: right_gripper_right_link
-    operation: disable  # Never in collision
-  - object1: right_forearm_link
-    object2: right_lower_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: right_forearm_link
-    object2: right_shoulder_caster_link
-    operation: disable  # Never in collision
-  - object1: right_forearm_link
-    object2: right_shoulder_link
-    operation: disable  # Never in collision
-  - object1: right_forearm_link
-    object2: right_shoulder_pan_link
-    operation: disable  # Never in collision
-  - object1: right_forearm_link
-    object2: right_upper_arm_hinge_link
-    operation: disable  # Never in collision
-  - object1: right_forearm_link
-    object2: right_upper_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: right_forearm_link
-    object2: right_wrist_roll_link
-    operation: disable  # Never in collision
-  - object1: right_forearm_link
-    object2: wheel_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: right_gripper_left_link
-    object2: right_gripper_right_link
-    operation: disable  # Never in collision
-  - object1: right_gripper_left_link
-    object2: right_lower_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: right_gripper_left_link
-    object2: right_shoulder_caster_link
-    operation: disable  # Never in collision
-  - object1: right_gripper_left_link
-    object2: right_upper_arm_hinge_link
-    operation: disable  # Never in collision
-  - object1: right_gripper_left_link
-    object2: right_upper_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: right_gripper_left_link
-    object2: right_wrist_flex_link
-    operation: disable  # Never in collision
-  - object1: right_gripper_right_link
-    object2: right_lower_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: right_gripper_right_link
-    object2: right_shoulder_caster_link
-    operation: disable  # Never in collision
-  - object1: right_gripper_right_link
-    object2: right_upper_arm_hinge_link
-    operation: disable  # Never in collision
-  - object1: right_gripper_right_link
-    object2: right_upper_linear_actuator_link
-    operation: disable  # Never in collision
-  - object1: right_gripper_right_link
-    object2: right_wrist_flex_link
     operation: disable  # Never in collision
   - object1: right_lower_linear_actuator_link
     object2: right_shoulder_link
@@ -5106,10 +5796,13 @@ default_collision_operations:
     object2: right_upper_arm_link
     operation: disable  # Never in collision
   - object1: right_lower_linear_actuator_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: right_lower_linear_actuator_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: right_lower_linear_actuator_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: right_lower_linear_actuator_link
     object2: top_shelf_link
@@ -5136,10 +5829,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: right_shoulder_caster_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: right_shoulder_caster_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: right_shoulder_caster_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: right_shoulder_caster_link
     object2: top_shelf_link
@@ -5160,7 +5856,7 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: right_shoulder_link
-    object2: right_wrist_flex_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: right_shoulder_link
     object2: top_shelf_link
@@ -5181,7 +5877,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: right_shoulder_pan_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
+    operation: disable  # Never in collision
+  - object1: right_shoulder_pan_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: right_shoulder_pan_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: right_shoulder_pan_link
     object2: top_shelf_link
@@ -5199,10 +5901,13 @@ default_collision_operations:
     object2: right_upper_linear_actuator_link
     operation: disable  # Never in collision
   - object1: right_upper_arm_hinge_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: right_upper_arm_hinge_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: right_upper_arm_hinge_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: right_upper_arm_hinge_link
     object2: top_shelf_link
@@ -5220,10 +5925,13 @@ default_collision_operations:
     object2: wheel_linear_actuator_link
     operation: disable  # Never in collision
   - object1: right_upper_linear_actuator_link
-    object2: right_wrist_flex_link
+    object2: standoff1_kinect_link
     operation: disable  # Never in collision
   - object1: right_upper_linear_actuator_link
-    object2: right_wrist_roll_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: right_upper_linear_actuator_link
+    object2: top_neck_link
     operation: disable  # Never in collision
   - object1: right_upper_linear_actuator_link
     object2: top_shelf_link
@@ -5237,7 +5945,37 @@ default_collision_operations:
   - object1: right_upper_linear_actuator_link
     object2: wheel_linear_actuator_link
     operation: disable  # Never in collision
-  - object1: right_wrist_flex_link
+  - object1: standoff1_kinect_link
+    object2: standoff2_kinect_link
+    operation: disable  # Never in collision
+  - object1: standoff1_kinect_link
+    object2: top_neck_link
+    operation: disable  # Never in collision
+  - object1: standoff1_kinect_link
+    object2: torso_lift_link
+    operation: disable  # Never in collision
+  - object1: standoff1_kinect_link
+    object2: torso_link
+    operation: disable  # Never in collision
+  - object1: standoff1_kinect_link
+    object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: standoff2_kinect_link
+    object2: torso_link
+    operation: disable  # Never in collision
+  - object1: standoff2_kinect_link
+    object2: wheel_linear_actuator_link
+    operation: disable  # Never in collision
+  - object1: top_neck_link
+    object2: top_shelf_link
+    operation: disable  # Never in collision
+  - object1: top_neck_link
+    object2: torso_lift_link
+    operation: disable  # Never in collision
+  - object1: top_neck_link
+    object2: torso_link
+    operation: disable  # Never in collision
+  - object1: top_neck_link
     object2: wheel_linear_actuator_link
     operation: disable  # Never in collision
   - object1: top_shelf_link
