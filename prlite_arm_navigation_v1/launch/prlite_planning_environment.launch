@@ -1,4 +1,0 @@
-<launch>
-    <param name="prlite_description" textfile="$(find prlite_urdf)/config/prlite.xml" />
-    <rosparam command="load" ns="prlite_description_planning" file="$(find prlite_arm_navigation)/config/prlite_planning_description.yaml" />
-</launch>
