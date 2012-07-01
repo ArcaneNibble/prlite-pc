@@ -37,6 +37,9 @@
     <property name="motor_block_size_y" value="0.0254" />
     <property name="motor_block_size_z" value="0.1016"/>
     <property name="wheel_radius" value=".0762"/>
+    <!-- 
+      from floor to bottom of base is 8.97 inches
+    -->
 
  <macro name="pr2lite_wheel" params="suffix parent reflect_x reflect_y">
 <!-- * * * Link Definitions * * * -->

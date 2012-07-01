@@ -9,13 +9,6 @@
   xmlns:xacro="http://www.ros.org/wiki/xacro"
 >
     <!-- Included URDF Files -->
-    <!-- 
-     From Matthew:
-      width of outer torso: 0.526999 meters
-      height of outer torso: 0.771906 meters
-      width of joints of arms: 0.4126992 meters
-      joints of arms: 0.05715
-    -->
     <include filename="$(find erratic_description)/urdf/materials.urdf.xacro" />
     <include filename="$(find erratic_description)/urdf/erratic_computer.xacro" />
     <include filename="$(find erratic_description)/urdf/erratic_wheel.xacro" />
@@ -38,7 +31,7 @@
     <property name="inner_torso_bottom_size_z" value="0.3" />
 
     <property name="inner_torso_top_size_x" value="0.17" />
-    <property name="inner_torso_top_size_y" value="0.4953" />
+    <property name="inner_torso_top_size_y" value="0.48" />
     <property name="inner_torso_top_size_z" value="0.46" />
 
     <property name="wheel_radius" value="0.0762" />
@@ -313,7 +306,6 @@
   <parent link="top_neck_link"/>
   <child link="head_base_link"/>
   <origin xyz="${inch_to_meter*2} ${inch_to_meter*(0)} ${inch_to_meter*(.25+.125)}" rpy="0 0 0"/>
-  <axis xyz="0 0 1"/>
 </joint>
 
 <link name="head_base_link">
@@ -357,8 +349,7 @@
   <limit effort="10" lower="-3.1416" upper="3.1416" velocity="3"/>
   <parent link="head_side_link"/>
   <child link="kinect_side_link"/>
-  <origin xyz="${inch_to_meter*0} ${inch_to_meter*(-.25)} ${inch_to_meter*.5}" rpy="0 0 0"/>
-  <axis xyz="0 1 0"/>
+  <origin xyz="${inch_to_meter*0} ${inch_to_meter*(-.25)} ${inch_to_meter*2.5}" rpy="0 0 0"/>
 </joint>
 
 <link name="kinect_side_link">
@@ -371,7 +362,7 @@
             </inertial>
 
   <visual>
-    <origin xyz="${inch_to_meter*0} ${inch_to_meter*(-.25/2)} ${inch_to_meter*0}" rpy="0 0 0"/>
+    <origin xyz="${inch_to_meter*0} ${inch_to_meter*(-.25/2)} ${inch_to_meter*-2}" rpy="0 0 0"/>
     <geometry><box size="${inch_to_meter*(4)} ${inch_to_meter*-.25} ${inch_to_meter*(4)}"/></geometry>
     <material name="green"><color rgba="0 0.9 0.9 1.0"/></material>
   </visual>
@@ -380,7 +371,7 @@
 <joint name="kinect_side_joint" type="fixed">
   <parent link="kinect_side_link"/>
   <child link="kinect_base_link"/>
-  <origin xyz="${inch_to_meter*-(0)} ${inch_to_meter*(0)} ${inch_to_meter*-(2.04+(.25/2))}" rpy="0 0 0"/>
+  <origin xyz="${inch_to_meter*-(0)} ${inch_to_meter*(0)} ${inch_to_meter*-(3.54+(.25/2))}" rpy="0 0 0"/>
 </joint>
 
 <link name="kinect_base_link">
@@ -586,7 +577,6 @@ hokuyo side bar dimensions:
   <parent link="lidar_bar_link"/>
   <child link="lidar_tilt_link"/>
   <origin xyz="${inch_to_meter*2.094} ${inch_to_meter*-.25} ${inch_to_meter*(0)}" rpy="0 0 0"/>
-  <axis xyz="0 1 0"/>
 </joint>
 <link name="lidar_tilt_link">
             <inertial>
