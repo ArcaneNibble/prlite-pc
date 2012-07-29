@@ -21,7 +21,8 @@ namespace pr2lite
                 void position_callback(const std_msgs::Int32::ConstPtr& position)
                 {
                     // Since this is just the raw, provide a simple write to service
-                    this->setPosition(position->data);
+                    ROS_INFO("Setting \"%s\" to %d", m_name.c_str(), position->data);
+		    this->setPosition(position->data);
                 }
             public:
                 LinactRaw(ros::NodeHandle& nh, int id, std::string& name)
@@ -40,8 +41,11 @@ extern "C"
     // Allocate an actuator object
     pr2lite::actuators::LinearActuator* createActuator(ros::NodeHandle& nh, std::string name)
     {
-        ROS_INFO("Registering \"%s\" of type LinactRaw", name.c_str());
-        return new pr2lite::actuators::plugins::LinactRaw(nh, 0x0f, name);
+        //ROS_INFO("DERP");
+        int id;
+        nh.getParam(name + "/id", id);
+        ROS_INFO("Registering \"%s\"(%d) of type LinactRaw", name.c_str(), id);
+        return new pr2lite::actuators::plugins::LinactRaw(nh, id, name);
     }
     
     // Return the type of actuator this is
@@ -50,3 +54,4 @@ extern "C"
         return "pr2lite.actuator.linactraw";
     }
 }
+

@@ -2,10 +2,11 @@ shoulder_elevationL:
     id: 15
     base_length: 9.9
     extent: 4.0
-    type: "pr2lite.actuators.linactraw"
+    type: "pr2lite.actuator.linactraw"
 
 shoulder_elevationR:
     id: 14
     base_length: 9.9
     extent: 4.0
-    type: "pr2lite.actuators.linactraw"
+    type: "pr2lite.actuator.linactraw"
+

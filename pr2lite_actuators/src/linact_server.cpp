@@ -59,8 +59,10 @@ int main (int argc, char** argv)
         dlerror();
         
         // Lookup the allocator and naming function
-        *(void **)(&allocator) = dlsym(plugin, "createActuator");
         *(void **)(&lookup) = dlsym(plugin, "pluginType");
+        assert(lookup != NULL);
+        *(void **)(&allocator) = dlsym(plugin, "createActuator");
+        assert(allocator != NULL);
         
         // Check if we encountered an error in the lookup
         char *error =  NULL;
@@ -81,6 +83,27 @@ int main (int argc, char** argv)
     }
 
     // Load actuators
+    std::string actuator_list;
+    nh.getParam("/linact_server/actuators", actuator_list);
+    
+    // Break down the string and load in the actuators
+    tokenizer actuator_tokenizer(actuator_list, sep);
+    for(tokenizer::iterator act_iter = actuator_tokenizer.begin(); act_iter != actuator_tokenizer.end(); ++act_iter)
+    {
+        // Variables
+        std::string name = act_iter->c_str();
+        std::string pluginType;
+        
+        // Get the type of actuator
+        nh.getParam(name + "/type", pluginType);
+        ROS_INFO("Starting Actuator \"%s\" (%s)", act_iter->c_str(), pluginType.c_str());
+        actuatorAllocator allocator = plugin_allocators[pluginType];
+        assert(allocator != NULL);
+        
+        // Create an instance of it
+        pr2lite::actuators::LinearActuator *actuator = (*allocator)(nh, name);
+        actuators.push_back(actuator);
+    }
 
     // Execute forever
     ros::spin();
@@ -131,3 +154,4 @@ int main (int argc, char** argv)
     return 0;
 }
 */
+
