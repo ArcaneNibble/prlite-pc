@@ -23,3 +23,5 @@ target_link_libraries(linact_server ${PROJECT_NAME})
 # Compile plugins
 rosbuild_add_library(linactrawplugin src/linact_type_raw.cpp)
 target_link_libraries(linactrawplugin ${PROJECT_NAME})
+rosbuild_add_library(linactdynamixelplugin src/linact_type_dynamixel.cpp)
+target_link_libraries(linactdynamixelplugin ${PROJECT_NAME})

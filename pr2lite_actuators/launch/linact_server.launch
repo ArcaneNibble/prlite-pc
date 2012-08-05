@@ -4,7 +4,7 @@
 
     <!-- launch the linear actuator server -->
     <node name="linact_server" pkg="pr2lite_actuators" type="linact_server">
-        <param name="plugins" value="$(find pr2lite_actuators)/lib/liblinactrawplugin.so"/>
+        <param name="plugins" value="$(find pr2lite_actuators)/lib/liblinactrawplugin.so;$(find pr2lite_actuators)/lib/liblinactdynamixelplugin.so"/>
         <param name="actuators" value="shoulder_elevationL;shoulder_elevationR" />
     </node>
 </launch>
