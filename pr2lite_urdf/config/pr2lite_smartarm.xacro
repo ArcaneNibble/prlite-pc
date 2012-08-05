@@ -64,18 +64,21 @@
             <child link="${side}_upper_arm_link" />
             
             <axis xyz="0 -1 0"/>
-            <limit  lower="-1.04719755" upper="1.972222" effort="300" velocity="1.17" />
+<!--
+            <limit  lower="-1.04" upper="1.95" effort="300" velocity="1.17" />
+-->
+            <limit  lower=".15" upper="1" effort="300" velocity="1.17" />
             <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="${-1.04719755+0.1}" soft_upper_limit="${1.972222-0.1}" />
             <dynamics damping="50" friction="1"/>
         </joint>
  
 
 <joint name="${side}_upper_arm_hinge_joint" type="revolute"> 
-    <origin xyz="${inch_to_meter*14} ${inch_to_meter*0} ${inch_to_meter*0}" rpy="0.0 0 0.0"/>
+    <origin xyz="${inch_to_meter*14} ${inch_to_meter*0} ${inch_to_meter*.25}" rpy="0.0 0 0.0"/>
     <parent link="${side}_upper_arm_link"/>
     <child link="${side}_upper_arm_hinge_link"/>    
     <axis xyz="0 -1 0"/>
-    <limit  lower="-1.04719755" upper="1.972222" effort="300" velocity="1.17" />
+    <limit  lower="-1" upper="-.15" effort="300" velocity="1.17" />
     <mimic joint="${side}_shoulder_tilt_joint" multiplier="-1" offset="0"/> 
 </joint>
 
@@ -219,7 +222,7 @@
     <!-- geometry><box size="${inch_to_meter*0} ${inch_to_meter*0} ${inch_to_meter*0}"/></geometry -->
     <origin xyz="${inch_to_meter*(0)} ${inch_to_meter*0} ${inch_to_meter*-5.95}" rpy="0 0 0"/>
     <geometry><box size="${inch_to_meter*.8} ${inch_to_meter*.8} ${inch_to_meter*-9.9}"/></geometry>
-    <material name="green"><color rgba="0 0.9 0.9 1.0"/></material>
+    <material name="Green"><color rgba="0 0.9 0.9 1.0"/></material>
   </visual>
 </link>
 

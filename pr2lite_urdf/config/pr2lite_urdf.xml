@@ -5,6 +5,13 @@
 <!-- =================================================================================== -->
 <robot name="pr2lite" xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body" xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller" xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface" xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#slider" xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- Included URDF Files -->
+  <!-- 
+     From Matthew:
+      width of outer torso: 0.526999 meters
+      height of outer torso: 0.771906 meters
+      width of joints of arms: 0.4126992 meters
+      joints of arms: 0.05715
+    -->
   <material name="Black">
     <color rgba="0.0 0.0 0.0 1.0"/>
   </material>
@@ -35,11 +42,6 @@
   <!-- Properties (Constants) -->
   <!-- base_footprint is a fictitious link(frame) that is on the ground right below base_link origin, navigation stack depends on this frame -->
   <link name="base_footprint">
-    <inertial>
-      <mass value="0.0001"/>
-      <origin xyz="0.0 0.0 0.0"/>
-      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
-    </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.00889"/>
       <geometry>
@@ -122,14 +124,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.3"/>
       <geometry>
-        <box size="0.17 0.48 0.46"/>
+        <box size="0.17 0.4953 0.46"/>
       </geometry>
       <material name="Blue"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.085 0.0 0.3"/>
       <geometry>
-        <box size="0.17 0.48 0.46"/>
+        <box size="0.17 0.4953 0.46"/>
       </geometry>
     </collision>
   </link>
@@ -240,7 +242,7 @@
       <geometry>
         <box size="-0.00635 0.14605 0.1651"/>
       </geometry>
-      <material name="red">
+      <material name="Brown">
         <color rgba="0 0.9 0.9 1.0"/>
       </material>
     </visual>
@@ -1291,16 +1293,19 @@ hokuyo side bar dimensions:
     <parent link="left_shoulder_link"/>
     <child link="left_upper_arm_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-1.04719755" upper="1.972222" velocity="1.17"/>
+    <!--
+            <limit  lower="-1.04" upper="1.95" effort="300" velocity="1.17" />
+-->
+    <limit effort="300" lower=".5" upper="1" velocity="1.17"/>
     <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-0.94719755" soft_upper_limit="1.872222"/>
     <dynamics damping="50" friction="1"/>
   </joint>
   <joint name="left_upper_arm_hinge_joint" type="revolute">
-    <origin rpy="0.0 0 0.0" xyz="0.3556 0.0 0.0"/>
+    <origin rpy="0.0 0 0.0" xyz="0.3556 0.0 0.00635"/>
     <parent link="left_upper_arm_link"/>
     <child link="left_upper_arm_hinge_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-1.04719755" upper="1.972222" velocity="1.17"/>
+    <limit effort="300" lower="-1" upper="-.15" velocity="1.17"/>
     <mimic joint="left_shoulder_tilt_joint" multiplier="-1" offset="0"/>
   </joint>
   <joint name="left_elbow_pan_joint" type="revolute">
@@ -1436,7 +1441,7 @@ hokuyo side bar dimensions:
       <geometry>
         <box size="0.02032 0.02032 -0.25146"/>
       </geometry>
-      <material name="green">
+      <material name="Green">
         <color rgba="0 0.9 0.9 1.0"/>
       </material>
     </visual>
@@ -1747,16 +1752,19 @@ hokuyo side bar dimensions:
     <parent link="right_shoulder_link"/>
     <child link="right_upper_arm_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-1.04719755" upper="1.972222" velocity="1.17"/>
+    <!--
+            <limit  lower="-1.04" upper="1.95" effort="300" velocity="1.17" />
+-->
+    <limit effort="300" lower=".5" upper="1" velocity="1.17"/>
     <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-0.94719755" soft_upper_limit="1.872222"/>
     <dynamics damping="50" friction="1"/>
   </joint>
   <joint name="right_upper_arm_hinge_joint" type="revolute">
-    <origin rpy="0.0 0 0.0" xyz="0.3556 0.0 0.0"/>
+    <origin rpy="0.0 0 0.0" xyz="0.3556 0.0 0.00635"/>
     <parent link="right_upper_arm_link"/>
     <child link="right_upper_arm_hinge_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-1.04719755" upper="1.972222" velocity="1.17"/>
+    <limit effort="300" lower="-1" upper="-.15" velocity="1.17"/>
     <mimic joint="right_shoulder_tilt_joint" multiplier="-1" offset="0"/>
   </joint>
   <joint name="right_elbow_pan_joint" type="revolute">
@@ -1892,7 +1900,7 @@ hokuyo side bar dimensions:
       <geometry>
         <box size="0.02032 0.02032 -0.25146"/>
       </geometry>
-      <material name="green">
+      <material name="Green">
         <color rgba="0 0.9 0.9 1.0"/>
       </material>
     </visual>
