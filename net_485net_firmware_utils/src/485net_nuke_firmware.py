@@ -34,7 +34,7 @@ def main(what, addr):
 
 if __name__ == '__main__':
 	if len(sys.argv) < 2:
-		print "Usage: %s x(everything|a|l addr)\n\tor m addr aa bb cc dd" % sys.argv[0]
+		print "Usage: %s x(everything)|a|l addr\n\tor m addr aa bb cc dd" % sys.argv[0]
 		sys.exit(1)
 	try:
 		main(sys.argv[1], ord(binascii.unhexlify(sys.argv[2])))
