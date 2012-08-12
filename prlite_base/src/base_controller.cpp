@@ -1,6 +1,6 @@
 /*
 * prlite_base
-* Copyright (c) 2011, Andrew Downing, Alan Downing
+* Copyright (c) 2011-2012, Andrew Downing, Alan Downing, Robert Ou
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
