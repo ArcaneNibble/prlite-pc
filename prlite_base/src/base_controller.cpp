@@ -44,7 +44,6 @@ const ros::Duration WHEEL_TO(5.0);
 const ros::Duration LINACT_TO(5.0);
 const ros::Duration LINACT_FINISH_TO(5.0);
 
-ros::Publisher pid_pub;
 ros::Publisher cmd_pub;
 ros::Publisher linact_pub;
 
@@ -338,7 +337,7 @@ static void initOneWheelPID(unsigned char id, int32_t p, int32_t i, int32_t d, u
 	do
 	{
 		printf("Trying to send pid to %s\n", names[id]);
-		pid_pub.publish(pid_gains);
+		cmd_pub.publish(pid_gains);
 		sleep(1);
 	}
 	while((wheel_debug_bits[id] & 4) == 0);
@@ -653,7 +652,6 @@ int main(int argc, char **argv)
   ros::Subscriber wheel_sub = n.subscribe("net_485net_incoming_dgram", 1000, wheelCallback);
   ros::Subscriber linact_sub = n.subscribe("net_485net_incoming_dgram", 1000, linactCallback);
 
-  pid_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
   cmd_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
   linact_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
   
