@@ -337,7 +337,7 @@ static void initOneWheelPID(unsigned char id, int32_t p, int32_t i, int32_t d, u
 	
 	do
 	{
-		printf("Trying to send pid to %s", names[id]);
+		printf("Trying to send pid to %s\n", names[id]);
 		pid_pub.publish(pid_gains);
 		sleep(1);
 	}
@@ -354,6 +354,101 @@ static void initWheelPID(void)
 	initOneWheelPID(2, 5 << 16, 25 << 16, 3 << 16, 1);
 	//back right
 	initOneWheelPID(3, 5 << 16, 25 << 16, 3 << 16, 255);
+}
+
+static void multicastSetWheelSpeeds(int16_t fl, int16_t fr, int16_t bl, int16_t br)
+{
+	unsigned char idfl = lookup_id("wheel-cnt", "front left");
+	unsigned char idfr = lookup_id("wheel-cnt", "front right");
+	unsigned char idbl = lookup_id("wheel-cnt", "back left");
+	unsigned char idbr = lookup_id("wheel-cnt", "back right");
+
+	packets_485net::packet_485net_dgram wheel_cmd;
+	
+	wheel_cmd.source = 0xF0;
+	wheel_cmd.sport = 7;
+	wheel_cmd.dport = 6;
+	wheel_cmd.destination = lookup_id("multicast", "all wheels");
+	
+	wheel_cmd.data.push_back(5);
+	wheel_cmd.data.push_back(idfl);
+	wheel_cmd.data.push_back(1);
+	wheel_cmd.data.push_back((fl >> 0) & 0xFF);
+	wheel_cmd.data.push_back((fl >> 8) & 0xFF);
+	
+	wheel_cmd.data.push_back(5);
+	wheel_cmd.data.push_back(idfr);
+	wheel_cmd.data.push_back(1);
+	wheel_cmd.data.push_back((fr >> 0) & 0xFF);
+	wheel_cmd.data.push_back((fr >> 8) & 0xFF);
+	
+	wheel_cmd.data.push_back(5);
+	wheel_cmd.data.push_back(idbl);
+	wheel_cmd.data.push_back(1);
+	wheel_cmd.data.push_back((bl >> 0) & 0xFF);
+	wheel_cmd.data.push_back((bl >> 8) & 0xFF);
+	
+	wheel_cmd.data.push_back(5);
+	wheel_cmd.data.push_back(idbr);
+	wheel_cmd.data.push_back(1);
+	wheel_cmd.data.push_back((br >> 0) & 0xFF);
+	wheel_cmd.data.push_back((br >> 8) & 0xFF);
+	
+	do
+	{
+		printf("Sending command to wheels (%hd, %hd, %hd, %hd)\n", fl, fr, bl, br);
+		cmd_pub.publish(wheel_cmd);
+		sleep(0.5);
+	}
+	while((wheel_debug_bits[0] & 0x10) != 1 || (wheel_debug_bits[1] & 0x10) != 1 || (wheel_debug_bits[2] & 0x10) != 1 || (wheel_debug_bits[3] & 0x10) != 1);
+	
+	//all got commands now
+	
+	wheel_cmd.data.clear();
+	wheel_cmd.data.push_back(0xa5);
+	wheel_cmd.data.push_back(0x5a);
+	wheel_cmd.data.push_back(0xcc);
+	wheel_cmd.data.push_back(0x33);
+	wheel_cmd.dport = 3;
+	
+	bool needsfl, needsfr, needsbl, needsbr;
+	needsfl = needsfr = needsbl = needsbr = true;
+	
+	do
+	{
+		if(needsfl)
+		{
+			printf("Sending sync deassert to fl\n");
+			wheel_cmd.destination = idfl;
+			cmd_pub.publish(wheel_cmd);
+		}
+		if(needsfr)
+		{
+			printf("Sending sync deassert to fr\n");
+			wheel_cmd.destination = idfr;
+			cmd_pub.publish(wheel_cmd);
+		}
+		if(needsbl)
+		{
+			printf("Sending sync deassert to bl\n");
+			wheel_cmd.destination = idbl;
+			cmd_pub.publish(wheel_cmd);
+		}
+		if(needsbr)
+		{
+			printf("Sending sync deassert to br\n");
+			wheel_cmd.destination = idbr;
+			cmd_pub.publish(wheel_cmd);
+		}
+		
+		sleep(0.5);
+		
+		needsfl = (wheel_debug_bits[0] & 0x10) != 0;
+		needsfr = (wheel_debug_bits[1] & 0x10) != 0;
+		needsbl = (wheel_debug_bits[2] & 0x10) != 0;
+		needsbr = (wheel_debug_bits[3] & 0x10) != 0;
+	}
+	while(needsfl || needsfr || needsbl || needsbr);
 }
 
 // only routine that can change cmd_l_last, cmd_r_last
@@ -375,66 +470,14 @@ void cmdPublishWheel(void)
       ROS_INFO("LINACT_90");
       // move sideways (positive cmd_l/cmd_r means go left)
 	  
-      // back wheels
-	  wheel_cmd.data.push_back(5);
-	  wheel_cmd.data.push_back(lookup_id("wheel-cnt", "back left"));
-	  wheel_cmd.data.push_back(1);
-      wheel_cmd.data.push_back(cmd_l & 0xFF);
-      wheel_cmd.data.push_back((cmd_l >> 8) & 0xFF);
-	  
-	  wheel_cmd.data.push_back(5);
-	  wheel_cmd.data.push_back(lookup_id("wheel-cnt", "back right"));
-	  wheel_cmd.data.push_back(1);
-      wheel_cmd.data.push_back((-cmd_l) & 0xFF);
-      wheel_cmd.data.push_back(((-cmd_l) >> 8) & 0xFF);
-	  
-      // front wheels
-	  wheel_cmd.data.push_back(5);
-	  wheel_cmd.data.push_back(lookup_id("wheel-cnt", "front right"));
-	  wheel_cmd.data.push_back(1);
-      wheel_cmd.data.push_back(cmd_r & 0xFF);
-      wheel_cmd.data.push_back((cmd_r >> 8) & 0xFF);
-	  
-	  wheel_cmd.data.push_back(0);
-	  wheel_cmd.data.push_back(lookup_id("wheel-cnt", "front left"));
-	  wheel_cmd.data.push_back(1);
-      wheel_cmd.data.push_back((-cmd_r) & 0xFF);
-      wheel_cmd.data.push_back(((-cmd_r) >> 8) & 0xFF);
-	  
-	  wheel_cmd.destination = lookup_id("multicast", "all wheels");
-      cmd_pub.publish(wheel_cmd);
+	  multicastSetWheelSpeeds(-cmd_r, cmd_r, cmd_l, -cmd_l);
     }
     else
     {
       ROS_INFO("MOVE F/B");
       // move forwards/backwards or spin in place
 	  
-	  wheel_cmd.data.push_back(5);
-	  wheel_cmd.data.push_back(lookup_id("wheel-cnt", "front left"));
-	  wheel_cmd.data.push_back(1);
-      wheel_cmd.data.push_back(cmd_l & 0xFF);
-      wheel_cmd.data.push_back((cmd_l >> 8) & 0xFF);
-	  
-	  wheel_cmd.data.push_back(5);
-	  wheel_cmd.data.push_back(lookup_id("wheel-cnt", "front right"));
-	  wheel_cmd.data.push_back(1);
-      wheel_cmd.data.push_back(cmd_r & 0xFF);
-      wheel_cmd.data.push_back((cmd_r >> 8) & 0xFF);
-	  
-	  wheel_cmd.data.push_back(5);
-	  wheel_cmd.data.push_back(lookup_id("wheel-cnt", "back left"));
-	  wheel_cmd.data.push_back(1);
-      wheel_cmd.data.push_back(cmd_l & 0xFF);
-      wheel_cmd.data.push_back((cmd_l >> 8) & 0xFF);
-	  
-	  wheel_cmd.data.push_back(0);
-	  wheel_cmd.data.push_back(lookup_id("wheel-cnt", "back right"));
-	  wheel_cmd.data.push_back(1);
-      wheel_cmd.data.push_back(cmd_r & 0xFF);
-      wheel_cmd.data.push_back((cmd_r >> 8) & 0xFF);
-	  
-	  wheel_cmd.destination = lookup_id("multicast", "all wheels");
-      cmd_pub.publish(wheel_cmd);
+	  multicastSetWheelSpeeds(cmd_l, cmd_r, cmd_l, cmd_r);
     }
     cmd_l_last = cmd_l;
     cmd_r_last = cmd_r;
