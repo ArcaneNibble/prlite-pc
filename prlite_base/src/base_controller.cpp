@@ -613,8 +613,6 @@ void linactCallback(const packets_485net::packet_485net_dgram& linear_actuator_s
 
 int main(int argc, char **argv)
 {
-	system("./yourmom.sh");
-
   /**
    * The ros::init() function needs to see argc and argv so that it can perform
    * any ROS arguments and name remapping that were provided at the command line. For programmatic
