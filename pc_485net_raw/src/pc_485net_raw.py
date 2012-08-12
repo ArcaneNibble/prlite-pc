@@ -98,7 +98,7 @@ def tx_packet(packet):
 	ser.write(packet.data)
 	ser.flush()
 	#we really really need a fix for this
-	time.sleep(0.5)
+	time.sleep(0.2)
 	ser.setRTS(True)
 	ser.setDTR(True)
 
