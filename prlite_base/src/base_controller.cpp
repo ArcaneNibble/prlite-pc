@@ -347,7 +347,7 @@ static void initOneWheelPID(unsigned char id, int32_t p, int32_t i, int32_t d, u
 	{
 		printf("Trying to send pid to %s\n", names[id]);
 		cmd_pub.publish(pid_gains);
-		sleep(1);
+		ros::Duration(1.0).sleep();
 		ros::spinOnce();
 	}
 	while((wheel_debug_bits[id] & 4) == 0);
@@ -407,7 +407,7 @@ static void multicastSetWheelSpeeds(int16_t fl, int16_t fr, int16_t bl, int16_t 
 	{
 		printf("Sending command to wheels (%hd, %hd, %hd, %hd)\n", fl, fr, bl, br);
 		cmd_pub.publish(wheel_cmd);
-		sleep(1);
+		ros::Duration(1.0).sleep();
 		ros::spinOnce();
 	}
 	while((wheel_debug_bits[0] & 0x10) != 0x10 || (wheel_debug_bits[1] & 0x10) != 0x10 || (wheel_debug_bits[2] & 0x10) != 0x10 || (wheel_debug_bits[3] & 0x10) != 0x10);
@@ -451,7 +451,7 @@ static void multicastSetWheelSpeeds(int16_t fl, int16_t fr, int16_t bl, int16_t 
 			cmd_pub.publish(wheel_cmd);
 		}
 		
-		sleep(1);
+		ros::Duration(1.0).sleep();
 		
 		ros::spinOnce();
 		
