@@ -115,7 +115,7 @@ void state_change(void)
   base_state_enum base_state_last;
   
   if(already_in_state_change)
-	return;
+    return;
   
   already_in_state_change = 1;
   
@@ -173,13 +173,13 @@ void state_change(void)
         } else if (!linact_arrived) {  // linact is moving
           base_state = linact_moving;  // TODO: any emergency stop?
           if (rosinfodbg) ROS_INFO("LINACT MOVING");
-		  if(linact_does_not_seem_to_be_moving)
-		  {
-			linact_does_not_seem_to_be_moving = false;
-			ROS_INFO("Placing a bet that linear actuator is stopped");
-			cmdPublishLinactStop();
-			base_state = ready;
-		  }
+          if (linact_does_not_seem_to_be_moving)
+          {
+            linact_does_not_seem_to_be_moving = false;
+            ROS_INFO("Placing a bet that linear actuator is stopped");
+            cmdPublishLinactStop();
+            base_state = ready;
+          }
         } else if (state_timeout(linact_moving, &now, LINACT_FINISH_TO)) {
           // TODO: make timeout more precise based on starting / end point
           ROS_INFO("ERR: LINACT FINISH TIMEOUT");
@@ -189,20 +189,20 @@ void state_change(void)
           if (rosinfodbg) ROS_INFO("NEW LINACT CMD ");
           cmdPublishLinact();
         } 
-	else if (linact_arrived && linact_goal_arrived)
-	{
-           if (rosinfodbg) ROS_INFO("BASE READY");
-	  //done with linact
-	  base_state = ready;
-	}
+        else if (linact_arrived && linact_goal_arrived)
+        {
+          if (rosinfodbg) ROS_INFO("BASE READY");
+          // done with linact
+          base_state = ready;
+        }
     } else if (base_state == wheel_start) {
         if ((cmd_l == 0 || (wheel_started[0] && wheel_started[2])) &&
-		    (cmd_r == 0 || (wheel_started[1] && wheel_started[3]))) {
+            (cmd_r == 0 || (wheel_started[1] && wheel_started[3]))) {
           base_state = wheel_moving;
           if (rosinfodbg) ROS_INFO("WHEEL moving");
         } else if (state_timeout(wheel_start, &now, WHEEL_TO)) {
           ROS_INFO("ERR: WHEEL START TIMEOUT");
-		  force_wheel_update = true;
+          force_wheel_update = true;
           //base_state = ready;
           cmdPublishWheel();
         }
@@ -218,12 +218,12 @@ void state_change(void)
           int cmd_r_tmp = cmd_r;
           cmd_l = 0;
           cmd_r = 0;
-		  force_wheel_update = true;
-	  if (rosinfodbg) ROS_INFO("stop wheels (new linact pos)");
+          force_wheel_update = true;
+          if (rosinfodbg) ROS_INFO("stop wheels (new linact pos)");
           cmdPublishWheel();
           cmd_l = cmd_l_tmp;
           cmd_r = cmd_r_tmp;
-		  force_wheel_update = true;
+          force_wheel_update = true;
           // Change in wheel command with same linact pos
           if (rosinfodbg) ROS_INFO("WHEEL cmd change, same linact");
           cmdPublishWheel();
@@ -235,11 +235,11 @@ void state_change(void)
           if (rosinfodbg) ROS_INFO("wheel cmd change");
           // cmdPublishLinact();
           cmdPublishWheel();
-		  base_state = wheel_start;
+          base_state = wheel_start;
         } else if (cmd_l == 0 && cmd_r == 0 && !wheel_stopped) {
           // try to stop again
-		  force_wheel_update = true;
-	  if (rosinfodbg) ROS_INFO("wheels not stopped");
+          force_wheel_update = true;
+          if (rosinfodbg) ROS_INFO("wheels not stopped");
           cmdPublishWheel();
         }
      }
@@ -255,38 +255,38 @@ void state_change(void)
 
 uint8_t lookup_id(const char *type, const char *desc)
 {
-	net_485net_id_handler::SearchID search;
-	
-	search.request.type = type;
-	search.request.desc = desc;
-	if(idlookup.call(search))
-	{
-		return search.response.res;
-	}
-	else
-	{
-		//ERROR
-		return 0xFF;
-	}
+  net_485net_id_handler::SearchID search;
+  
+  search.request.type = type;
+  search.request.desc = desc;
+  if(idlookup.call(search))
+  {
+    return search.response.res;
+  }
+  else
+  {
+    //ERROR
+    return 0xFF;
+  }
 }
 
 // only routine that can change linact_goal_last
 void cmdPublishLinact(void)
 {
-	uint16_t itmp;
+  uint16_t itmp;
   packets_485net::packet_485net_dgram linact_cmd;
-	linact_cmd.destination = lookup_id("lin-act", "wheel rotate");
-	linact_cmd.source = 0xF0;
-	linact_cmd.sport = 7;
-	linact_cmd.dport = 1;
-	
-	itmp = linact_goal > LINACT_PRECISION ? linact_goal - LINACT_PRECISION : 0;
-	linact_cmd.data.push_back(itmp & 0xFF);
-	linact_cmd.data.push_back((itmp >> 8) & 0xFF);
-	itmp = linact_goal + LINACT_PRECISION < MAX_LINACT ? linact_goal + LINACT_PRECISION : MAX_LINACT;
-	linact_cmd.data.push_back(itmp & 0xFF);
-	linact_cmd.data.push_back((itmp >> 8) & 0xFF);
-	
+  linact_cmd.destination = lookup_id("lin-act", "wheel rotate");
+  linact_cmd.source = 0xF0;
+  linact_cmd.sport = 7;
+  linact_cmd.dport = 1;
+  
+  itmp = linact_goal > LINACT_PRECISION ? linact_goal - LINACT_PRECISION : 0;
+  linact_cmd.data.push_back(itmp & 0xFF);
+  linact_cmd.data.push_back((itmp >> 8) & 0xFF);
+  itmp = linact_goal + LINACT_PRECISION < MAX_LINACT ? linact_goal + LINACT_PRECISION : MAX_LINACT;
+  linact_cmd.data.push_back(itmp & 0xFF);
+  linact_cmd.data.push_back((itmp >> 8) & 0xFF);
+  
   ROS_INFO("base linact %d", linact_goal);
   linact_pub.publish(linact_cmd);
   linact_goal_last = linact_goal;
@@ -294,173 +294,173 @@ void cmdPublishLinact(void)
 
 void cmdPublishLinactStop(void)
 {
-	packets_485net::packet_485net_dgram linact_cmd;
-	linact_cmd.destination = lookup_id("lin-act", "wheel rotate");
-	linact_cmd.source = 0xF0;
-	linact_cmd.sport = 7;
-	linact_cmd.dport = 1;
-	
-	linact_cmd.data.push_back(0);
-	linact_cmd.data.push_back(0);
-	linact_cmd.data.push_back(0xff);
-	linact_cmd.data.push_back(0x03);
-	
-	ROS_INFO("stopping linact");
-	linact_pub.publish(linact_cmd);
-	linact_goal_last = linact_goal;
+  packets_485net::packet_485net_dgram linact_cmd;
+  linact_cmd.destination = lookup_id("lin-act", "wheel rotate");
+  linact_cmd.source = 0xF0;
+  linact_cmd.sport = 7;
+  linact_cmd.dport = 1;
+  
+  linact_cmd.data.push_back(0);
+  linact_cmd.data.push_back(0);
+  linact_cmd.data.push_back(0xff);
+  linact_cmd.data.push_back(0x03);
+  
+  ROS_INFO("stopping linact");
+  linact_pub.publish(linact_cmd);
+  linact_goal_last = linact_goal;
 }
 
 static void initOneWheelPID(unsigned char id, int32_t p, int32_t i, int32_t d, unsigned char dir)
 {
-	if(id > 3)
-	{
-		printf("ERROR: tried to send pid for invalid wheel %d\n", id);
-		return;
-	}
-	
-	const char * const names[] = {"front left", "front right", "back left", "back right"};
+  if(id > 3)
+  {
+    printf("ERROR: tried to send pid for invalid wheel %d\n", id);
+    return;
+  }
+  
+  const char * const names[] = {"front left", "front right", "back left", "back right"};
 
-    packets_485net::packet_485net_dgram pid_gains;
-	
-	pid_gains.source = 0xF0;
-	pid_gains.sport = 7;
-	pid_gains.dport = 1;
-	  
-	pid_gains.data.push_back((p >>  0) & 0xFF);
-	pid_gains.data.push_back((p >>  8) & 0xFF);
-	pid_gains.data.push_back((p >> 16) & 0xFF);
-	pid_gains.data.push_back((p >> 24) & 0xFF);
-	pid_gains.data.push_back((i >>  0) & 0xFF);
-	pid_gains.data.push_back((i >>  8) & 0xFF);
-	pid_gains.data.push_back((i >> 16) & 0xFF);
-	pid_gains.data.push_back((i >> 24) & 0xFF);
-	pid_gains.data.push_back((d >>  0) & 0xFF);
-	pid_gains.data.push_back((d >>  8) & 0xFF);
-	pid_gains.data.push_back((d >> 16) & 0xFF);
-	pid_gains.data.push_back((d >> 24) & 0xFF);
-	
-	pid_gains.data.push_back(dir);
-	
-	pid_gains.destination = lookup_id("wheel-cnt", names[id]);
-	
-	do
-	{
-		printf("Trying to send pid to %s\n", names[id]);
-		cmd_pub.publish(pid_gains);
-		ros::Duration(1.0).sleep();
-		ros::spinOnce();
-	}
-	while((wheel_debug_bits[id] & 4) == 0);
+  packets_485net::packet_485net_dgram pid_gains;
+  
+  pid_gains.source = 0xF0;
+  pid_gains.sport = 7;
+  pid_gains.dport = 1;
+    
+  pid_gains.data.push_back((p >>  0) & 0xFF);
+  pid_gains.data.push_back((p >>  8) & 0xFF);
+  pid_gains.data.push_back((p >> 16) & 0xFF);
+  pid_gains.data.push_back((p >> 24) & 0xFF);
+  pid_gains.data.push_back((i >>  0) & 0xFF);
+  pid_gains.data.push_back((i >>  8) & 0xFF);
+  pid_gains.data.push_back((i >> 16) & 0xFF);
+  pid_gains.data.push_back((i >> 24) & 0xFF);
+  pid_gains.data.push_back((d >>  0) & 0xFF);
+  pid_gains.data.push_back((d >>  8) & 0xFF);
+  pid_gains.data.push_back((d >> 16) & 0xFF);
+  pid_gains.data.push_back((d >> 24) & 0xFF);
+  
+  pid_gains.data.push_back(dir);
+  
+  pid_gains.destination = lookup_id("wheel-cnt", names[id]);
+  
+  do
+  {
+    printf("Trying to send pid to %s\n", names[id]);
+    cmd_pub.publish(pid_gains);
+    ros::Duration(1.0).sleep();
+    ros::spinOnce();
+  }
+  while((wheel_debug_bits[id] & 4) == 0);
 }
 
 static void initWheelPID(void)
 {
-	//front left
-	initOneWheelPID(0, 5 << 16, 25 << 16, 3 << 16, 1);
-	//front right
-	initOneWheelPID(1, 5 << 16, 25 << 16, 3 << 16, 255);
-	//back left
-	initOneWheelPID(2, 5 << 16, 25 << 16, 3 << 16, 1);
-	//back right
-	initOneWheelPID(3, 5 << 16, 25 << 16, 3 << 16, 255);
+  //front left
+  initOneWheelPID(0, 5 << 16, 25 << 16, 3 << 16, 1);
+  //front right
+  initOneWheelPID(1, 5 << 16, 25 << 16, 3 << 16, 255);
+  //back left
+  initOneWheelPID(2, 5 << 16, 25 << 16, 3 << 16, 1);
+  //back right
+  initOneWheelPID(3, 5 << 16, 25 << 16, 3 << 16, 255);
 }
 
 static void multicastSetWheelSpeeds(int16_t fl, int16_t fr, int16_t bl, int16_t br)
 {
-	unsigned char idfl = lookup_id("wheel-cnt", "front left");
-	unsigned char idfr = lookup_id("wheel-cnt", "front right");
-	unsigned char idbl = lookup_id("wheel-cnt", "back left");
-	unsigned char idbr = lookup_id("wheel-cnt", "back right");
+  unsigned char idfl = lookup_id("wheel-cnt", "front left");
+  unsigned char idfr = lookup_id("wheel-cnt", "front right");
+  unsigned char idbl = lookup_id("wheel-cnt", "back left");
+  unsigned char idbr = lookup_id("wheel-cnt", "back right");
 
-	packets_485net::packet_485net_dgram wheel_cmd;
-	
-	wheel_cmd.source = 0xF0;
-	wheel_cmd.sport = 7;
-	wheel_cmd.dport = 6;
-	wheel_cmd.destination = lookup_id("multicast", "all wheels");
-	
-	wheel_cmd.data.push_back(5);
-	wheel_cmd.data.push_back(idfl);
-	wheel_cmd.data.push_back(1);
-	wheel_cmd.data.push_back((fl >> 0) & 0xFF);
-	wheel_cmd.data.push_back((fl >> 8) & 0xFF);
-	
-	wheel_cmd.data.push_back(5);
-	wheel_cmd.data.push_back(idfr);
-	wheel_cmd.data.push_back(1);
-	wheel_cmd.data.push_back((fr >> 0) & 0xFF);
-	wheel_cmd.data.push_back((fr >> 8) & 0xFF);
-	
-	wheel_cmd.data.push_back(5);
-	wheel_cmd.data.push_back(idbl);
-	wheel_cmd.data.push_back(1);
-	wheel_cmd.data.push_back((bl >> 0) & 0xFF);
-	wheel_cmd.data.push_back((bl >> 8) & 0xFF);
-	
-	wheel_cmd.data.push_back(5);
-	wheel_cmd.data.push_back(idbr);
-	wheel_cmd.data.push_back(1);
-	wheel_cmd.data.push_back((br >> 0) & 0xFF);
-	wheel_cmd.data.push_back((br >> 8) & 0xFF);
-	
-	do
-	{
-		printf("Sending command to wheels (%hd, %hd, %hd, %hd)\n", fl, fr, bl, br);
-		cmd_pub.publish(wheel_cmd);
-		ros::Duration(1.0).sleep();
-		ros::spinOnce();
-	}
-	while((wheel_debug_bits[0] & 0x10) != 0x10 || (wheel_debug_bits[1] & 0x10) != 0x10 || (wheel_debug_bits[2] & 0x10) != 0x10 || (wheel_debug_bits[3] & 0x10) != 0x10);
-	
-	//all got commands now
-	
-	wheel_cmd.data.clear();
-	wheel_cmd.data.push_back(0xa5);
-	wheel_cmd.data.push_back(0x5a);
-	wheel_cmd.data.push_back(0xcc);
-	wheel_cmd.data.push_back(0x33);
-	wheel_cmd.dport = 3;
-	
-	bool needsfl, needsfr, needsbl, needsbr;
-	needsfl = needsfr = needsbl = needsbr = true;
-	
-	do
-	{
-		if(needsfl)
-		{
-			printf("Sending sync deassert to fl\n");
-			wheel_cmd.destination = idfl;
-			cmd_pub.publish(wheel_cmd);
-		}
-		if(needsfr)
-		{
-			printf("Sending sync deassert to fr\n");
-			wheel_cmd.destination = idfr;
-			cmd_pub.publish(wheel_cmd);
-		}
-		if(needsbl)
-		{
-			printf("Sending sync deassert to bl\n");
-			wheel_cmd.destination = idbl;
-			cmd_pub.publish(wheel_cmd);
-		}
-		if(needsbr)
-		{
-			printf("Sending sync deassert to br\n");
-			wheel_cmd.destination = idbr;
-			cmd_pub.publish(wheel_cmd);
-		}
-		
-		ros::Duration(1.0).sleep();
-		
-		ros::spinOnce();
-		
-		needsfl = (wheel_debug_bits[0] & 0x10) != 0;
-		needsfr = (wheel_debug_bits[1] & 0x10) != 0;
-		needsbl = (wheel_debug_bits[2] & 0x10) != 0;
-		needsbr = (wheel_debug_bits[3] & 0x10) != 0;
-	}
-	while(needsfl || needsfr || needsbl || needsbr);
+  packets_485net::packet_485net_dgram wheel_cmd;
+  
+  wheel_cmd.source = 0xF0;
+  wheel_cmd.sport = 7;
+  wheel_cmd.dport = 6;
+  wheel_cmd.destination = lookup_id("multicast", "all wheels");
+  
+  wheel_cmd.data.push_back(5);
+  wheel_cmd.data.push_back(idfl);
+  wheel_cmd.data.push_back(1);
+  wheel_cmd.data.push_back((fl >> 0) & 0xFF);
+  wheel_cmd.data.push_back((fl >> 8) & 0xFF);
+  
+  wheel_cmd.data.push_back(5);
+  wheel_cmd.data.push_back(idfr);
+  wheel_cmd.data.push_back(1);
+  wheel_cmd.data.push_back((fr >> 0) & 0xFF);
+  wheel_cmd.data.push_back((fr >> 8) & 0xFF);
+  
+  wheel_cmd.data.push_back(5);
+  wheel_cmd.data.push_back(idbl);
+  wheel_cmd.data.push_back(1);
+  wheel_cmd.data.push_back((bl >> 0) & 0xFF);
+  wheel_cmd.data.push_back((bl >> 8) & 0xFF);
+  
+  wheel_cmd.data.push_back(5);
+  wheel_cmd.data.push_back(idbr);
+  wheel_cmd.data.push_back(1);
+  wheel_cmd.data.push_back((br >> 0) & 0xFF);
+  wheel_cmd.data.push_back((br >> 8) & 0xFF);
+  
+  do
+  {
+    printf("Sending command to wheels (%hd, %hd, %hd, %hd)\n", fl, fr, bl, br);
+    cmd_pub.publish(wheel_cmd);
+    ros::Duration(1.0).sleep();
+    ros::spinOnce();
+  }
+  while((wheel_debug_bits[0] & 0x10) != 0x10 || (wheel_debug_bits[1] & 0x10) != 0x10 || (wheel_debug_bits[2] & 0x10) != 0x10 || (wheel_debug_bits[3] & 0x10) != 0x10);
+  
+  //all got commands now
+  
+  wheel_cmd.data.clear();
+  wheel_cmd.data.push_back(0xa5);
+  wheel_cmd.data.push_back(0x5a);
+  wheel_cmd.data.push_back(0xcc);
+  wheel_cmd.data.push_back(0x33);
+  wheel_cmd.dport = 3;
+  
+  bool needsfl, needsfr, needsbl, needsbr;
+  needsfl = needsfr = needsbl = needsbr = true;
+  
+  do
+  {
+    if(needsfl)
+    {
+      printf("Sending sync deassert to fl\n");
+      wheel_cmd.destination = idfl;
+      cmd_pub.publish(wheel_cmd);
+    }
+    if(needsfr)
+    {
+      printf("Sending sync deassert to fr\n");
+      wheel_cmd.destination = idfr;
+      cmd_pub.publish(wheel_cmd);
+    }
+    if(needsbl)
+    {
+      printf("Sending sync deassert to bl\n");
+      wheel_cmd.destination = idbl;
+      cmd_pub.publish(wheel_cmd);
+    }
+    if(needsbr)
+    {
+      printf("Sending sync deassert to br\n");
+      wheel_cmd.destination = idbr;
+      cmd_pub.publish(wheel_cmd);
+    }
+    
+    ros::Duration(1.0).sleep();
+    
+    ros::spinOnce();
+    
+    needsfl = (wheel_debug_bits[0] & 0x10) != 0;
+    needsfr = (wheel_debug_bits[1] & 0x10) != 0;
+    needsbl = (wheel_debug_bits[2] & 0x10) != 0;
+    needsbr = (wheel_debug_bits[3] & 0x10) != 0;
+  }
+  while(needsfl || needsfr || needsbl || needsbr);
 }
 
 // only routine that can change cmd_l_last, cmd_r_last
@@ -470,26 +470,26 @@ void cmdPublishWheel(void)
   {
     // publish wheel commands
     packets_485net::packet_485net_dgram wheel_cmd;
-	
-	ROS_INFO("Wheel update forced");
-	force_wheel_update = false;
-	
-	wheel_cmd.source = 0xF0;
-	wheel_cmd.sport = 7;
-	wheel_cmd.dport = 6;
+    
+    ROS_INFO("Wheel update forced");
+    force_wheel_update = false;
+    
+    wheel_cmd.source = 0xF0;
+    wheel_cmd.sport = 7;
+    wheel_cmd.dport = 6;
     if (LINACT_90 == linact_goal)
     {
       ROS_INFO("LINACT_90");
       // move sideways (positive cmd_l/cmd_r means go left)
-	  
-	  multicastSetWheelSpeeds(-cmd_r, cmd_r, cmd_l, -cmd_l);
+      
+      multicastSetWheelSpeeds(-cmd_r, cmd_r, cmd_l, -cmd_l);
     }
     else
     {
       ROS_INFO("MOVE F/B");
       // move forwards/backwards or spin in place
-	  
-	  multicastSetWheelSpeeds(cmd_l, cmd_r, cmd_l, cmd_r);
+      
+      multicastSetWheelSpeeds(cmd_l, cmd_r, cmd_l, cmd_r);
     }
     cmd_l_last = cmd_l;
     cmd_r_last = cmd_r;
@@ -531,91 +531,91 @@ void wheelCallback(const packets_485net::packet_485net_dgram& ws)
   static int16_t vl[2];
   static int16_t vr[2];
 
-	uint16_t itmp;
-	if(ws.source != lookup_id("wheel-cnt", "front left") && ws.source != lookup_id("wheel-cnt", "front right") && ws.source != lookup_id("wheel-cnt", "back left") && ws.source != lookup_id("wheel-cnt", "back right"))
-		return;
-	if(!(ws.destination == 0xF0 || ws.destination == 0x00))
-		return;
-	if(ws.dport != 7)
-		return;
-	if(ws.data.size() != 23)
-		return;
-		
-	itmp = ws.data[4] | ((ws.data[5]) << 8);
-	
-	if(ws.source == lookup_id("wheel-cnt", "front left"))
-	{
-		vl[0] = itmp;
-		wheel_debug_bits[0] = ws.data[22];
-	}
-	else if(ws.source == lookup_id("wheel-cnt", "front right"))
-	{
-		vr[0] = itmp;
-		wheel_debug_bits[1] = ws.data[22];
-	}
-	else if(ws.source == lookup_id("wheel-cnt", "back left"))
-	{
-		vl[1] = itmp;
-		wheel_debug_bits[2] = ws.data[22];
-	}
-	else if(ws.source == lookup_id("wheel-cnt", "back right"))
-	{
-		vr[1] = itmp;
-		wheel_debug_bits[3] = ws.data[22];
-	}
-		
-		
+  uint16_t itmp;
+  if(ws.source != lookup_id("wheel-cnt", "front left") && ws.source != lookup_id("wheel-cnt", "front right") && ws.source != lookup_id("wheel-cnt", "back left") && ws.source != lookup_id("wheel-cnt", "back right"))
+    return;
+  if(!(ws.destination == 0xF0 || ws.destination == 0x00))
+    return;
+  if(ws.dport != 7)
+    return;
+  if(ws.data.size() != 23)
+    return;
+    
+  itmp = ws.data[4] | ((ws.data[5]) << 8);
+  
+  if(ws.source == lookup_id("wheel-cnt", "front left"))
+  {
+    vl[0] = itmp;
+    wheel_debug_bits[0] = ws.data[22];
+  }
+  else if(ws.source == lookup_id("wheel-cnt", "front right"))
+  {
+    vr[0] = itmp;
+    wheel_debug_bits[1] = ws.data[22];
+  }
+  else if(ws.source == lookup_id("wheel-cnt", "back left"))
+  {
+    vl[1] = itmp;
+    wheel_debug_bits[2] = ws.data[22];
+  }
+  else if(ws.source == lookup_id("wheel-cnt", "back right"))
+  {
+    vr[1] = itmp;
+    wheel_debug_bits[3] = ws.data[22];
+  }
+
+
   if(rosinfodbg)
-	ROS_INFO("debug bits %02X %02X %02X %02X", wheel_debug_bits[0], wheel_debug_bits[1], wheel_debug_bits[2], wheel_debug_bits[3]);
+    ROS_INFO("debug bits %02X %02X %02X %02X", wheel_debug_bits[0], wheel_debug_bits[1], wheel_debug_bits[2], wheel_debug_bits[3]);
   //int addr = ws.srcaddr / 2 - 1;
   //vl[addr] = ws.ticks0_interval;
   //vr[addr] = ws.ticks1_interval;  
   wheel_stopped = (0 == vl[0] && 0 == vl[1] && 0 == vr[0] && 0 == vr[1]);
   if (rosinfodbg) ROS_INFO("wheel_stopped %d %d %d %d", vl[0], vl[1], vr[0], vr[1]);
-  wheel_started[0] = vl[0] != 0;	//fl
-  wheel_started[1] = vr[0] != 0;	//fr
-  wheel_started[2] = vl[1] != 0;	//bl
-  wheel_started[3] = vr[1] != 0;	//br
+  wheel_started[0] = vl[0] != 0;    //fl
+  wheel_started[1] = vr[0] != 0;    //fr
+  wheel_started[2] = vl[1] != 0;    //bl
+  wheel_started[3] = vr[1] != 0;    //br
   state_change();
 }
 
 // only place to set linact_arrived and linact_goal_arrived
 void linactCallback(const packets_485net::packet_485net_dgram& linear_actuator_status)
 {
-	uint16_t itmp;
-	static int notmoving = 0;
-	static int last_pos = -1;
-	if(linear_actuator_status.source != lookup_id("lin-act", "wheel rotate"))
-		return;
-	if(!(linear_actuator_status.destination == 0xF0 || linear_actuator_status.destination == 0x00))
-		return;
-	if(linear_actuator_status.dport != 7)
-		return;
-	if(linear_actuator_status.data.size() != 7)
-		return;
+  uint16_t itmp;
+  static int notmoving = 0;
+  static int last_pos = -1;
+  if(linear_actuator_status.source != lookup_id("lin-act", "wheel rotate"))
+    return;
+  if(!(linear_actuator_status.destination == 0xF0 || linear_actuator_status.destination == 0x00))
+    return;
+  if(linear_actuator_status.dport != 7)
+    return;
+  if(linear_actuator_status.data.size() != 7)
+    return;
   linact_arrived = linear_actuator_status.data[4+2];
   itmp = linear_actuator_status.data[4] | ((linear_actuator_status.data[5]) << 8);
   //linact_arrived = true; // hack for if linear actuator isn't working
   linact_goal_arrived = (itmp >= linact_goal - LINACT_PRECISION && itmp <= linact_goal + LINACT_PRECISION);
-	
-	ROS_INFO("base: linact is at %d\n", itmp);
   
-	//if we are within +- NOT_MOVING_VAL of the previous value, we probably aren't moving
-	if((itmp >= last_pos - NOT_MOVING_VAL) && (itmp <= last_pos + NOT_MOVING_VAL))
-		notmoving++;
-	else
-		notmoving = 0;
-	last_pos = itmp;
-	ROS_INFO("base: not moving for %d\n", notmoving);
+  ROS_INFO("base: linact is at %d\n", itmp);
   
-	if(notmoving >= MOVING_LAST_N && ((itmp > 0x400 - DIST_FROM_LIMIT) || (itmp < DIST_FROM_LIMIT)))
-	{
-		ROS_INFO("By the alignment of the planets, I conclude that the linact isn't actually moving.");
-		linact_does_not_seem_to_be_moving = true;
-		notmoving = 0;
-	}
-	else
-		linact_does_not_seem_to_be_moving = false;
+  //if we are within +- NOT_MOVING_VAL of the previous value, we probably aren't moving
+  if((itmp >= last_pos - NOT_MOVING_VAL) && (itmp <= last_pos + NOT_MOVING_VAL))
+    notmoving++;
+  else
+    notmoving = 0;
+  last_pos = itmp;
+  ROS_INFO("base: not moving for %d\n", notmoving);
+  
+  if(notmoving >= MOVING_LAST_N && ((itmp > 0x400 - DIST_FROM_LIMIT) || (itmp < DIST_FROM_LIMIT)))
+  {
+    ROS_INFO("By the alignment of the planets, I conclude that the linact isn't actually moving.");
+    linact_does_not_seem_to_be_moving = true;
+    notmoving = 0;
+  }
+  else
+    linact_does_not_seem_to_be_moving = false;
   
   state_change();
 }
