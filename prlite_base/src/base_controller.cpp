@@ -88,6 +88,8 @@ bool linact_goal_arrived = true;
 #define NOT_MOVING_VAL	1
 bool linact_does_not_seem_to_be_moving = false;
 
+unsigned char already_in_state_change = 0;
+
 void cmdPublishLinact(void);
 void cmdPublishLinactStop(void);
 void cmdPublishWheel(void);
@@ -111,6 +113,11 @@ void state_change(void)
 {  
   ros::Time now;
   base_state_enum base_state_last;
+  
+  if(already_in_state_change)
+	return;
+  
+  already_in_state_change = 1;
   
   //debug
   //linact_arrived = true;
@@ -242,6 +249,8 @@ void state_change(void)
      }
   
   } while (base_state != base_state_last);
+  
+  already_in_state_change = 0;
 }
 
 uint8_t lookup_id(const char *type, const char *desc)
@@ -401,7 +410,7 @@ static void multicastSetWheelSpeeds(int16_t fl, int16_t fr, int16_t bl, int16_t 
 		sleep(1);
 		ros::spinOnce();
 	}
-	while((wheel_debug_bits[0] & 0x10) != 1 || (wheel_debug_bits[1] & 0x10) != 1 || (wheel_debug_bits[2] & 0x10) != 1 || (wheel_debug_bits[3] & 0x10) != 1);
+	while((wheel_debug_bits[0] & 0x10) != 0x10 || (wheel_debug_bits[1] & 0x10) != 0x10 || (wheel_debug_bits[2] & 0x10) != 0x10 || (wheel_debug_bits[3] & 0x10) != 0x10);
 	
 	//all got commands now
 	
