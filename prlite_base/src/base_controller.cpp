@@ -77,6 +77,9 @@ bool wheel_stopped = true;
 //fl, fr, bl, br
 bool wheel_started[4] = {false, false, false, false};
 
+//front left, front right, back left, back right
+unsigned char wheel_debug_bits[4] = {0};
+
 // linact state (set in linactCallback)
 bool linact_arrived = true;
 bool linact_goal_arrived = true;
@@ -299,45 +302,63 @@ void cmdPublishLinactStop(void)
 	linact_goal_last = linact_goal;
 }
 
-// only routine that can change cmd_l_last, cmd_r_last
-void cmdPublishWheel(void)
+static void initOneWheelPID(unsigned char id, int32_t p, int32_t i, int32_t d, unsigned char dir)
 {
-  static bool init = true;
-  if (init) {
-    // publish pid gains
+	if(id > 3)
+	{
+		printf("ERROR: tried to send pid for invalid wheel %d\n", id);
+		return;
+	}
+	
+	const char * const names[] = {"front left", "front right", "back left", "back right"};
+
     packets_485net::packet_485net_dgram pid_gains;
 	
 	pid_gains.source = 0xF0;
 	pid_gains.sport = 7;
 	pid_gains.dport = 1;
 	  
-	pid_gains.data.push_back(0);
-	pid_gains.data.push_back(0);
-	pid_gains.data.push_back(5);
-	pid_gains.data.push_back(0);		//this is 5.0 (p)
-	pid_gains.data.push_back(0);
-	pid_gains.data.push_back(0);
-	pid_gains.data.push_back(25);
-	pid_gains.data.push_back(0);		//this is 25.0 (i)
-	pid_gains.data.push_back(0);
-	pid_gains.data.push_back(0);
-	pid_gains.data.push_back(3);
-	pid_gains.data.push_back(0);		//this is 3.0 (d)
+	pid_gains.data.push_back((p >>  0) & 0xFF);
+	pid_gains.data.push_back((p >>  8) & 0xFF);
+	pid_gains.data.push_back((p >> 16) & 0xFF);
+	pid_gains.data.push_back((p >> 24) & 0xFF);
+	pid_gains.data.push_back((i >>  0) & 0xFF);
+	pid_gains.data.push_back((i >>  8) & 0xFF);
+	pid_gains.data.push_back((i >> 16) & 0xFF);
+	pid_gains.data.push_back((i >> 24) & 0xFF);
+	pid_gains.data.push_back((d >>  0) & 0xFF);
+	pid_gains.data.push_back((d >>  8) & 0xFF);
+	pid_gains.data.push_back((d >> 16) & 0xFF);
+	pid_gains.data.push_back((d >> 24) & 0xFF);
 	
-	pid_gains.data.push_back(0xFF);		//do reverse
-	pid_gains.destination = lookup_id("wheel-cnt", "front right");
-    pid_pub.publish(pid_gains);
-	pid_gains.data[12] = 0xFF;		//do reverse	//this isn't push_back
-	pid_gains.destination = lookup_id("wheel-cnt", "back right");
-    pid_pub.publish(pid_gains);
-	pid_gains.data[12] = 1;		//do not reverse
-	pid_gains.destination = lookup_id("wheel-cnt", "front left");
-    pid_pub.publish(pid_gains);
-	pid_gains.data[12] = 1;		//do not reverse
-	pid_gains.destination = lookup_id("wheel-cnt", "back left");
-    pid_pub.publish(pid_gains);
-    init = false;	//robert: I have no idea why this was commented out
-  }
+	pid_gains.data.push_back(dir);
+	
+	pid_gains.destination = lookup_id("wheel-cnt", names[id]);
+	
+	do
+	{
+		printf("Trying to send pid to %s", names[id]);
+		pid_pub.publish(pid_gains);
+		sleep(1);
+	}
+	while((wheel_debug_bits[id] & 4) == 0);
+}
+
+static void initWheelPID(void)
+{
+	//front left
+	initOneWheelPID(0, 5 << 16, 25 << 16, 3 << 16, 1);
+	//front right
+	initOneWheelPID(1, 5 << 16, 25 << 16, 3 << 16, 255);
+	//back left
+	initOneWheelPID(2, 5 << 16, 25 << 16, 3 << 16, 1);
+	//back right
+	initOneWheelPID(3, 5 << 16, 25 << 16, 3 << 16, 255);
+}
+
+// only routine that can change cmd_l_last, cmd_r_last
+void cmdPublishWheel(void)
+{
   if (cmd_l != cmd_l_last || cmd_r != cmd_r_last || (LINACT_90 == linact_goal) != cmd_90_last || force_wheel_update)
   {
     // publish wheel commands
@@ -462,19 +483,31 @@ void wheelCallback(const packets_485net::packet_485net_dgram& ws)
 		return;
 	if(ws.dport != 7)
 		return;
-	if(ws.data.size() != 22)
+	if(ws.data.size() != 23)
 		return;
 		
 	itmp = ws.data[4] | ((ws.data[5]) << 8);
 	
 	if(ws.source == lookup_id("wheel-cnt", "front left"))
+	{
 		vl[0] = itmp;
+		wheel_debug_bits[0] = ws.data[22];
+	}
 	else if(ws.source == lookup_id("wheel-cnt", "front right"))
+	{
 		vr[0] = itmp;
+		wheel_debug_bits[1] = ws.data[22];
+	}
 	else if(ws.source == lookup_id("wheel-cnt", "back left"))
+	{
 		vl[1] = itmp;
+		wheel_debug_bits[2] = ws.data[22];
+	}
 	else if(ws.source == lookup_id("wheel-cnt", "back right"))
+	{
 		vr[1] = itmp;
+		wheel_debug_bits[3] = ws.data[22];
+	}
 		
   //int addr = ws.srcaddr / 2 - 1;
   //vl[addr] = ws.ticks0_interval;
@@ -580,6 +613,8 @@ int main(int argc, char **argv)
   pid_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
   cmd_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
   linact_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
+  
+  initWheelPID();
 
   /**
    * ros::spin() will enter a loop, pumping callbacks.  With this version, all
