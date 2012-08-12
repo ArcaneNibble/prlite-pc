@@ -339,6 +339,7 @@ static void initOneWheelPID(unsigned char id, int32_t p, int32_t i, int32_t d, u
 		printf("Trying to send pid to %s\n", names[id]);
 		cmd_pub.publish(pid_gains);
 		sleep(1);
+		ros::spinOnce();
 	}
 	while((wheel_debug_bits[id] & 4) == 0);
 }
@@ -397,7 +398,8 @@ static void multicastSetWheelSpeeds(int16_t fl, int16_t fr, int16_t bl, int16_t 
 	{
 		printf("Sending command to wheels (%hd, %hd, %hd, %hd)\n", fl, fr, bl, br);
 		cmd_pub.publish(wheel_cmd);
-		sleep(0.5);
+		sleep(1);
+		ros::spinOnce();
 	}
 	while((wheel_debug_bits[0] & 0x10) != 1 || (wheel_debug_bits[1] & 0x10) != 1 || (wheel_debug_bits[2] & 0x10) != 1 || (wheel_debug_bits[3] & 0x10) != 1);
 	
@@ -440,7 +442,9 @@ static void multicastSetWheelSpeeds(int16_t fl, int16_t fr, int16_t bl, int16_t 
 			cmd_pub.publish(wheel_cmd);
 		}
 		
-		sleep(0.5);
+		sleep(1);
+		
+		ros::spinOnce();
 		
 		needsfl = (wheel_debug_bits[0] & 0x10) != 0;
 		needsfr = (wheel_debug_bits[1] & 0x10) != 0;
@@ -551,6 +555,9 @@ void wheelCallback(const packets_485net::packet_485net_dgram& ws)
 		wheel_debug_bits[3] = ws.data[22];
 	}
 		
+		
+  if(rosinfodbg)
+	ROS_INFO("debug bits %02X %02X %02X %02X", wheel_debug_bits[0], wheel_debug_bits[1], wheel_debug_bits[2], wheel_debug_bits[3]);
   //int addr = ws.srcaddr / 2 - 1;
   //vl[addr] = ws.ticks0_interval;
   //vr[addr] = ws.ticks1_interval;  
