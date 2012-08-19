@@ -4,13 +4,13 @@
   <license>BSD,LGPL</license>  
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/prlite</url>
-  <depend stack="arm_navigation" /> <!-- move_arm, trajectory_filter_server, planning_environment, constraint_aware_spline_smoother, arm_kinematics_constraint_aware, ompl_ros_interface -->
+  <depend stack="arm_navigation" /> <!-- move_arm, trajectory_filter_server, kinematics_base, planning_models, constraint_aware_spline_smoother, kinematics_msgs, planning_environment, arm_navigation_msgs, ompl_ros_interface -->
   <depend stack="common" /> <!-- actionlib -->
-  <depend stack="common_msgs" /> <!-- nav_msgs, sensor_msgs, actionlib_msgs, geometry_msgs -->
+  <depend stack="common_msgs" /> <!-- nav_msgs, geometry_msgs, actionlib_msgs, sensor_msgs -->
   <depend stack="crustcrawler_smart_arm" /> <!-- smart_arm_controller -->
   <depend stack="dynamixel_motor" /> <!-- dynamixel_msgs, dynamixel_controllers -->
   <depend stack="executive_smach" /> <!-- smach_ros -->
-  <depend stack="geometry" /> <!-- tf -->
+  <depend stack="geometry" /> <!-- tf, tf_conversions -->
   <depend stack="joystick_drivers" /> <!-- joy -->
   <depend stack="laser_drivers" /> <!-- hokuyo_node -->
   <depend stack="laser_pipeline" /> <!-- laser_assembler -->
@@ -18,9 +18,10 @@
   <depend stack="openni_kinect" /> <!-- openni, nite -->
   <depend stack="orocos_kinematics_dynamics" /> <!-- kdl -->
   <depend stack="perception_pcl" /> <!-- pcl, pcl_ros -->
-  <depend stack="robot_model" /> <!-- urdf -->
+  <depend stack="pluginlib" /> <!-- pluginlib -->
+  <depend stack="robot_model" /> <!-- urdf, kdl_parser -->
   <depend stack="ros" /> <!-- roslib -->
-  <depend stack="ros_comm" /> <!-- rospy, std_msgs, roscpp, std_srvs -->
+  <depend stack="ros_comm" /> <!-- std_msgs, rospy, roscpp, std_srvs -->
   <depend stack="ua_controllers" /> <!-- wubble_actions -->
 
 </stack>
