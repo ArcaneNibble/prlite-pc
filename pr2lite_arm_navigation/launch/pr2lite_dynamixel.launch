@@ -1,0 +1,65 @@
+<!-- -*- mode: XML -*- -->
+
+<launch>
+    <!-- Start the Dynamixel motor manager to control all SmartArm servos -->
+    <node name="smartarm_motor_manager" pkg="dynamixel_controllers" type="controller_manager.py" required="true" output="screen">
+        <rosparam>
+            namespace: smartarm_motor_manager
+            diagnostics_rate: 10
+            serial_ports:
+                smart_arm:
+                    port_name: "/dev/magellan_arm"
+                    baud_rate: 1000000
+                    min_motor_id: 1
+                    max_motor_id: 30
+                    update_rate: 20
+        </rosparam>
+    </node>
+
+    <!-- Load joint controller configuration from YAML file to parameter server -->
+    <rosparam file="$(find pr2lite_arm_navigation)/config/pr2lite_smart_arm.yaml" command="load"/>
+
+    <!-- Start all SmartArm joint controllers -->
+<!--
+shoulder_pan_controllerL
+shoulder_pan_controllerR
+-->
+    <node name="smartarm_controller_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
+          args="--manager=smartarm_motor_manager
+                --port=smart_arm
+                --type=simple
+                elbow_tilt_controllerL
+                elbow_pan_controllerL
+                wrist_rotate_controllerL
+                wrist_tilt_controllerL
+                finger_right_controllerL
+                finger_left_controllerL
+                elbow_tilt_controllerR
+                elbow_pan_controllerR
+                wrist_rotate_controllerR
+                wrist_tilt_controllerR
+                finger_right_controllerR
+                finger_left_controllerR
+                kinect_tilt_controller
+                kinect_pan_controller
+                laser_tilt_controller"
+          output="screen"/>
+        
+   <!-- Start the arm trajectory controller -->
+   <!-- arm_controller removed from above elbow_tilt_controllerL -->
+
+   <!-- Start the Dynamixel Joint States Publisher -->
+   <node pkg="pr2lite_arm_navigation" name="dynamixel_joint_states_publisher" type="dynamixel_joint_state_publisher.py" output="screen">
+      <param name="rate" value="5" />
+   </node>
+
+   <node pkg="diagnostic_aggregator" type="aggregator_node" name="diagnostic_aggregator" >
+      <rosparam command="load" file="$(find pr2lite_arm_navigation)/config/pr2lite_diagnostics.yaml" />
+   </node>
+
+   <node pkg="robot_monitor" type="robot_monitor" name="robot_monitor" />
+
+   <node pkg="pr2lite_arm_navigation" type="relax_all_servos.py" name="relax_all_servos" />
+<!--
+-->
+</launch>

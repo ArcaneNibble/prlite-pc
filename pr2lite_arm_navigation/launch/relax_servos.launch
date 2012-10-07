@@ -1,0 +1,4 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+   <node pkg="pr2lite_arm_navigation" type="relax_all_servos.py" name="relax_all_servos" />
+</launch>

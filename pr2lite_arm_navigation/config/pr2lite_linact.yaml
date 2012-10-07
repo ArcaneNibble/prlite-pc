@@ -1,0 +1,21 @@
+port: /dev/magellan-i2c-serial
+baud: 115200
+rate: 5
+sync_write: False
+sync_read: False
+read_rate: 5
+write_rate: 5
+joints: {
+shoulder_tilt_controllerL: {id: 24, max_angle: 150, min_angle: -150, max_speed: 25},
+shoulder_tilt_controllerR:{id: 25, max_angle: 150, min_angle: -150, max_speed: 25}
+}
+
+dynamixels: {
+shoulder_tilt_controllerL: {id: 24, max_angle: 150, min_angle: -150, max_speed: 25},
+shoulder_tilt_controllerR:{id: 25, max_angle: 150, min_angle: -150, max_speed: 25}
+}
+
+controllers: {
+shoulder_controller: {type: follow_controller, joints: [shoulder_tilt_controllerL, shoulder_tilt_controllerR], onboard: False },
+}
+

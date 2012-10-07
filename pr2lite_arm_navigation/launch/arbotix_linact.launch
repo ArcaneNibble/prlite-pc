@@ -1,0 +1,7 @@
+<launch>
+
+  <node name="arbotix_la" pkg="arbotix_python" type="driver.py" output="screen">
+      <rosparam file="$(find pr2lite_arm_navigation)/config/pr2lite_linact.yaml" command="load" />
+  </node>
+
+</launch>
