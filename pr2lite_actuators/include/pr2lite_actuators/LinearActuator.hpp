@@ -25,10 +25,14 @@ namespace pr2lite
             
             // Set the position
             void setPosition(int position);
+
+            void setName(std::string name, ros::Publisher state);
+
             
         private:
             // ROS objects
             ros::Publisher  m_publisher;
+            ros::Publisher  m_state;
             ros::Subscriber m_subscriber;
         
             // Internal data storage
@@ -37,9 +41,13 @@ namespace pr2lite
             bool m_goallast;
             bool m_arrived;        
             bool m_newgoal;
+            std::string m_name;
             
             // ROS responses
             void actuator_callback(const packets_485net::packet_485net_dgram& linear_actuator_status);
+
+            void publish_dyna_state(int cur_pos);
+
             void actuator_publish();
         };
     }

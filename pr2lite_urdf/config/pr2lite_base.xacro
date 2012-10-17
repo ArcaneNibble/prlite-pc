@@ -300,15 +300,15 @@
 </link>
 
 <!-- 4x 13.14 -->
-<joint name="head_base_joint" type="revolute">
+<joint name="head_pan_joint" type="revolute">
   <limit effort="10" lower="-3.1416" upper="3.1416" velocity="3"/>
   <parent link="top_neck_link"/>
-  <child link="head_base_link"/>
+  <child link="head_pan_link"/>
   <origin xyz="${inch_to_meter*2} ${inch_to_meter*(0)} ${inch_to_meter*(.25+.125)}" rpy="0 0 0"/>
   <axis xyz="0 0 1"/>
 </joint>
 
-<link name="head_base_link">
+<link name="head_pan_link">
             <inertial>
                 <mass value="0" />
                 <origin xyz="0.0 0.0 0.0" />
@@ -325,7 +325,7 @@
 </link>
 
 <joint name="head_side_joint" type="fixed">
-  <parent link="head_base_link"/>
+  <parent link="head_pan_link"/>
   <child link="head_side_link"/>
   <origin xyz="${inch_to_meter*0} ${inch_to_meter*((13.14/2)-(.25/2))} ${inch_to_meter*(2.5)}" rpy="0 0 0"/>
 </joint>

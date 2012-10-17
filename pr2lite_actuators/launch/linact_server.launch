@@ -1,11 +1,9 @@
 <launch>
     <!-- load the linear actuator parameters -->
     <rosparam command="load" file="$(find pr2lite_actuators)/config/pr2lite_actuators.yaml" />
-
     <!-- launch the linear actuator server -->
     <node name="linact_server" pkg="pr2lite_actuators" type="linact_server">
         <param name="plugins" value="$(find pr2lite_actuators)/lib/liblinactrawplugin.so;$(find pr2lite_actuators)/lib/liblinactdynamixelplugin.so"/>
-        <param name="actuators" value="shoulder_elevationL;shoulder_elevationR" />
+        <param name="actuators" value="left_shoulder_tilt_controller;right_shoulder_tilt_controller" />
     </node>
 </launch>
-

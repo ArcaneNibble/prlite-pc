@@ -38,7 +38,7 @@ namespace pr2lite
                     if(length >  1000.0f) length = 1000.0f;
                     
                     // Set the position
-		            this->setPosition(length);
+		    this->setPosition(length);
                 }
             public:
                 LinactDynamixel(ros::NodeHandle& nh, int id, std::string& name)
@@ -51,6 +51,7 @@ namespace pr2lite
                     // Here is where to set up a subscriber
                     m_command = nh.subscribe(name + "/command", 1000, &LinactDynamixel::command_callback, this);
                     m_state = nh.advertise<dynamixel_msgs::JointState>(name + "/state", 5);
+		    this->setName(name, m_state);
                 }
             };
         }

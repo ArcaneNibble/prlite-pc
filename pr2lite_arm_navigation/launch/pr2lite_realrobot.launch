@@ -1,5 +1,0 @@
-<launch>
-    <include file="$(find pr2lite_arm_navigation)/launch/arbotix_arm.launch" />
-    <include file="$(find pr2lite_arm_navigation)/launch/arbotix_linact.launch" />
-    <node pkg="pr2lite_arm_navigation" type="fake_pub.py" name="fake_pub" />
-</launch>
