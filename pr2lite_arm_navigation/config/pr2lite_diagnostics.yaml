@@ -5,4 +5,4 @@ analyzers:
     type: GenericAnalyzer
     path: 'Joints'
     timeout: 5.0
-    contains: ['controller','joint']
+    contains: ['joint']

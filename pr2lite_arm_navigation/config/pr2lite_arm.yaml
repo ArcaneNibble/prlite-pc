@@ -6,48 +6,48 @@ sync_read: False
 read_rate: 5
 write_rate: 5
 joints: {
-kinect_pan_controller:{id: 1, max_angle: 150, min_angle: -150, max_speed: 25},
-elbow_tilt_controllerR:{id: 3, max_angle: 150, min_angle: -150, max_speed: 25},
-finger_left_controllerL:{id: 5, max_angle: 150, min_angle: -150, max_speed: 25},
-wrist_rotate_controllerL:{id: 6,max_angle: 150, min_angle: -150, max_speed: 25},
-finger_right_controllerL:{id: 7,max_angle: 150, min_angle: -150, max_speed: 25},
-elbow_tilt_controllerL: {id: 8, max_angle: 150, min_angle: -150, max_speed: 25},
-finger_left_controllerR:{id: 10,max_angle: 150, min_angle: -150, max_speed: 25},
-wrist_tilt_controllerL:{id: 11, max_angle: 150, min_angle: -150, max_speed: 25},
-laser_tilt_controller:{id: 12, max_angle: 150, min_angle: -150, max_speed: 25},
-wrist_tilt_controllerR:{id: 14, max_angle: 150, min_angle: -150, max_speed: 25},
-finger_right_controllerR:{id: 15,max_angle: 150,min_angle: -150, max_speed: 25},
-wrist_rotate_controllerR:{id: 18,max_angle: 150,min_angle: -150, max_speed: 25},
-elbow_pan_controllerR:{id: 19, max_angle: 150, min_angle: -150, max_speed: 25},
-elbow_pan_controllerL: {id: 21, max_angle: 150, min_angle: -150, max_speed: 25},
-kinect_tilt_controller:{id: 23, max_angle: 150, min_angle: -150, max_speed: 25},
-shoulder_pan_controllerL: {id: 2, max_angle: 150, min_angle: -150, max_speed: 25},
-shoulder_pan_controllerR:{id: 17, max_angle: 150, min_angle: -150, max_speed: 25}
+head_pan_joint:{id: 1, max_angle: 150, min_angle: -150, max_speed: 25},
+right_elbow_flex_joint:{id: 3, max_angle: 150, min_angle: -150, max_speed: 25},
+left_gripper_left_joint:{id: 5, max_angle: 150, min_angle: -150, max_speed: 25},
+left_wrist_roll_joint:{id: 6,max_angle: 150, min_angle: -150, max_speed: 25},
+left_gripper_right_joint:{id: 7,max_angle: 150, min_angle: -150, max_speed: 25},
+left_elbow_flex_joint: {id: 8, max_angle: 150, min_angle: -150, max_speed: 25},
+right_gripper_left_joint:{id: 10,max_angle: 150, min_angle: -150, max_speed: 25},
+left_wrist_flex_joint:{id: 11, max_angle: 150, min_angle: -150, max_speed: 25},
+lidar_tilt_joint:{id: 12, max_angle: 150, min_angle: -150, max_speed: 25},
+right_wrist_flex_joint:{id: 14, max_angle: 150, min_angle: -150, max_speed: 25},
+right_gripper_right_joint:{id: 15,max_angle: 150,min_angle: -150, max_speed: 25},
+right_wrist_roll_joint:{id: 18,max_angle: 150,min_angle: -150, max_speed: 25},
+right_elbow_joint:{id: 19, max_angle: 150, min_angle: -150, max_speed: 25},
+left_elbow_joint: {id: 21, max_angle: 150, min_angle: -150, max_speed: 25},
+head_tilt_joint:{id: 23, max_angle: 150, min_angle: -150, max_speed: 25},
+left_shoulder_pan_joint: {id: 2, max_angle: 150, min_angle: -150, max_speed: 25},
+right_shoulder_pan_joint:{id: 17, max_angle: 150, min_angle: -150, max_speed: 25}
 }
 
 dynamixels: {
-kinect_pan_controller:{id: 1, max_angle: 150, min_angle: -150, max_speed: 25},
-elbow_tilt_controllerR:{id: 3, max_angle: 150, min_angle: -150, max_speed: 25},
-finger_left_controllerL:{id: 5, max_angle: 150, min_angle: -150, max_speed: 25},
-wrist_rotate_controllerL:{id: 6,max_angle: 150, min_angle: -150, max_speed: 25},
-finger_right_controllerL:{id: 7,max_angle: 150, min_angle: -150, max_speed: 25},
-elbow_tilt_controllerL: {id: 8, max_angle: 150, min_angle: -150, max_speed: 25},
-finger_left_controllerR:{id: 10,max_angle: 150, min_angle: -150, max_speed: 25},
-wrist_tilt_controllerL:{id: 11, max_angle: 150, min_angle: -150, max_speed: 25},
-laser_tilt_controller:{id: 12, max_angle: 150, min_angle: -150, max_speed: 25},
-wrist_tilt_controllerR:{id: 14, max_angle: 150, min_angle: -150, max_speed: 25},
-finger_right_controllerR:{id: 15,max_angle: 150,min_angle: -150, max_speed: 25},
-wrist_rotate_controllerR:{id: 18,max_angle: 150,min_angle: -150, max_speed: 25},
-elbow_pan_controllerR:{id: 19, max_angle: 150, min_angle: -150, max_speed: 25},
-elbow_pan_controllerL: {id: 21, max_angle: 150, min_angle: -150, max_speed: 25},
-kinect_tilt_controller:{id: 23, max_angle: 150, min_angle: -150, max_speed: 25},
-shoulder_pan_controllerL: {id: 2, max_angle: 150, min_angle: -150, max_speed: 25},
-shoulder_pan_controllerR:{id: 17, max_angle: 150, min_angle: -150, max_speed: 25}
+head_pan_joint:{id: 1, max_angle: 150, min_angle: -150, max_speed: 25},
+right_elbow_flex_joint:{id: 3, max_angle: 150, min_angle: -150, max_speed: 25},
+left_gripper_left_joint:{id: 5, max_angle: 150, min_angle: -150, max_speed: 25},
+left_wrist_roll_joint:{id: 6,max_angle: 150, min_angle: -150, max_speed: 25},
+left_gripper_right_joint:{id: 7,max_angle: 150, min_angle: -150, max_speed: 25},
+left_elbow_flex_joint: {id: 8, max_angle: 150, min_angle: -150, max_speed: 25},
+right_gripper_left_joint:{id: 10,max_angle: 150, min_angle: -150, max_speed: 25},
+left_wrist_flex_joint:{id: 11, max_angle: 150, min_angle: -150, max_speed: 25},
+lidar_tilt_joint:{id: 12, max_angle: 150, min_angle: -150, max_speed: 25},
+right_wrist_flex_joint:{id: 14, max_angle: 150, min_angle: -150, max_speed: 25},
+right_gripper_right_joint:{id: 15,max_angle: 150,min_angle: -150, max_speed: 25},
+right_wrist_roll_joint:{id: 18,max_angle: 150,min_angle: -150, max_speed: 25},
+right_elbow_joint:{id: 19, max_angle: 150, min_angle: -150, max_speed: 25},
+left_elbow_joint: {id: 21, max_angle: 150, min_angle: -150, max_speed: 25},
+head_tilt_joint:{id: 23, max_angle: 150, min_angle: -150, max_speed: 25},
+left_shoulder_pan_joint: {id: 2, max_angle: 150, min_angle: -150, max_speed: 25},
+right_shoulder_pan_joint:{id: 17, max_angle: 150, min_angle: -150, max_speed: 25}
 }
 
 controllers: {
-arm_controller: {type: follow_controller, joints: [shoulder_pan_controllerL,elbow_pan_controllerL, elbow_tilt_controllerL, wrist_tilt_controllerL,wrist_rotate_controllerL], onboard: False },
-arm_controllerR: {type: follow_controller, joints: [shoulder_pan_controllerR,elbow_tilt_controllerR, elbow_pan_controllerR, wrist_tilt_controllerR, wrist_rotate_controllerR, finger_right_controllerR, finger_left_controllerR] , onboard: False },
-head_controller: {type: follow_controller, joints: [kinect_tilt_controller,kinect_pan_controller, laser_tilt_controller], onboard: False }
+arm_controller: {type: follow_controller, joints: [ left_elbow_flex_joint, left_elbow_joint, left_shoulder_pan_joint, left_wrist_flex_joint, left_wrist_roll_joint ], onboard: False },
+arm_controllerR: {type: follow_controller, joints: [ right_elbow_flex_joint, right_elbow_joint, right_shoulder_pan_joint, right_wrist_flex_joint, right_wrist_roll_joint ] , onboard: False },
+head_controller: {type: follow_controller, joints: [ head_pan_joint, head_tilt_joint, lidar_tilt_joint ], onboard: False }
 }
 

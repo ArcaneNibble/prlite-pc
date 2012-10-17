@@ -28,38 +28,30 @@ shoulder_pan_controllerR
           args="--manager=smartarm_motor_manager
                 --port=smart_arm
                 --type=simple
-                elbow_tilt_controllerL
-                elbow_pan_controllerL
-                wrist_rotate_controllerL
-                wrist_tilt_controllerL
-                finger_right_controllerL
-                finger_left_controllerL
-                elbow_tilt_controllerR
-                elbow_pan_controllerR
-                wrist_rotate_controllerR
-                wrist_tilt_controllerR
-                finger_right_controllerR
-                finger_left_controllerR
-                kinect_tilt_controller
-                kinect_pan_controller
-                laser_tilt_controller"
+                head_pan_controller 
+                head_tilt_controller
+                left_elbow_flex_controller
+                left_elbow_controller
+                left_gripper_left_controller
+                left_gripper_right_controller
+                left_shoulder_pan_controller
+                left_shoulder_tilt_controller
+                left_wrist_flex_controller
+                left_wrist_roll_controller
+                lidar_tilt_controller
+                right_elbow_flex_controller
+                right_elbow_controller
+                right_gripper_left_controller
+                right_gripper_right_controller
+                right_shoulder_pan_controller
+                right_shoulder_tilt_controller
+                right_wrist_flex_controller 
+                right_wrist_roll_controller"
           output="screen"/>
         
    <!-- Start the arm trajectory controller -->
    <!-- arm_controller removed from above elbow_tilt_controllerL -->
 
-   <!-- Start the Dynamixel Joint States Publisher -->
-   <node pkg="pr2lite_arm_navigation" name="dynamixel_joint_states_publisher" type="dynamixel_joint_state_publisher.py" output="screen">
-      <param name="rate" value="5" />
-   </node>
-
-   <node pkg="diagnostic_aggregator" type="aggregator_node" name="diagnostic_aggregator" >
-      <rosparam command="load" file="$(find pr2lite_arm_navigation)/config/pr2lite_diagnostics.yaml" />
-   </node>
-
-   <node pkg="robot_monitor" type="robot_monitor" name="robot_monitor" />
-
-   <node pkg="pr2lite_arm_navigation" type="relax_all_servos.py" name="relax_all_servos" />
 <!--
 -->
 </launch>

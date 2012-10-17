@@ -1,0 +1,7 @@
+273 <joint name="left_wheel_joint" type="continuous">
+298 <joint name="right_wheel_joint" type="continuous">
+1027 <joint name="arm_shoulder_pan_joint" type="revolute">
+1079 <joint name="arm_shoulder_lift_joint" type="revolute">
+1231 <joint name="arm_elbow_flex_joint" type="revolute">
+1383 <joint name="arm_wrist_flex_joint" type="revolute">
+1460 <joint name="gripper_joint" type="revolute">

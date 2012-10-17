@@ -3,6 +3,7 @@
     <include file="$(find planning_environment)/launch/environment_server.launch">
         <arg name="use_monitor" value="true" />
         <arg name="use_collision_map" value="false" />
+        <arg name="joint_state_cache_allowed_difference" value="2.0" />
     </include>
     <include file="$(find pr2lite_arm_navigation)/launch/constraint_aware_kinematics.launch" />
     <include file="$(find pr2lite_arm_navigation)/launch/ompl_planning.launch" />

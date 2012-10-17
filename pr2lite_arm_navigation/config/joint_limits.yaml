@@ -13,7 +13,35 @@ joint_limits:
     has_acceleration_limits: true
     max_acceleration: 1
     angle_wraparound: false
-  left_upper_arm_hinge_joint:
+  left_elbow_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 1.17
+    has_acceleration_limits: true
+    max_acceleration: 1
+    angle_wraparound: false
+  left_elbow_flex_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 1.17
+    has_acceleration_limits: true
+    max_acceleration: 1
+    angle_wraparound: false
+  left_wrist_tilt_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 1.17
+    has_acceleration_limits: true
+    max_acceleration: 1
+    angle_wraparound: false
+  left_shoulder_pan_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 1.17
+    has_acceleration_limits: true
+    max_acceleration: 1
+    angle_wraparound: false
+  left_shoulder_tilt_joint:
     has_position_limits: true
     has_velocity_limits: true
     max_velocity: 1.17
@@ -27,14 +55,7 @@ joint_limits:
     has_acceleration_limits: true
     max_acceleration: 1
     angle_wraparound: false
-  left_elbow_joint:
-    has_position_limits: true
-    has_velocity_limits: true
-    max_velocity: 1.17
-    has_acceleration_limits: true
-    max_acceleration: 1
-    angle_wraparound: false
-  left_elbow_flex_joint:
+  left_elbow_tilt_joint:
     has_position_limits: true
     has_velocity_limits: true
     max_velocity: 1.17
@@ -55,6 +76,20 @@ joint_limits:
     has_acceleration_limits: true
     max_acceleration: 1
     angle_wraparound: false
+  left_gripper_left_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 1.17
+    has_acceleration_limits: true
+    max_acceleration: 1
+    angle_wraparound: false
+  left_gripper_right_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 1.17
+    has_acceleration_limits: true
+    max_acceleration: 1
+    angle_wraparound: false
   right_shoulder_pan_joint:
     has_position_limits: true
     has_velocity_limits: true
@@ -63,20 +98,6 @@ joint_limits:
     max_acceleration: 1
     angle_wraparound: false
   right_shoulder_tilt_joint:
-    has_position_limits: true
-    has_velocity_limits: true
-    max_velocity: 1.17
-    has_acceleration_limits: true
-    max_acceleration: 1
-    angle_wraparound: false
-  right_upper_arm_hinge_joint:
-    has_position_limits: true
-    has_velocity_limits: true
-    max_velocity: 1.17
-    has_acceleration_limits: true
-    max_acceleration: 1
-    angle_wraparound: false
-  right_elbow_pan_joint:
     has_position_limits: true
     has_velocity_limits: true
     max_velocity: 1.17
@@ -97,6 +118,41 @@ joint_limits:
     has_acceleration_limits: true
     max_acceleration: 1
     angle_wraparound: false
+  right_wrist_tilt_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 1.17
+    has_acceleration_limits: true
+    max_acceleration: 1
+    angle_wraparound: false
+  right_shoulder_pan_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 1.17
+    has_acceleration_limits: true
+    max_acceleration: 1
+    angle_wraparound: false
+  right_shoulder_tilt_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 1.17
+    has_acceleration_limits: true
+    max_acceleration: 1
+    angle_wraparound: false
+  right_elbow_pan_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 1.17
+    has_acceleration_limits: true
+    max_acceleration: 1
+    angle_wraparound: false
+  right_elbow_tilt_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 1.17
+    has_acceleration_limits: true
+    max_acceleration: 1
+    angle_wraparound: false
   right_wrist_flex_joint:
     has_position_limits: true
     has_velocity_limits: true
@@ -111,3 +167,40 @@ joint_limits:
     has_acceleration_limits: true
     max_acceleration: 1
     angle_wraparound: false
+  right_gripper_left_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 1.17
+    has_acceleration_limits: true
+    max_acceleration: 1
+    angle_wraparound: false
+  right_gripper_right_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 1.17
+    has_acceleration_limits: true
+    max_acceleration: 1
+    angle_wraparound: false
+  head_pan_joint: 
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 1.17
+    has_acceleration_limits: true
+    max_acceleration: 1
+    angle_wraparound: false
+  head_tilt_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 1.17
+    has_acceleration_limits: true
+    max_acceleration: 1
+    angle_wraparound: false
+  lidar_tilt_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 1.17
+    has_acceleration_limits: true
+    max_acceleration: 1
+    angle_wraparound: false
+
+

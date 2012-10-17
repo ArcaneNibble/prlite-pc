@@ -46,7 +46,7 @@
   <param name="use_robot_data" value="true"/>
 
   <!-- Called when right arm executes trajectory using controllers -->
-  <param name="execute_right_trajectory" value="none" />
+  <param name="execute_right_trajectory" value="follow_joint_trajectory" />
   <!-- Called to get left arm inverse kinematics with collision checking -->
   <param name="left_ik_name" value="/pr2lite_left_arm_kinematics/get_constraint_aware_ik" />
   <!-- Called to get right arm inverse kinematics with collision checking -->
