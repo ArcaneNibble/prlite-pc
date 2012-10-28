@@ -3,9 +3,16 @@
 <launch>
    <!-- Start the Dynamixel Joint States Publisher -->
    <node pkg="pr2lite_arm_navigation" name="dynamixel_joint_states_publisher" type="dynamixel_joint_state_publisher.py" output="screen">
-      <param name="rate" value="10" />
+      <param name="rate" value="5" />
    </node>
+
+   <node pkg="diagnostic_aggregator" type="aggregator_node" name="diagnostic_aggregator" >
+      <rosparam command="load" file="$(find pr2lite_arm_navigation)/config/pr2lite_diagnostics.yaml" />
+   </node>
+
    <node pkg="robot_monitor" type="robot_monitor" name="robot_monitor" />
 
    <node pkg="pr2lite_arm_navigation" type="relax_all_servos.py" name="relax_all_servos" />
+<!--
+-->
 </launch>

@@ -26,7 +26,7 @@ namespace pr2lite
             // Set the position
             void setPosition(int position);
 
-            void setName(std::string name, ros::Publisher state);
+            void setName(std::string name);
 
             
         private:
@@ -37,6 +37,7 @@ namespace pr2lite
         
             // Internal data storage
             int  m_id;             // stores the 485net node id of the actuator
+            int  m_seq;            // message seq num
             int  m_goal;           // the target position for the actuator
             bool m_goallast;
             bool m_arrived;        
@@ -47,6 +48,8 @@ namespace pr2lite
             void actuator_callback(const packets_485net::packet_485net_dgram& linear_actuator_status);
 
             void publish_dyna_state(int cur_pos);
+            void publish_torso_state(int cur_pos);
+            void publish_base_state(int cur_pos);
 
             void actuator_publish();
         };

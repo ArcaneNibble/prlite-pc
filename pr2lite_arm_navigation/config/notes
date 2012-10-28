@@ -1,0 +1,27 @@
+Note:
+For now, Left_elbow_joint will be a Fake joint. Left Elbow will be the dynamixel joint. 
+Later:
+Left_elbow_joint should be renamed to left_elbow_pan_joint.
+Left_elbow_pan_joint should be renamed to left_elbow_joint
+After the renames Left_elbow_joint should be type Fixed (not revolute)
+
+  <joint name="left_elbow_pan_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0 0 0.0254"/>
+    <parent link="left_upper_arm_hinge_link"/>
+    <child link="left_elbow_pan_link"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="300" lower="-1.22" upper="1.22" velocity="1.17"/>
+    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-1.12" soft_upper_limit="1.12"/>
+    <dynamics damping="50" friction="1"/>
+  </joint>
+  <joint name="left_elbow_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="-0.0075 0 -0.025"/>
+    <!-- parent link="${side}_arm_base_link" /-->
+    <parent link="left_elbow_pan_link"/>
+    <child link="left_elbow_flex_link"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="300" lower="-1.22" upper="1.22" velocity="1.17"/>
+    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-1.12" soft_upper_limit="1.12"/>
+    <dynamics damping="50" friction="1"/>
+  </joint>
+

@@ -48,10 +48,10 @@ namespace pr2lite
                     nh.getParam(name + "/base_length", m_base_length);
                     nh.getParam(name + "/extent", m_extent);
                 
+                    // m_state = nh.advertise<dynamixel_msgs::JointState>(name + "/state", 5);
+		    this->setName(name);
                     // Here is where to set up a subscriber
                     m_command = nh.subscribe(name + "/command", 1000, &LinactDynamixel::command_callback, this);
-                    m_state = nh.advertise<dynamixel_msgs::JointState>(name + "/state", 5);
-		    this->setName(name, m_state);
                 }
             };
         }

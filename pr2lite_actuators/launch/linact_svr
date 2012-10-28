@@ -1,0 +1,12 @@
+pushd /opt/ros/electric/stacks/prlite
+./pr2lite_actuators/launch/pr2lite_kill
+roscore &
+./pc_485net_raw/src/pc_485net_raw.py &
+sleep 5
+./net_485net_packet_handler/src/485net_packet_sorter.py &
+sleep 5
+./net_485net_id_handler/src/id_server.py &
+sleep 5
+cd pr2lite_actuators/launch
+roslaunch linact_server.launch
+popd

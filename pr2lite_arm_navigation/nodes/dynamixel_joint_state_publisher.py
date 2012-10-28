@@ -96,6 +96,7 @@ class JointStatePublisher():
        
         while not rospy.is_shutdown():
             self.publish_joint_states()
+            # With 23 servos, we go as fast as possible
             r.sleep()
            
     def controller_state_handler(self, msg):

@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="pr2lite_arm_navigation" type="fake_pub.py" name="fake_pub" />
+</launch>

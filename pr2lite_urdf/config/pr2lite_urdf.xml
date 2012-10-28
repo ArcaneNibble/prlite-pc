@@ -1308,7 +1308,7 @@ hokuyo side bar dimensions:
     <limit effort="300" lower="-1" upper="-.15" velocity="1.17"/>
     <mimic joint="left_shoulder_tilt_joint" multiplier="-1" offset="0"/>
   </joint>
-  <joint name="left_elbow_pan_joint" type="revolute">
+  <joint name="left_elbow_pan_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0.0 0 0.0254"/>
     <parent link="left_upper_arm_hinge_link"/>
     <child link="left_elbow_pan_link"/>
@@ -1767,7 +1767,7 @@ hokuyo side bar dimensions:
     <limit effort="300" lower="-1" upper="-.15" velocity="1.17"/>
     <mimic joint="right_shoulder_tilt_joint" multiplier="-1" offset="0"/>
   </joint>
-  <joint name="right_elbow_pan_joint" type="revolute">
+  <joint name="right_elbow_pan_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0.0 0 0.0254"/>
     <parent link="right_upper_arm_hinge_link"/>
     <child link="right_elbow_pan_link"/>
