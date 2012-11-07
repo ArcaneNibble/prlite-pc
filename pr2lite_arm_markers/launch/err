@@ -1,0 +1,36 @@
+SUMMARY
+========
+
+PARAMETERS
+ * /pr2lite_left_arm_markers/joints
+ * /pr2lite_right_arm_markers/tip_link
+ * /rosdistro
+ * /pr2lite_left_arm_markers/tip_link
+ * /pr2lite_left_arm_markers/robot_description
+ * /pr2lite_right_arm_markers/root_link
+ * /rosversion
+ * /pr2lite_right_arm_markers/joints
+ * /pr2lite_left_arm_markers/links
+ * /pr2lite_right_arm_markers/links
+ * /pr2lite_left_arm_markers/root_link
+
+NODES
+  /
+    pr2lite_left_arm_markers (pr2lite_arm_markers/arm_marker_server)
+    pr2lite_right_arm_markers (pr2lite_arm_markers/arm_marker_server)
+
+ROS_MASTER_URI=http://localhost:11311
+
+core service [/rosout] found
+process[pr2lite_left_arm_markers-1]: started with pid [20332]
+process[pr2lite_right_arm_markers-2]: started with pid [20333]
+[ WARN] [1351993945.261902166]: [arm interactive markers] TF exception:
+Frame id /top_shelf_link does not exist! Frames (3): Frame /base_footprint exists with parent /world_joint.
+Frame /world_joint exists with parent NO_PARENT.
+
+[ INFO] [1351993945.262124350]: [arm marker server] Initialized.
+[ WARN] [1351993945.265143966]: [arm interactive markers] TF exception:
+Frame id /top_shelf_link does not exist! Frames (3): Frame /base_footprint exists with parent /world_joint.
+Frame /world_joint exists with parent NO_PARENT.
+
+[ INFO] [1351993945.265396630]: [arm marker server] Initialized.

@@ -1,0 +1,18 @@
+<launch>
+
+<!--
+  <include file="$(find pr2lite_urdf)/launch/pr2lite.launch" />
+-->
+  <node name="pick_and_place_action_server" pkg="pr2lite_block_manipulation" type="pick_and_place_action_server" output="screen">
+  </node>
+  <node name="parallel_gripper_controller" pkg="pr2lite_block_manipulation" type="parallel_gripper_controller.py">
+      <param name="pad_width" value="0.0381" />
+      <param name="finger_length" value="0.08255" />
+      <param name="center_left" value="0.18" />
+      <param name="center_right" value="0.18" />
+      <param name="invert_left" value="True" />
+  </node>
+  <include file="$(find pr2lite_arm_navigation)/launch/planning_components_visualizer.launch" />
+
+
+</launch>

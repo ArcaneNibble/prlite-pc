@@ -51,7 +51,7 @@
 
        <joint name="${side}_linear_actuator_joint" type="prismatic">
           <!-- linact down: 9.9 inches, up 13.9 inches -->
-          <axis xyz="0 0 1" />
+          <axis xyz="0 0 -1" />
           <limit lower="${inch_to_meter*0}" upper="${inch_to_meter*-4}" effort="10000" velocity=".025"/>
           <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
           <parent link="${side}_lower_linear_actuator_link"/>

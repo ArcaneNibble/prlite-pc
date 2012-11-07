@@ -1,0 +1,14 @@
+top_shelf_joint, left_arm_shelf_joint, left_arm_base_link, left_shoulder_pan_joint, left_shoulder_caster_joint, left_shoulder_tilt_joint, left_upper_arm_hinge_joint, left_elbow_pan_joint, left_elbow_joint, left_elbow_flex_joint, left_wrist_flex_joint, left_wrist_roll_joint, left_gripper_right_joint, left_gripper_left_joint
+
+top_shelf_link, left_arm_shelf_link, left_shoulder_pan_link, left_shoulder_link, left_shoulder_caster_link, left_upper_arm_link, left_elbow_pan_link, left_elbow_flex_link, left_forearm_link, left_wrist_flex_link, left_wrist_roll_link, left_gripper_right_link, left_gripper_left_link
+
+top_shelf_joint, right_arm_shelf_joint, right_arm_base_link, right_elbow_pan_joint, right_elbow_joint, right_elbow_flex_joint, right_wrist_flex_joint, right_wrist_roll_joint, right_gripper_right_joint, right_gripper_left_joint
+
+right_arm_shelf_link, right_shoulder_pan_link, right_shoulder_link, right_shoulder_caster_link, right_upper_arm_link, right_elbow_pan_link, right_elbow_flex_link, right_forearm_link, right_wrist_flex_link, right_wrist_roll_link, right_gripper_right_link, right_gripper_left_link
+
+USUSED:
+"right_upper_arm_hinge_joint"
+"right_lower_linear_actuator_link"
+"right_upper_linear_actuator_link"
+"right_upper_arm_hinge_link"
+

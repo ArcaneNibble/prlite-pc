@@ -15,9 +15,8 @@ msg = JointState()
 
 #msg.name = [ "fl_anchor_rod_joint", "fl_caster_rotation_joint", "fl_wheel_joint", "base_link_fl_wheel_joint", "fr_base_joint", "fr_anchor_rod_joint", "fr_caster_rotation_joint", "fr_caster_motor_joint", "fr_wheel_joint", "base_link_fr_wheel_joint", "bl_anchor_rod_joint", "bl_caster_rotation_joint", "bl_caster_motor_joint", "bl_wheel_joint", "base_link_bl_wheel_joint", "br_anchor_rod_joint", "br_caster_rotation_joint", "base_link_br_wheel_joint", "left_lin_act_cyl_joint", "left_upper_arm_hinge_joint", "right_lin_act_cyl_joint", "right_upper_arm_hinge_joint", "left_linear_actuator_joint", "right_linear_actuator_joint", "right_elbow_pan_joint", "left_elbow_pan_joint", "br_wheel_joint", "torso_lift_joint", "wheel_linear_actuator_joint" ]
 
-msg.name = [ 
-"fl_wheel_joint", "fr_wheel_joint", "bl_wheel_joint", "br_wheel_joint"
-]
+msg.name = [ "fl_wheel_joint", "fr_wheel_joint", "bl_wheel_joint", "br_wheel_joint" ] 
+#msg.name = ["wheel_linear_actuator_joint", "torso_lift_joint", "left_shoulder_tilt_joint", "left_linear_actuator_joint", "left_lin_act_cyl_joint", "left_upper_arm_hinge_joint", "right_shoulder_tilt_joint", "right_linear_actuator_joint", "right_lin_act_cyl_joint", "right_upper_arm_hinge_joint", "fl_caster_rotation_joint", "fl_push_rod_joint", "fl_anchor_rod_joint", "fr_caster_rotation_joint", "fr_push_rod_joint", "fr_anchor_rod_joint", "bl_caster_rotation_joint", "bl_push_rod_joint", "bl_anchor_rod_joint", "br_caster_rotation_joint", "br_push_rod_joint", "br_anchor_rod_joint", "fl_wheel_joint", "fr_wheel_joint", "bl_wheel_joint", "br_wheel_joint" ] 
 
 msg.position = [0.0 for name in msg.name]
 msg.velocity = [0.0 for name in msg.name]

@@ -1282,7 +1282,7 @@ hokuyo side bar dimensions:
   </joint>
   <joint name="left_linear_actuator_joint" type="prismatic">
     <!-- linact down: 9.9 inches, up 13.9 inches -->
-    <axis xyz="0 0 1"/>
+    <axis xyz="0 0 -1"/>
     <limit effort="10000" lower="0.0" upper="-0.1016" velocity=".025"/>
     <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
     <parent link="left_lower_linear_actuator_link"/>
@@ -1741,7 +1741,7 @@ hokuyo side bar dimensions:
   </joint>
   <joint name="right_linear_actuator_joint" type="prismatic">
     <!-- linact down: 9.9 inches, up 13.9 inches -->
-    <axis xyz="0 0 1"/>
+    <axis xyz="0 0 -1"/>
     <limit effort="10000" lower="0.0" upper="-0.1016" velocity=".025"/>
     <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
     <parent link="right_lower_linear_actuator_link"/>

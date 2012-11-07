@@ -1,0 +1,30 @@
+Node [/pick_and_place_action_server]
+Publications: 
+ * /move_arm/cancel [actionlib_msgs/GoalID]
+ * /rosout [rosgraph_msgs/Log]
+ * /move_arm/goal [simple_arm_server/MoveArmActionGoal]
+ * /pick_and_place/result [turtlebot_block_manipulation/PickAndPlaceActionResult]
+ * /pick_and_place/feedback [turtlebot_block_manipulation/PickAndPlaceActionFeedback]
+ * /pick_and_place/status [actionlib_msgs/GoalStatusArray]
+
+Subscriptions: 
+ * /move_arm/status [unknown type]
+ * /clock [rosgraph_msgs/Clock]
+ * /pick_and_place/cancel [unknown type]
+ * /move_arm/result [unknown type]
+ * /pick_and_place/goal [unknown type]
+ * /move_arm/feedback [unknown type]
+
+Services: 
+ * /pick_and_place_action_server/get_loggers
+ * /pick_and_place_action_server/set_logger_level
+Pid: 10317
+Connections:
+ * topic: /rosout
+    * to: /rosout
+    * direction: outbound
+    * transport: TCPROS
+ * topic: /clock
+    * to: http://prlite-controller:36722/
+    * direction: inbound
+    * transport: TCPROS
