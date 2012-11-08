@@ -814,9 +814,12 @@ hokuyo side bar dimensions:
   </joint>
   <link name="fl_wheel_motor_block_link">
     <visual>
+  <!--
       <origin rpy="0 0 0" xyz="0 0 -0.0508"/>
+-->
+      <origin rpy="0 0 0" xyz="0 0 -0.0762"/>
       <geometry>
-        <box size="0.1016 0.0254 0.1016"/>
+        <box size="0.1016 0.0254 0.1524"/>
       </geometry>
       <material name="Blue1">
         <color rgba="0 0.9 0.9 1.0"/>
@@ -828,7 +831,10 @@ hokuyo side bar dimensions:
     <limit effort="100" velocity="100"/>
     <safety_controller k_velocity="10"/>
     <dynamics damping="0.0" friction="0.0"/>
+<!--
     <origin rpy="0 0 0" xyz="0 0.0254 -0.0889"/>
+-->
+    <origin rpy="0 0 0" xyz="0 0.0254 -0.1397"/>
     <parent link="fl_wheel_motor_block_link"/>
     <child link="fl_wheel_link"/>
   </joint>
@@ -941,9 +947,15 @@ hokuyo side bar dimensions:
   </joint>
   <link name="fr_wheel_motor_block_link">
     <visual>
+<!--
       <origin rpy="0 0 0" xyz="0 0 -0.0508"/>
+-->
+      <origin rpy="0 0 0" xyz="0 0 -0.0762"/>
       <geometry>
+<!--
         <box size="0.1016 0.0254 0.1016"/>
+-->
+        <box size="0.1016 0.0254 0.1524"/>
       </geometry>
       <material name="Blue1">
         <color rgba="0 0.9 0.9 1.0"/>
@@ -955,7 +967,10 @@ hokuyo side bar dimensions:
     <limit effort="100" velocity="100"/>
     <safety_controller k_velocity="10"/>
     <dynamics damping="0.0" friction="0.0"/>
+<!--
     <origin rpy="0 0 0" xyz="0 -0.0254 -0.0889"/>
+-->
+    <origin rpy="0 0 0" xyz="0 -0.0254 -0.1397"/>
     <parent link="fr_wheel_motor_block_link"/>
     <child link="fr_wheel_link"/>
   </joint>
@@ -1068,9 +1083,15 @@ hokuyo side bar dimensions:
   </joint>
   <link name="bl_wheel_motor_block_link">
     <visual>
+<!--
       <origin rpy="0 0 0" xyz="0 0 -0.0508"/>
+-->
+      <origin rpy="0 0 0" xyz="0 0 -0.0762"/>
       <geometry>
+<!--
         <box size="0.1016 0.0254 0.1016"/>
+-->
+        <box size="0.1016 0.0254 0.1524"/>
       </geometry>
       <material name="Blue1">
         <color rgba="0 0.9 0.9 1.0"/>
@@ -1082,7 +1103,10 @@ hokuyo side bar dimensions:
     <limit effort="100" velocity="100"/>
     <safety_controller k_velocity="10"/>
     <dynamics damping="0.0" friction="0.0"/>
+<!--
     <origin rpy="0 0 0" xyz="0 0.0254 -0.0889"/>
+-->
+    <origin rpy="0 0 0" xyz="0 0.0254 -0.1397"/>
     <parent link="bl_wheel_motor_block_link"/>
     <child link="bl_wheel_link"/>
   </joint>
@@ -1195,9 +1219,15 @@ hokuyo side bar dimensions:
   </joint>
   <link name="br_wheel_motor_block_link">
     <visual>
+<!--
       <origin rpy="0 0 0" xyz="0 0 -0.0508"/>
+-->
+      <origin rpy="0 0 0" xyz="0 0 -0.0762"/>
       <geometry>
+<!--
         <box size="0.1016 0.0254 0.1016"/>
+-->
+        <box size="0.1016 0.0254 0.1524"/>
       </geometry>
       <material name="Blue1">
         <color rgba="0 0.9 0.9 1.0"/>
@@ -1209,7 +1239,10 @@ hokuyo side bar dimensions:
     <limit effort="100" velocity="100"/>
     <safety_controller k_velocity="10"/>
     <dynamics damping="0.0" friction="0.0"/>
+<!--
     <origin rpy="0 0 0" xyz="0 -0.0254 -0.0889"/>
+-->
+    <origin rpy="0 0 0" xyz="0 -0.0254 -0.1397"/>
     <parent link="br_wheel_motor_block_link"/>
     <child link="br_wheel_link"/>
   </joint>

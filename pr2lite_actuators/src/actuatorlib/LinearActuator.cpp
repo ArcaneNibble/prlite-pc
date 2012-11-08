@@ -241,7 +241,8 @@ void LinearActuator::publish_base_state(int cur_pos)
 {
 
 #define PUSH_ROD_LEN 0.1778
-#define CASTER_LEN (0.1016 / 2.0)
+// #define CASTER_LEN (0.1016 / 2.0)
+#define CASTER_LEN (0.089 / 2.0)
 
 /*
  ---------
@@ -256,13 +257,14 @@ void LinearActuator::publish_base_state(int cur_pos)
     basestate.header.stamp = ros::Time::now();
 
     double length = (1000.0f - (double)cur_pos) * 4.0 / 1000.0f * INCHES_TO_METERS;
+    // length = 0 * INCHES_TO_METERS; // for debugging
     // basestate.position.push_back(length);
     // sin rule : a / sin(A) = b/ sin(B) = c/ sin(C)
     // cos rule : c^2 = a^2 + b^2 - 2ab cos(C)
     // a = pushrod ; b = casterlen ; c = side ; C = casterangle
     // cos rule : cos(C) = (a^2 + b^2 + c^2) / 2ab
     double retracted_linact_side_angle = ONE_PI;  // straight from linact rod to caster
-    double retracted_caster_angle = 2* ONE_PI * 5.0 / 4.0; // 135 degrees
+    double retracted_caster_angle = ONE_PI / 2.0;
 
     // a = pushrod ; b = casterlen ; c = side ; C = casterangle
     // cos rule : c = sqrt(a^2 + b^2 - 2ab cos(C))
@@ -274,7 +276,7 @@ void LinearActuator::publish_base_state(int cur_pos)
     // sin rule : A = asin((sin(B) * a) / b)
     //--------------------------------------------------
 
-    double mid_caster_angle = 2*ONE_PI / 2.0; // 90 degrees
+    double mid_caster_angle = ONE_PI / 4.0;
     double mid_side = sqrt( pow(PUSH_ROD_LEN,2.0) + pow(CASTER_LEN, 2.0) 
                             + 2 * PUSH_ROD_LEN * CASTER_LEN * cos(mid_caster_angle));
     double mid_pushrod_angle = asin((sin(mid_caster_angle) * mid_side) / PUSH_ROD_LEN);
@@ -282,27 +284,28 @@ void LinearActuator::publish_base_state(int cur_pos)
 
     //--------------------------------------------------
     double extended_linact_side_angle = 2*ONE_PI;  // straight
-    double extended_caster_angle = ONE_PI / 4.0; // 45 degrees
+    double extended_caster_angle = 0; 
     double extended_side = sqrt( pow(PUSH_ROD_LEN,2.0) + pow(CASTER_LEN, 2.0) 
                             + 2 * PUSH_ROD_LEN * CASTER_LEN * cos(extended_caster_angle));
     double extended_pushrod_angle = asin((sin(extended_caster_angle) * extended_side) / PUSH_ROD_LEN);
+    // extended_linact_side_angle = ONE_PI / 4.0;
+    // extended_pushrod_angle = ONE_PI / 4.0;
 
     basestate.name.resize(13);
     basestate.name[0] = "wheel_linear_actuator_joint";
-    basestate.name[1] = "fl_caster_rotation_joint";
+    basestate.name[1] = "fl_anchor_rod_joint";
     basestate.name[2] = "fl_push_rod_joint";
-    basestate.name[3] = "fl_anchor_rod_joint";
-    basestate.name[4] = "fr_caster_rotation_joint";
+    basestate.name[3] = "fl_caster_rotation_joint";
+    basestate.name[4] = "fr_anchor_rod_joint";
     basestate.name[5] = "fr_push_rod_joint";
-    basestate.name[6] = "fr_anchor_rod_joint";
-    basestate.name[7] = "bl_caster_rotation_joint";
+    basestate.name[6] = "fr_caster_rotation_joint";
+    basestate.name[7] = "bl_anchor_rod_joint";
     basestate.name[8] = "bl_push_rod_joint";
-    basestate.name[9] = "bl_anchor_rod_joint";
-    basestate.name[10] = "br_caster_rotation_joint";
+    basestate.name[9] = "bl_caster_rotation_joint";
+    basestate.name[10] = "br_anchor_rod_joint";
     basestate.name[11] = "br_push_rod_joint";
-    basestate.name[12] = "br_anchor_rod_joint";
+    basestate.name[12] = "br_caster_rotation_joint";
     basestate.position.push_back(length);
-    double inverse = 1;
     ROS_INFO("Published base: %d %f %f %f %f %f %f %f %f %f %f", 
       cur_pos, length, retracted_linact_side_angle, retracted_pushrod_angle, 
       retracted_caster_angle,
@@ -314,60 +317,52 @@ void LinearActuator::publish_base_state(int cur_pos)
       double inverse = 1;
       basestate.position.push_back(retracted_linact_side_angle*inverse); // fl
       basestate.position.push_back(retracted_pushrod_angle*inverse);
+      inverse = -1;
       basestate.position.push_back(retracted_caster_angle*inverse);
       inverse = 1;
       basestate.position.push_back(retracted_linact_side_angle*inverse); // fr
       basestate.position.push_back(retracted_pushrod_angle*inverse);
       basestate.position.push_back(retracted_caster_angle*inverse);
       inverse = 1;
-      basestate.position.push_back(retracted_linact_side_angle*inverse); // fr
+      basestate.position.push_back(retracted_linact_side_angle*inverse); // bl
       basestate.position.push_back(retracted_pushrod_angle*inverse);
       basestate.position.push_back(retracted_caster_angle*inverse);
-      inverse = 1;
-      basestate.position.push_back(retracted_linact_side_angle*inverse); // fr
+      basestate.position.push_back(retracted_linact_side_angle*inverse); // br
       basestate.position.push_back(retracted_pushrod_angle*inverse);
+      inverse = -1;
       basestate.position.push_back(retracted_caster_angle*inverse);
-/*
-      basestate.position.push_back(extended_linact_side_angle*inverse); // bl
-      basestate.position.push_back(extended_pushrod_angle*inverse);
-      basestate.position.push_back(extended_caster_angle*inverse);
-      inverse = 1;
-      basestate.position.push_back(extended_linact_side_angle*inverse); // br
-      basestate.position.push_back(extended_pushrod_angle*inverse);
-      basestate.position.push_back(extended_caster_angle*inverse);
-*/
     } else if (length <= 3 * INCHES_TO_METERS)
     {
+      double inverse = 1;
       basestate.position.push_back(mid_linact_side_angle*inverse); // fl
       basestate.position.push_back(mid_pushrod_angle*inverse);
+      inverse = -1;
       basestate.position.push_back(mid_caster_angle*inverse);
-      inverse = 1;
+      inverse = -1;
       basestate.position.push_back(mid_linact_side_angle*inverse); // fr
       basestate.position.push_back(mid_pushrod_angle*inverse);
-      basestate.position.push_back(mid_caster_angle*inverse);
       inverse = 1;
+      basestate.position.push_back(mid_caster_angle*inverse);
       basestate.position.push_back(mid_linact_side_angle*inverse); // bl
       basestate.position.push_back(mid_pushrod_angle*inverse);
       basestate.position.push_back(mid_caster_angle*inverse);
-      inverse = 1;
+      inverse = -1;
       basestate.position.push_back(mid_linact_side_angle*inverse); // br
       basestate.position.push_back(mid_pushrod_angle*inverse);
       basestate.position.push_back(mid_caster_angle*inverse);
     } else
     {
+      double inverse = 1;
       basestate.position.push_back(extended_linact_side_angle*inverse); // fl
       basestate.position.push_back(extended_pushrod_angle*inverse);
       basestate.position.push_back(extended_caster_angle*inverse);
-      inverse = 1;
       basestate.position.push_back(extended_linact_side_angle*inverse); // fr
       basestate.position.push_back(extended_pushrod_angle*inverse);
       basestate.position.push_back(extended_caster_angle*inverse);
-      inverse = 1;
-      basestate.position.push_back(extended_linact_side_angle*inverse); // fr
+      basestate.position.push_back(extended_linact_side_angle*inverse); // bl
       basestate.position.push_back(extended_pushrod_angle*inverse);
       basestate.position.push_back(extended_caster_angle*inverse);
-      inverse = 1;
-      basestate.position.push_back(extended_linact_side_angle*inverse); // fr
+      basestate.position.push_back(extended_linact_side_angle*inverse); // br
       basestate.position.push_back(extended_pushrod_angle*inverse);
       basestate.position.push_back(extended_caster_angle*inverse);
     }
