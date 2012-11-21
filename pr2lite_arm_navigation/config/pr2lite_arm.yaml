@@ -1,4 +1,5 @@
-port: /dev/magellan_arm
+#port: /dev/magellan_arm
+port: /dev/null
 baud: 115200
 rate: 5
 sync_write: False
@@ -18,8 +19,8 @@ lidar_tilt_joint:{id: 12, max_angle: 150, min_angle: -150, max_speed: 25},
 right_wrist_flex_joint:{id: 14, max_angle: 150, min_angle: -150, max_speed: 25},
 right_gripper_right_joint:{id: 15,max_angle: 150,min_angle: -150, max_speed: 25},
 right_wrist_roll_joint:{id: 18,max_angle: 150,min_angle: -150, max_speed: 25},
-right_elbow_joint:{id: 19, max_angle: 150, min_angle: -150, max_speed: 25},
-left_elbow_joint: {id: 21, max_angle: 150, min_angle: -150, max_speed: 25},
+right_elbow_pan_joint:{id: 19, max_angle: 150, min_angle: -150, max_speed: 25},
+left_elbow_pan_joint: {id: 21, max_angle: 150, min_angle: -150, max_speed: 25},
 head_tilt_joint:{id: 23, max_angle: 150, min_angle: -150, max_speed: 25},
 left_shoulder_pan_joint: {id: 2, max_angle: 150, min_angle: -150, max_speed: 25},
 right_shoulder_pan_joint:{id: 17, max_angle: 150, min_angle: -150, max_speed: 25}
@@ -38,16 +39,23 @@ lidar_tilt_joint:{id: 12, max_angle: 150, min_angle: -150, max_speed: 25},
 right_wrist_flex_joint:{id: 14, max_angle: 150, min_angle: -150, max_speed: 25},
 right_gripper_right_joint:{id: 15,max_angle: 150,min_angle: -150, max_speed: 25},
 right_wrist_roll_joint:{id: 18,max_angle: 150,min_angle: -150, max_speed: 25},
-right_elbow_joint:{id: 19, max_angle: 150, min_angle: -150, max_speed: 25},
-left_elbow_joint: {id: 21, max_angle: 150, min_angle: -150, max_speed: 25},
+right_elbow_pan_joint:{id: 19, max_angle: 150, min_angle: -150, max_speed: 25},
+left_elbow_pan_joint: {id: 21, max_angle: 150, min_angle: -150, max_speed: 25},
 head_tilt_joint:{id: 23, max_angle: 150, min_angle: -150, max_speed: 25},
 left_shoulder_pan_joint: {id: 2, max_angle: 150, min_angle: -150, max_speed: 25},
 right_shoulder_pan_joint:{id: 17, max_angle: 150, min_angle: -150, max_speed: 25}
 }
 
+fudge_factor: {
+left_elbow_pan_joint: {value: 1.31922347758},
+left_elbow_flex_joint: {value: 1.51352771071},
+right_elbow_flex_joint: {value: 1.67715232809}
+}
+
+
 controllers: {
-arm_controller: {type: follow_controller, joints: [ left_elbow_flex_joint, left_elbow_joint, left_shoulder_pan_joint, left_wrist_flex_joint, left_wrist_roll_joint ], action_name: arm_controller/follow_joint_trajectory, onboard: False },
-arm_controllerR: {type: follow_controller, joints: [ right_elbow_flex_joint, right_elbow_joint, right_shoulder_pan_joint, right_wrist_flex_joint, right_wrist_roll_joint ], action_name: arm_controllerR/follow_joint_trajectory, onboard: False },
+arm_controller: {type: follow_controller, joints: [ left_elbow_flex_joint, left_elbow_pan_joint, left_shoulder_pan_joint, left_wrist_flex_joint, left_wrist_roll_joint ], action_name: arm_controller/follow_joint_trajectory, onboard: False },
+arm_controllerR: {type: follow_controller, joints: [ right_elbow_flex_joint, right_elbow_pan_joint, right_shoulder_pan_joint, right_wrist_flex_joint, right_wrist_roll_joint ], action_name: arm_controllerR/follow_joint_trajectory, onboard: False },
 head_controller: {type: follow_controller, joints: [ head_pan_joint, head_tilt_joint, lidar_tilt_joint ], onboard: False }
 }
 

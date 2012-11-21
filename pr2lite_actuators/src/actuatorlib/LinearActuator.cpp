@@ -270,7 +270,8 @@ void LinearActuator::publish_base_state(int cur_pos)
     // cos rule : c = sqrt(a^2 + b^2 - 2ab cos(C))
     double retracted_side = sqrt( pow(PUSH_ROD_LEN,2.0) + pow(CASTER_LEN, 2.0) 
                             + 2 * PUSH_ROD_LEN * CASTER_LEN * cos(retracted_caster_angle));
-    double retracted_pushrod_angle = asin((sin(retracted_caster_angle) * retracted_side) / PUSH_ROD_LEN);
+    // double retracted_pushrod_angle = asin((sin(retracted_caster_angle) * retracted_side) / PUSH_ROD_LEN);
+    double retracted_pushrod_angle = 0;
 
     // a = side ; b = pushrod_len ; B = caster_angle
     // sin rule : A = asin((sin(B) * a) / b)

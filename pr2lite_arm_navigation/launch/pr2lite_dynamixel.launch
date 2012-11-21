@@ -31,24 +31,26 @@ shoulder_pan_controllerR
                 head_pan_controller 
                 head_tilt_controller
                 left_elbow_flex_controller
-                left_elbow_controller
+                left_elbow_pan_controller
                 left_gripper_left_controller
                 left_gripper_right_controller
                 left_shoulder_pan_controller
-                left_shoulder_tilt_controller
                 left_wrist_flex_controller
                 left_wrist_roll_controller
                 lidar_tilt_controller
                 right_elbow_flex_controller
-                right_elbow_controller
+                right_elbow_pan_controller
                 right_gripper_left_controller
                 right_gripper_right_controller
                 right_shoulder_pan_controller
-                right_shoulder_tilt_controller
                 right_wrist_flex_controller 
                 right_wrist_roll_controller"
           output="screen"/>
         
+<!--
+                left_shoulder_tilt_controller
+                right_shoulder_tilt_controller
+-->
    <!-- Start the arm trajectory controller -->
    <!-- arm_controller removed from above elbow_tilt_controllerL -->
 

@@ -4,8 +4,11 @@
    <!-- Start the Dynamixel Joint States Publisher -->
    <node pkg="pr2lite_arm_navigation" name="dynamixel_joint_states_publisher" type="dynamixel_joint_state_publisher.py" output="screen">
       <param name="rate" value="10" />
+      <rosparam file="$(find pr2lite_arm_navigation)/config/pr2lite_arm.yaml" command="load" />
    </node>
+<!--
    <node pkg="robot_monitor" type="robot_monitor" name="robot_monitor" />
 
    <node pkg="pr2lite_arm_navigation" type="relax_all_servos.py" name="relax_all_servos" />
+-->
 </launch>

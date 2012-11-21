@@ -51,27 +51,6 @@ class JointStatePublisher():
             # Look for the parameters that name the joints.
             if parameter.find(dynamixel_namespace) != -1 and parameter.find("joint_name") != -1:
               self.joints.append(rospy.get_param(parameter))
-#            self.joints.append("head_pan_joint") 
-#            self.joints.append("head_tilt_joint")
-#            self.joints.append("left_elbow_flex_joint")
-#            self.joints.append("left_elbow_joint")
-#            self.joints.append("left_elbow_pan_joint")
-#            self.joints.append("left_gripper_left_joint")
-#            self.joints.append("left_gripper_right_joint")
-#            self.joints.append("left_shoulder_pan_joint")
-#            self.joints.append("left_shoulder_tilt_joint")
-#            self.joints.append("left_wrist_flex_joint")
-#            self.joints.append("left_wrist_roll_joint")
-#            self.joints.append("lidar_tilt_joint")
-#            self.joints.append("right_elbow_flex_joint")
-#            self.joints.append("right_elbow_joint")
-#            self.joints.append("right_elbow_pan_joint") 
-#            self.joints.append("right_gripper_left_joint")
-#            self.joints.append("right_gripper_right_joint")
-#            self.joints.append("right_shoulder_pan_joint")
-#            self.joints.append("right_shoulder_tilt_joint")
-#            self.joints.append("right_wrist_flex_joint") 
-#            self.joints.append("right_wrist_roll_joint") 
 
         self.servos = list()
         self.controllers = list()
@@ -83,7 +62,7 @@ class JointStatePublisher():
             self.joint_states[joint] = JointStateMessage(joint, 0.0, 0.0, 0.0)
             #  ARD
             self.controllers.append(dynamixel_namespace + servo + "_controller")
-            self.controllers.append(joint)
+            # self.controllers.append(joint)
             rospy.loginfo("Dynamixel Joint State Publisher " + joint)
                            
         # Start controller state subscribers
@@ -113,7 +92,10 @@ class JointStatePublisher():
        
         for joint in self.joint_states.values():
             msg.name.append(joint.name)
-            msg.position.append(joint.position)
+            fudge_value = rospy.get_param('~fudge_factor/' + joint.name + '/value', 0.0)
+            j_pos = joint.position - fudge_value
+            # rospy.loginfo("fudge " + str(joint.name) + ': ' + str(j_pos) + ' = ' + str(joint.position) + ' - ' + str(fudge_value))
+            msg.position.append(j_pos)
             msg.velocity.append(joint.velocity)
             msg.effort.append(joint.effort)
            

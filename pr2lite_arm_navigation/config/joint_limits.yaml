@@ -13,7 +13,7 @@ joint_limits:
     has_acceleration_limits: true
     max_acceleration: 1
     angle_wraparound: false
-  left_elbow_joint:
+  left_elbow_pan_joint:
     has_position_limits: true
     has_velocity_limits: true
     max_velocity: 1.17
@@ -104,7 +104,7 @@ joint_limits:
     has_acceleration_limits: true
     max_acceleration: 1
     angle_wraparound: false
-  right_elbow_joint:
+  right_elbow_pan_joint:
     has_position_limits: true
     has_velocity_limits: true
     max_velocity: 1.17

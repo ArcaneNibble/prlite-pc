@@ -518,7 +518,7 @@ hokuyo side bar dimensions:
     <parent link="lidar_bar_link"/>
     <child link="lidar_tilt_link"/>
     <origin rpy="0 0 0" xyz="0.0531876 -0.00635 0.0"/>
-    <axis xyz="0 1 0"/>
+    <axis xyz="0 -1 0"/>
   </joint>
   <link name="lidar_tilt_link">
     <inertial>
@@ -1341,7 +1341,7 @@ hokuyo side bar dimensions:
     <limit effort="300" lower="-1" upper="-.15" velocity="1.17"/>
     <mimic joint="left_shoulder_tilt_joint" multiplier="-1" offset="0"/>
   </joint>
-  <joint name="left_elbow_pan_joint" type="fixed">
+  <joint name="left_elbow_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0.0 0 0.0254"/>
     <parent link="left_upper_arm_hinge_link"/>
     <child link="left_elbow_pan_link"/>
@@ -1350,7 +1350,7 @@ hokuyo side bar dimensions:
     <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-1.12" soft_upper_limit="1.12"/>
     <dynamics damping="50" friction="1"/>
   </joint>
-  <joint name="left_elbow_joint" type="revolute">
+  <joint name="left_elbow_pan_joint" type="revolute">
     <origin rpy="0 0 0" xyz="-0.0075 0 -0.025"/>
     <!-- parent link="${side}_arm_base_link" /-->
     <parent link="left_elbow_pan_link"/>
@@ -1365,6 +1365,7 @@ hokuyo side bar dimensions:
     <parent link="left_elbow_flex_link"/>
     <child link="left_forearm_link"/>
     <axis xyz="0 -1 0"/>
+    <!-- axis xyz="0 -1 0" -->
     <limit effort="300" lower="-1.04719755" upper="1.972222" velocity="1.17"/>
     <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-0.94719755" soft_upper_limit="1.872222"/>
     <dynamics damping="50" friction="1"/>
@@ -1373,7 +1374,7 @@ hokuyo side bar dimensions:
     <origin rpy="0 0 0" xyz="0.1815 0 0"/>
     <parent link="left_forearm_link"/>
     <child link="left_wrist_flex_link"/>
-    <axis xyz="0 -1 0"/>
+    <axis xyz="0 1 0"/>
     <!-- From -113 to 108 degrees -->
     <limit effort="300" lower="-1.972222" upper="1.8849556" velocity="1.17"/>
     <dynamics damping="50" friction="1"/>
@@ -1800,7 +1801,7 @@ hokuyo side bar dimensions:
     <limit effort="300" lower="-1" upper="-.15" velocity="1.17"/>
     <mimic joint="right_shoulder_tilt_joint" multiplier="-1" offset="0"/>
   </joint>
-  <joint name="right_elbow_pan_joint" type="fixed">
+  <joint name="right_elbow_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0.0 0 0.0254"/>
     <parent link="right_upper_arm_hinge_link"/>
     <child link="right_elbow_pan_link"/>
@@ -1809,7 +1810,7 @@ hokuyo side bar dimensions:
     <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-1.12" soft_upper_limit="1.12"/>
     <dynamics damping="50" friction="1"/>
   </joint>
-  <joint name="right_elbow_joint" type="revolute">
+  <joint name="right_elbow_pan_joint" type="revolute">
     <origin rpy="0 0 0" xyz="-0.0075 0 -0.025"/>
     <!-- parent link="${side}_arm_base_link" /-->
     <parent link="right_elbow_pan_link"/>
@@ -1855,6 +1856,7 @@ hokuyo side bar dimensions:
     <axis xyz="0 0 1"/>
     <!-- From 14 to -45 degrees -->
     <limit effort="300" lower="-0.838576116" upper="0.245436912" velocity="1.17"/>
+    <!-- limit effort="300" lower="-0.245436912" upper="0.838576116" velocity="1.17"-->
     <dynamics damping="50" friction="1"/>
     <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-0.738576116" soft_upper_limit="0.145436912"/>
   </joint>
@@ -1864,7 +1866,8 @@ hokuyo side bar dimensions:
     <child link="right_gripper_left_link"/>
     <axis xyz="0 0 1"/>
     <!-- From -14 to 45 degrees -->
-    <limit effort="300" lower="-0.240323643" upper="0.843689385" velocity="1.17"/>
+    <limit effort="300" lower="-0.240323643" upper="0.843689385" velocity="1.17" />
+    <!-- limit effort="300" lower="-0.843689385" upper="0.240323643" velocity="1.17" -->
     <dynamics damping="50" friction="1"/>
     <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-0.140323643" soft_upper_limit="0.743689385"/>
   </joint>

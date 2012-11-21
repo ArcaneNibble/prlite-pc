@@ -4,6 +4,7 @@
    <!-- Start the Dynamixel Joint States Publisher -->
    <node pkg="pr2lite_arm_navigation" name="dynamixel_joint_states_publisher" type="dynamixel_joint_state_publisher.py" output="screen">
       <param name="rate" value="5" />
+      <rosparam file="$(find pr2lite_arm_navigation)/config/pr2lite_arm.yaml" command="load" />
    </node>
 
    <node pkg="diagnostic_aggregator" type="aggregator_node" name="diagnostic_aggregator" >

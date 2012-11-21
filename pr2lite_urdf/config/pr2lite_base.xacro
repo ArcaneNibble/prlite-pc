@@ -578,7 +578,7 @@ hokuyo side bar dimensions:
   <parent link="lidar_bar_link"/>
   <child link="lidar_tilt_link"/>
   <origin xyz="${inch_to_meter*2.094} ${inch_to_meter*-.25} ${inch_to_meter*(0)}" rpy="0 0 0"/>
-  <axis xyz="0 1 0"/>
+  <axis xyz="0 -1 0"/>
 </joint>
 <link name="lidar_tilt_link">
             <inertial>
