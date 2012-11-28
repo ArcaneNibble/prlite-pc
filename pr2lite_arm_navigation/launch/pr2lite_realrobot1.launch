@@ -4,6 +4,7 @@
     <!-- include file="$(find pr2lite_arm_markers)/launch/pr2lite_arm_markers.launch" -->
     <!-- include file="$(find pr2lite_arm_navigation)/launch/arbotix_linact.launch" -->
     <node pkg="pr2lite_arm_navigation" type="fake_pub.py" name="fake_pub" />
+    <node pkg="pr2lite_arm_navigation" type="fake_linact_pos.py" name="fake_linact_pos" />
 
     <node pkg="tf" type="static_transform_publisher" name="quaternion_bc" args="0 0 0 0 0 1 world_joint base_footprint 100" />
        <!-- should this be "0 0 0 0 0 0" or "0 0 0 0 0 0 1"?-->

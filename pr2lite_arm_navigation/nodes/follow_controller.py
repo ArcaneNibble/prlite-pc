@@ -52,13 +52,13 @@ class FollowController:
         self.fudge_factor = list()
         # Get all parameter names
         parameters = rospy.get_param_names()
-        for parameter in parameters:
+        #for parameter in parameters:
             # Look for the parameters that name the joints.
-            if parameter.find("joint_name") != -1:
-              self.joints.append(rospy.get_param(parameter))
+            #if parameter.find("joint_name") != -1:
+              #self.joints.append(rospy.get_param(parameter))
 
-        #self.joints = rospy.get_param('~controllers/'+name+'/joints')
-        #self.index = rospy.get_param('~controllers/'+name+'/index', len(device.controllers))
+        self.joints = rospy.get_param('~controllers/'+name+'/joints')
+
         self.controllers = list()
         self.fudge_factor = list()
         for joint in self.joints:
@@ -89,7 +89,7 @@ class FollowController:
         traj = goal.trajectory
 
         if set(self.joints) != set(traj.joint_names):
-            msg = "Trajectory joint names does not match action controlled joints." + str(traj.joint_names)
+            msg = "Trajectory joint names does not match action controlled joints." + str(traj.joint_names + " versus" + str(self.joints))
             rospy.logerr(msg)
             self.server.set_aborted(text=msg)
             return

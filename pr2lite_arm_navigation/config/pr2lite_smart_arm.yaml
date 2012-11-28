@@ -47,8 +47,8 @@ left_elbow_pan_controller:
         id: 21
         # init: 512 - WRONG HW CONFIG?
         init: 256
-        min:  440
-        max:  1024
+        min: 0
+        max: 1023
 
 left_elbow_flex_controller:
     controller:
@@ -60,7 +60,7 @@ left_elbow_flex_controller:
     motor_master:
         id: 16
         init: 192
-        min: 226
+        min: 0
         max: 1023
     motor_slave:
         id: 8
@@ -75,8 +75,8 @@ left_wrist_flex_controller:
     motor_master:
         id: 9
         init: 512
-        min: 226
-        max: 798
+        min: 0
+        max: 1023
     motor_slave:
         id: 11
 
@@ -104,7 +104,8 @@ left_gripper_right_controller:
         id: 7
         init: 400
         min: 400
-        max: 575
+        min: 0
+        max: 1023
 
 left_gripper_left_controller:
     controller:
@@ -116,8 +117,8 @@ left_gripper_left_controller:
     motor:
         id: 5
         init: 600
-        min: 400
-        max: 550
+        min: 0
+        max: 1023
 
 right_shoulder_pan_controller:
     controller:
@@ -144,7 +145,7 @@ right_elbow_flex_controller:
     motor_master:
         id: 13
         init: 192
-        min: 226
+        min: 0
         max: 1023
     motor_slave:
         id: 3
@@ -159,8 +160,8 @@ right_elbow_pan_controller:
     motor:
         id: 19
         init: 512
-        min:  286
-        max:  818
+        min: 0
+        max: 1023
 
 right_wrist_flex_controller: 
     controller:
@@ -172,8 +173,8 @@ right_wrist_flex_controller:
     motor_master:
         id: 4
         init: 512
-        min: 226
-        max: 798
+        min: 0
+        max: 1023
     motor_slave:
         id: 14
 
@@ -187,8 +188,8 @@ right_wrist_roll_controller:
     motor:
         id: 18
         init: 505
-        min: 205
-        max: 740
+        min: 0
+        max: 1023
 
 right_gripper_right_controller:
     controller:
@@ -200,8 +201,8 @@ right_gripper_right_controller:
     motor:
         id: 10
         init: 600
-        min: 400
-        max: 600
+        min: 0
+        max: 1023
 
 right_gripper_left_controller:
     controller:
@@ -213,8 +214,8 @@ right_gripper_left_controller:
     motor:
         id: 15
         init: 400
-        min: 400
-        max: 600
+        min: 0
+        max: 1023
 
 head_tilt_controller:
     controller:
@@ -226,8 +227,8 @@ head_tilt_controller:
     motor:
         id: 23
         init: 512
-        min: 300
-        max: 800
+        min: 0
+        max: 1023
 
 head_pan_controller:
     controller:
@@ -252,7 +253,7 @@ lidar_tilt_controller:
     motor:
         id: 12
         init: 512
-        min: 212
-        max: 812
+        min: 0
+        max: 1023
 
 

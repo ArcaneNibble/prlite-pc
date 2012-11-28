@@ -75,15 +75,15 @@ void LinearActuator::actuator_callback(const packets_485net::packet_485net_dgram
     // ROS_INFO("[ACTUATOR ID %d] publish!", m_id);
     actuator_publish();
     // if (m_name == "left_shoulder_tilt_joint" || m_name == "right_shoulder_tilt_joint")
-    if (m_id == 15 || m_id == 14)
+    if (m_id == 15 || m_id == 14) {
         publish_dyna_state(cur_pos);
     // else if (m_name == "torso_lift_joint")
-    else if (m_id == 13)
+    } else if (m_id == 13) {
         publish_torso_state(cur_pos);
     // else if (m_name == "wheel_linear_actuator_joint")
-    else if (m_id == 12)
+    } else if (m_id == 12) {
         publish_base_state(cur_pos);
-    else
+    } else
         ROS_INFO("no actuator registered");
 }
 
@@ -119,6 +119,8 @@ void LinearActuator::publish_dyna_state(int cur_pos)
 /* extra angle caused by LinAct bottom and Shoulder hinge not lining up */
 #define FIXED_LA_ANGLE  (acos(LINACT_TO_TOP / HYPOTENUSE))
 #define FIXED_LA_ANGLE2  (asin(LINACT_TO_TOP / HYPOTENUSE))
+// tan(θ) = Opposite / Adjacent
+#define FIXED_LA_ANGLE3  (atan(BAR_LEN / HYPOTENUSE))
 /* for shorthand */
 #define B BAR_LEN
 #define H HYPOTENUSE
@@ -148,10 +150,15 @@ void LinearActuator::publish_dyna_state(int cur_pos)
     // double upper_arm_angle = TWO_PI - linact_cyl_angle - angle;
     // sin rule : a / sin(A) = b/ sin(B) = c/ sin(C)
     // cos rule : c^2 = a^2 + b^2 - 2ab cos(C)
-    double linact_length = length * INCHES_TO_METERS;
     // sin rule : A = asin((sin(B) * a) / b)
-    double linact_cyl_angle = asin( (BAR_LEN*INCHES_TO_METERS) * sin(angle) / (linact_length + (HYPOTENUSE*INCHES_TO_METERS)));
-    double upper_arm_angle = TWO_PI - linact_cyl_angle - angle;
+    // double linact_cyl_angle = asin( (BAR_LEN*INCHES_TO_METERS) * sin(ONE_PI - angle) / (linact_length + (LINACT_DWN*INCHES_TO_METERS)));
+    // double linact_cyl_angle = LINACT_ANGLE;
+    // double upper_arm_angle = ONE_PI - linact_cyl_angle - angle;
+    // double upper_arm_angle = angle - ONE_PI;
+    // tan(θ) = Opposite / Adjacent
+    double linact_length = length * INCHES_TO_METERS;
+    double linact_cyl_angle = asin( (BAR_LEN*INCHES_TO_METERS) * sin(ONE_PI - angle) / (linact_length + (LINACT_DWN*INCHES_TO_METERS))) + FIXED_LA_ANGLE3;
+    double upper_arm_angle = -1 * angle;
 
     // return the angle
     /*
