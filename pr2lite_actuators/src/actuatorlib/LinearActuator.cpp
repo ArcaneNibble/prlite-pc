@@ -156,9 +156,11 @@ void LinearActuator::publish_dyna_state(int cur_pos)
     // double upper_arm_angle = ONE_PI - linact_cyl_angle - angle;
     // double upper_arm_angle = angle - ONE_PI;
     // tan(θ) = Opposite / Adjacent
+    // angle -= ADD_BRACKET_ANGLE;
     double linact_length = length * INCHES_TO_METERS;
     double linact_cyl_angle = asin( (BAR_LEN*INCHES_TO_METERS) * sin(ONE_PI - angle) / (linact_length + (LINACT_DWN*INCHES_TO_METERS))) + FIXED_LA_ANGLE3;
     double upper_arm_angle = -1 * angle;
+    linact_length -= (.5 * INCHES_TO_METERS); // avoid false collision
 
     // return the angle
     /*

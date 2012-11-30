@@ -1363,101 +1363,196 @@ hokuyo side bar dimensions:
 -->
     <dynamics damping="50" friction="1"/>
   </joint>
+<!-- ==========ARD CUT HERE ========== -->
+<!--
+ <joint name="left_arm_top_bar_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0 0 0.003175"/>
+    <parent link="left_upper_arm_link"/>
+    <child link="left_upper_arm_top_bar_link"/>
+    <axis xyz="0 -1 0"/>
+  </joint>
+  <link name="left_upper_arm_top_bar_link">
+    <inertial>
+      <mass value="0.405"/>
+      <origin rpy="0 0 0" xyz="0.02988871 0 0.02056699"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.1778 0.0 -.0254"/>
+      <geometry>
+        <box size="0.2794 0.0508 0.0508"/>
+      </geometry>
+      <material name="Silver1">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+  </link>
+-->
+
   <joint name="left_upper_arm_hinge_joint" type="revolute">
     <origin rpy="0.0 0 0.0" xyz="0.3556 0.0 0.00635"/>
     <parent link="left_upper_arm_link"/>
-    <child link="left_upper_arm_hinge_link"/>
+    <child link="left_elbow_pan_link"/>
     <axis xyz="0 -1 0"/>
     <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
     <mimic joint="left_shoulder_tilt_joint" multiplier="-1" offset="0"/>
   </joint>
-  <joint name="left_elbow_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0.0 0 0.0254"/>
-    <parent link="left_upper_arm_hinge_link"/>
-    <child link="left_elbow_pan_link"/>
-    <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-1.22" upper="1.22" velocity="1.17"/>
-<!--
-    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-1.12" soft_upper_limit="1.12"/>
--->
-    <dynamics damping="50" friction="1"/>
-  </joint>
   <joint name="left_elbow_pan_joint" type="revolute">
-    <origin rpy="0 0 0" xyz="-0.0075 0 -0.025"/>
-    <!-- parent link="${side}_arm_base_link" /-->
+    <origin rpy="0 0 0" xyz="-0.0508 0 0.0127"/>
     <parent link="left_elbow_pan_link"/>
     <child link="left_elbow_flex_link"/>
     <axis xyz="0 0 1"/>
     <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
-<!--
-    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-1.12" soft_upper_limit="1.12"/>
--->
-    <dynamics damping="50" friction="1"/>
   </joint>
   <joint name="left_elbow_flex_joint" type="revolute">
-    <origin rpy="0 0 0" xyz="0.079575 0 0.0445"/>
+    <origin rpy="0 0 0" xyz="0.0762 0.0 0.0254"/>
     <parent link="left_elbow_flex_link"/>
     <child link="left_forearm_link"/>
     <axis xyz="0 -1 0"/>
-    <!-- axis xyz="0 -1 0" -->
     <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
-<!--
-    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-0.94719755" soft_upper_limit="1.872222"/>
--->
-    <dynamics damping="50" friction="1"/>
   </joint>
   <joint name="left_wrist_flex_joint" type="revolute">
-    <origin rpy="0 0 0" xyz="0.1815 0 0"/>
+    <origin rpy="0 0 0" xyz="0.1778 0 0"/>
     <parent link="left_forearm_link"/>
     <child link="left_wrist_flex_link"/>
     <axis xyz="0 1 0"/>
-    <!-- From -113 to 108 degrees -->
     <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
-    <dynamics damping="50" friction="1"/>
-<!--
-    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-1.872222" soft_upper_limit="1.7849556"/>
--->
   </joint>
   <joint name="left_wrist_roll_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.07 0 0.023"/>
     <parent link="left_wrist_flex_link"/>
     <child link="left_wrist_roll_link"/>
     <axis xyz="-1 0 0"/>
-    <!-- From -150 to 150 degrees -->
-
     <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
-    <dynamics damping="50" friction="1"/>
-<!--
-    <limit effort="300" lower="-2.6179939" upper="2.6179939" velocity="1.17"/>
-    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-2.5179939" soft_upper_limit="2.5179939"/>
--->
   </joint>
   <joint name="left_gripper_right_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0415 -0.0175 0"/>
     <parent link="left_wrist_roll_link"/>
     <child link="left_gripper_right_link"/>
     <axis xyz="0 0 -1"/>
-    <!-- From 14 to -45 degrees 
-    <limit effort="300" lower="-0.838576116" upper="0.245436912" velocity="1.17"/>
--->
     <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
-    <dynamics damping="50" friction="1"/>
-<!--
-    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-0.738576116" soft_upper_limit="0.145436912"/>
--->
   </joint>
   <joint name="left_gripper_left_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0415 0.0175 0"/>
     <parent link="left_wrist_roll_link"/>
     <child link="left_gripper_left_link"/>
     <axis xyz="0 0 -1"/>
-    <!-- From -14 to 45 degrees -->
     <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
-    <dynamics damping="50" friction="1"/>
-<!--
-    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-0.140323643" soft_upper_limit="0.743689385"/>
--->
   </joint>
+  <link name="left_elbow_pan_link">
+    <inertial>
+      <mass value="0.405"/>
+      <origin rpy="0 0 0" xyz="0.02988871 0 0.02056699"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="-0.0508 0.0 0.0"/>
+      <geometry>
+        <box size="0.1016 0.1016 0.0127"/>
+      </geometry>
+      <material name="Green">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+  </link>
+  <link name="left_elbow_flex_link">
+    <inertial>
+      <mass value="0.405"/>
+      <origin rpy="0 0 0" xyz="0.0 0 0.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <box size="0.1016 0.1016 0.00635"/>
+      </geometry>
+      <material name="Green">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+  </link>
+  <link name="left_forearm_link">
+    <inertial>
+      <mass value="0.405"/>
+      <origin rpy="0 0 0" xyz="0.02988871 0 0.02056699"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0889 0.0 0.0"/>
+      <geometry>
+        <!-- 2", 1", 7" -->
+        <box size="0.1524  0.1016 0.0254"/>
+      </geometry>
+      <material name="Silver1">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+  </link>
+  <link name="left_wrist_flex_link">
+    <inertial>
+      <mass value="0.12"/>
+      <origin rpy="0 0 0" xyz="0.04463361 0 0.00720194"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="package://pr2lite_urdf/config/meshes/arm_elbow_tilt.stl"/>
+      </geometry>
+      <material name="Green">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+   </link>
+  <link name="left_wrist_roll_link">
+    <inertial>
+      <mass value="0.13"/>
+      <origin rpy="0 0 0" xyz="0.02539960 0 0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="package://pr2lite_urdf/config/meshes/arm_wrist_rotate.stl"/>
+      </geometry>
+      <material name="Green">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+  </link>
+  <link name="left_gripper_right_link">
+    <inertial>
+      <mass value="0.0225"/>
+      <origin rpy="0 0 0" xyz="0.03058625 -0.01804371 -0.00941599"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="package://pr2lite_urdf/config/meshes/arm_right_finger.stl"/>
+      </geometry>
+      <material name="Silver1">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+   </link>
+  <link name="left_gripper_left_link">
+    <inertial>
+      <mass value="0.0225"/>
+      <origin rpy="0 0 0" xyz="0.03058625 0.01804371 -0.00941599"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="package://pr2lite_urdf/config/meshes/arm_left_finger.stl"/>
+      </geometry>
+      <material name="Silver1">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+  </link>
+<!-- ==========ARD CUT HERE ========== -->
   <link name="left_shoulder_pan_link">
     <inertial>
       <mass value="0.405"/>
@@ -1538,164 +1633,6 @@ hokuyo side bar dimensions:
         <color rgba="0 0.9 0.9 1.0"/>
       </material>
     </visual>
-  </link>
-  <link name="left_upper_arm_hinge_link">
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <geometry>
-        <box size="0.0 0.0 0.0"/>
-      </geometry>
-      <material name="Silver1">
-        <color rgba="0 0.9 0.9 1.0"/>
-      </material>
-    </visual>
-  </link>
-  <link name="left_elbow_pan_link">
-    <inertial>
-      <mass value="0.125"/>
-      <origin rpy="0 0 0" xyz="0 0 0.00893364"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <geometry>
-        <mesh filename="package://pr2lite_urdf/config/meshes/arm_base.stl"/>
-      </geometry>
-    </visual>
-    <!--
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="package://pr2lite_urdf/config/meshes/arm_base_convex.stlb"/>
-                </geometry>
-            </collision>
--->
-  </link>
-  <link name="left_elbow_flex_link">
-    <inertial>
-      <mass value="0.405"/>
-      <origin rpy="0 0 0" xyz="0.02988871 0 0.02056699"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.005"/>
-      <geometry>
-        <mesh filename="package://pr2lite_urdf/config/meshes/arm_shoulder_pan.stl"/>
-      </geometry>
-    </visual>
-    <!--
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="package://pr2lite_urdf/config/meshes/arm_shoulder_pan_convex.stlb"/>
-                </geometry>
-            </collision>
--->
-  </link>
-  <link name="left_forearm_link">
-    <inertial>
-      <mass value="0.18"/>
-      <origin rpy="0 0 0" xyz="0.13999458 0 0.00064711"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <geometry>
-        <mesh filename="package://pr2lite_urdf/config/meshes/arm_shoulder_tilt.stl"/>
-      </geometry>
-    </visual>
-    <!--
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="package://pr2lite_urdf/config/meshes/arm_shoulder_tilt_convex.stlb"/>
-                </geometry>
-            </collision>
--->
-  </link>
-  <link name="left_wrist_flex_link">
-    <inertial>
-      <mass value="0.12"/>
-      <origin rpy="0 0 0" xyz="0.04463361 0 0.00720194"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <geometry>
-        <mesh filename="package://pr2lite_urdf/config/meshes/arm_elbow_tilt.stl"/>
-      </geometry>
-    </visual>
-    <!--
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="package://pr2lite_urdf/config/meshes/arm_elbow_tilt_convex.stlb"/>
-                </geometry>
-            </collision>
--->
-  </link>
-  <link name="left_wrist_roll_link">
-    <inertial>
-      <mass value="0.13"/>
-      <origin rpy="0 0 0" xyz="0.02539960 0 0"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <geometry>
-        <mesh filename="package://pr2lite_urdf/config/meshes/arm_wrist_rotate.stl"/>
-      </geometry>
-    </visual>
-    <!--
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="package://pr2lite_urdf/config/meshes/arm_wrist_rotate_convex.stlb"/>
-                </geometry>
-            </collision>
--->
-  </link>
-  <link name="left_gripper_right_link">
-    <inertial>
-      <mass value="0.0225"/>
-      <origin rpy="0 0 0" xyz="0.03058625 -0.01804371 -0.00941599"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <geometry>
-        <mesh filename="package://pr2lite_urdf/config/meshes/arm_right_finger.stl"/>
-      </geometry>
-    </visual>
-    <!--
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="package://pr2lite_urdf/config/meshes/arm_right_finger_convex.stlb"/>
-                </geometry>
-            </collision>
--->
-  </link>
-  <link name="left_gripper_left_link">
-    <inertial>
-      <mass value="0.0225"/>
-      <origin rpy="0 0 0" xyz="0.03058625 0.01804371 -0.00941599"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <geometry>
-        <mesh filename="package://pr2lite_urdf/config/meshes/arm_left_finger.stl"/>
-      </geometry>
-    </visual>
-    <!--
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="package://pr2lite_urdf/config/meshes/arm_left_finger_convex.stlb"/>
-                </geometry>
-            </collision>
--->
   </link>
   <transmission name="left_shoulder_pan_trans" type="pr2_mechanism_model/SimpleTransmission">
     <actuator name="left_shoulder_pan_motor"/>
@@ -1823,6 +1760,21 @@ hokuyo side bar dimensions:
     <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
     <!-- mimic joint="${side}_shoulder_tilt_joint" multiplier="-1" offset="0" -->
   </joint>
+  <link name="right_upper_linear_actuator_link">
+    <!-- (4.3 - .315) inches where lin act attaches to arm -->
+    <visual>
+      <!-- origin xyz="${inch_to_meter*0} ${inch_to_meter*0} ${inch_to_meter*0}" rpy="0 0 0"-->
+      <!-- geometry><box size="${inch_to_meter*0} ${inch_to_meter*0} ${inch_to_meter*0}"/></geometry -->
+      <origin rpy="0 0 0" xyz="0.0 0.0 -0.15113"/>
+      <geometry>
+        <box size="0.02032 0.02032 -0.25146"/>
+      </geometry>
+      <material name="Green">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+  </link>
+
   <joint name="right_linear_actuator_joint" type="prismatic">
     <!-- linact down: 9.9 inches, up 13.9 inches -->
     <axis xyz="0 0 -1"/>
@@ -1845,98 +1797,195 @@ hokuyo side bar dimensions:
 -->
     <dynamics damping="50" friction="1"/>
   </joint>
+<!-- ==========ARD CUT HERE ========== -->
+<!--
+ <joint name="right_arm_top_bar_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0 0 0.003175"/>
+    <parent link="right_upper_arm_link"/>
+    <child link="right_upper_arm_top_bar_link"/>
+    <axis xyz="0 -1 0"/>
+  </joint>
+  <link name="right_upper_arm_top_bar_link">
+    <inertial>
+      <mass value="0.405"/>
+      <origin rpy="0 0 0" xyz="0.02988871 0 0.02056699"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.1778 0.0 -.0254"/>
+      <geometry>
+        <box size="0.2921 0.0508 0.0508"/>
+      </geometry>
+      <material name="Silver1">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+  </link>
+-->
   <joint name="right_upper_arm_hinge_joint" type="revolute">
     <origin rpy="0.0 0 0.0" xyz="0.3556 0.0 0.00635"/>
     <parent link="right_upper_arm_link"/>
-    <child link="right_upper_arm_hinge_link"/>
+    <child link="right_elbow_pan_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-1" upper="-.15" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
     <mimic joint="right_shoulder_tilt_joint" multiplier="-1" offset="0"/>
   </joint>
-  <joint name="right_elbow_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0.0 0 0.0254"/>
-    <parent link="right_upper_arm_hinge_link"/>
-    <child link="right_elbow_pan_link"/>
-    <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-1.22" upper="1.22" velocity="1.17"/>
-<!--
-    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-1.12" soft_upper_limit="1.12"/>
--->
-    <dynamics damping="50" friction="1"/>
-  </joint>
   <joint name="right_elbow_pan_joint" type="revolute">
-    <origin rpy="0 0 0" xyz="-0.0075 0 -0.025"/>
-    <!-- parent link="${side}_arm_base_link" /-->
+    <origin rpy="0 0 0" xyz="-0.0508 0 0.0127"/>
     <parent link="right_elbow_pan_link"/>
     <child link="right_elbow_flex_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-1.22" upper="1.22" velocity="1.17"/>
-<!--
-    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-1.12" soft_upper_limit="1.12"/>
--->
-    <dynamics damping="50" friction="1"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
   </joint>
   <joint name="right_elbow_flex_joint" type="revolute">
-    <origin rpy="0 0 0" xyz="0.079575 0 0.0445"/>
+    <origin rpy="0 0 0" xyz="0.0762 0.0 0.0254"/>
     <parent link="right_elbow_flex_link"/>
     <child link="right_forearm_link"/>
     <axis xyz="0 -1 0"/>
     <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
-<!--
-    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-0.94719755" soft_upper_limit="1.872222"/>
--->
-    <dynamics damping="50" friction="1"/>
   </joint>
   <joint name="right_wrist_flex_joint" type="revolute">
-    <origin rpy="0 0 0" xyz="0.1815 0 0"/>
+    <origin rpy="0 0 0" xyz="0.1778 0 0"/>
     <parent link="right_forearm_link"/>
     <child link="right_wrist_flex_link"/>
-    <axis xyz="0 -1 0"/>
-    <!-- From -113 to 108 degrees -->
+    <axis xyz="0 1 0"/>
     <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
-    <dynamics damping="50" friction="1"/>
-<!--
-    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-1.872222" soft_upper_limit="1.7849556"/>
--->
   </joint>
   <joint name="right_wrist_roll_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.07 0 0.023"/>
     <parent link="right_wrist_flex_link"/>
     <child link="right_wrist_roll_link"/>
     <axis xyz="-1 0 0"/>
-    <!-- From -150 to 150 degrees -->
     <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
-    <dynamics damping="50" friction="1"/>
-<!--
-    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-2.5179939" soft_upper_limit="2.5179939"/>
--->
   </joint>
   <joint name="right_gripper_right_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0415 -0.0175 0"/>
     <parent link="right_wrist_roll_link"/>
     <child link="right_gripper_right_link"/>
-    <axis xyz="0 0 1"/>
-    <!-- From 14 to -45 degrees -->
+    <axis xyz="0 0 -1"/>
     <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
-    <!-- limit effort="300" lower="-0.245436912" upper="0.838576116" velocity="1.17"-->
-    <dynamics damping="50" friction="1"/>
-<!--
-    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-0.738576116" soft_upper_limit="0.145436912"/>
--->
   </joint>
   <joint name="right_gripper_left_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0415 0.0175 0"/>
     <parent link="right_wrist_roll_link"/>
     <child link="right_gripper_left_link"/>
-    <axis xyz="0 0 1"/>
-    <!-- From -14 to 45 degrees -->
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17" />
-    <!-- limit effort="300" lower="-0.843689385" upper="0.240323643" velocity="1.17" -->
-    <dynamics damping="50" friction="1"/>
-<!--
-    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-0.140323643" soft_upper_limit="0.743689385"/>
--->
+    <axis xyz="0 0 -1"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
   </joint>
+  <link name="right_elbow_pan_link">
+    <inertial>
+      <mass value="0.405"/>
+      <origin rpy="0 0 0" xyz="0.0 0 0.02056699"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="-0.0508 0.0 0.0"/>
+      <geometry>
+        <box size="0.1016 0.1016 0.0127"/>
+      </geometry>
+      <material name="Green">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+  </link>
+  <link name="right_elbow_flex_link">
+    <inertial>
+      <mass value="0.405"/>
+      <origin rpy="0 0 0" xyz="0.0 0 0.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <box size="0.1016 0.1016 0.00635"/>
+      </geometry>
+      <material name="Green">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+  </link>
+  <link name="right_forearm_link">
+    <inertial>
+      <mass value="0.405"/>
+      <origin rpy="0 0 0" xyz="0.02988871 0 0.02056699"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0889 0.0 0.0"/>
+      <geometry>
+        <!-- 2", 1", 7" -->
+        <box size="0.1524  0.1016 0.0254"/>
+      </geometry>
+      <material name="Silver1">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+  </link>
+  <link name="right_wrist_flex_link">
+    <inertial>
+      <mass value="0.12"/>
+      <origin rpy="0 0 0" xyz="0.04463361 0 0.00720194"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="package://pr2lite_urdf/config/meshes/arm_elbow_tilt.stl"/>
+      </geometry>
+      <material name="Green">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+   </link>
+  <link name="right_wrist_roll_link">
+    <inertial>
+      <mass value="0.13"/>
+      <origin rpy="0 0 0" xyz="0.02539960 0 0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="package://pr2lite_urdf/config/meshes/arm_wrist_rotate.stl"/>
+      </geometry>
+      <material name="Green">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+  </link>
+  <link name="right_gripper_right_link">
+    <inertial>
+      <mass value="0.0225"/>
+      <origin rpy="0 0 0" xyz="0.03058625 -0.01804371 -0.00941599"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="package://pr2lite_urdf/config/meshes/arm_right_finger.stl"/>
+      </geometry>
+      <material name="Silver1">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+   </link>
+  <link name="right_gripper_left_link">
+    <inertial>
+      <mass value="0.0225"/>
+      <origin rpy="0 0 0" xyz="0.03058625 0.01804371 -0.00941599"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="package://pr2lite_urdf/config/meshes/arm_left_finger.stl"/>
+      </geometry>
+      <material name="Silver1">
+        <color rgba="0 0.9 0.9 1.0"/>
+      </material>
+    </visual>
+  </link>
+<!-- ==========ARD CUT HERE ========== -->
   <link name="right_shoulder_pan_link">
     <inertial>
       <mass value="0.405"/>
@@ -1993,20 +2042,6 @@ hokuyo side bar dimensions:
       </material>
     </visual>
   </link>
-  <link name="right_upper_linear_actuator_link">
-    <!-- (4.3 - .315) inches where lin act attaches to arm -->
-    <visual>
-      <!-- origin xyz="${inch_to_meter*0} ${inch_to_meter*0} ${inch_to_meter*0}" rpy="0 0 0"-->
-      <!-- geometry><box size="${inch_to_meter*0} ${inch_to_meter*0} ${inch_to_meter*0}"/></geometry -->
-      <origin rpy="0 0 0" xyz="0.0 0.0 -0.15113"/>
-      <geometry>
-        <box size="0.02032 0.02032 -0.25146"/>
-      </geometry>
-      <material name="Green">
-        <color rgba="0 0.9 0.9 1.0"/>
-      </material>
-    </visual>
-  </link>
   <link name="right_upper_arm_link">
     <visual>
       <origin rpy="0 0 0" xyz="0.1778 0.0 0.0"/>
@@ -2017,164 +2052,6 @@ hokuyo side bar dimensions:
         <color rgba="0 0.9 0.9 1.0"/>
       </material>
     </visual>
-  </link>
-  <link name="right_upper_arm_hinge_link">
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <geometry>
-        <box size="0.0 0.0 0.0"/>
-      </geometry>
-      <material name="Silver1">
-        <color rgba="0 0.9 0.9 1.0"/>
-      </material>
-    </visual>
-  </link>
-  <link name="right_elbow_pan_link">
-    <inertial>
-      <mass value="0.125"/>
-      <origin rpy="0 0 0" xyz="0 0 0.00893364"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <geometry>
-        <mesh filename="package://pr2lite_urdf/config/meshes/arm_base.stl"/>
-      </geometry>
-    </visual>
-    <!--
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="package://pr2lite_urdf/config/meshes/arm_base_convex.stlb"/>
-                </geometry>
-            </collision>
--->
-  </link>
-  <link name="right_elbow_flex_link">
-    <inertial>
-      <mass value="0.405"/>
-      <origin rpy="0 0 0" xyz="0.02988871 0 0.02056699"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.005"/>
-      <geometry>
-        <mesh filename="package://pr2lite_urdf/config/meshes/arm_shoulder_pan.stl"/>
-      </geometry>
-    </visual>
-    <!--
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="package://pr2lite_urdf/config/meshes/arm_shoulder_pan_convex.stlb"/>
-                </geometry>
-            </collision>
--->
-  </link>
-  <link name="right_forearm_link">
-    <inertial>
-      <mass value="0.18"/>
-      <origin rpy="0 0 0" xyz="0.13999458 0 0.00064711"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <geometry>
-        <mesh filename="package://pr2lite_urdf/config/meshes/arm_shoulder_tilt.stl"/>
-      </geometry>
-    </visual>
-    <!--
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="package://pr2lite_urdf/config/meshes/arm_shoulder_tilt_convex.stlb"/>
-                </geometry>
-            </collision>
--->
-  </link>
-  <link name="right_wrist_flex_link">
-    <inertial>
-      <mass value="0.12"/>
-      <origin rpy="0 0 0" xyz="0.04463361 0 0.00720194"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <geometry>
-        <mesh filename="package://pr2lite_urdf/config/meshes/arm_elbow_tilt.stl"/>
-      </geometry>
-    </visual>
-    <!--
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="package://pr2lite_urdf/config/meshes/arm_elbow_tilt_convex.stlb"/>
-                </geometry>
-            </collision>
--->
-  </link>
-  <link name="right_wrist_roll_link">
-    <inertial>
-      <mass value="0.13"/>
-      <origin rpy="0 0 0" xyz="0.02539960 0 0"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <geometry>
-        <mesh filename="package://pr2lite_urdf/config/meshes/arm_wrist_rotate.stl"/>
-      </geometry>
-    </visual>
-    <!--
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="package://pr2lite_urdf/config/meshes/arm_wrist_rotate_convex.stlb"/>
-                </geometry>
-            </collision>
--->
-  </link>
-  <link name="right_gripper_right_link">
-    <inertial>
-      <mass value="0.0225"/>
-      <origin rpy="0 0 0" xyz="0.03058625 -0.01804371 -0.00941599"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <geometry>
-        <mesh filename="package://pr2lite_urdf/config/meshes/arm_right_finger.stl"/>
-      </geometry>
-    </visual>
-    <!--
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="package://pr2lite_urdf/config/meshes/arm_right_finger_convex.stlb"/>
-                </geometry>
-            </collision>
--->
-  </link>
-  <link name="right_gripper_left_link">
-    <inertial>
-      <mass value="0.0225"/>
-      <origin rpy="0 0 0" xyz="0.03058625 0.01804371 -0.00941599"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <geometry>
-        <mesh filename="package://pr2lite_urdf/config/meshes/arm_left_finger.stl"/>
-      </geometry>
-    </visual>
-    <!--
-            <collision>
-                <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="package://pr2lite_urdf/config/meshes/arm_left_finger_convex.stlb"/>
-                </geometry>
-            </collision>
--->
   </link>
   <transmission name="right_shoulder_pan_trans" type="pr2_mechanism_model/SimpleTransmission">
     <actuator name="right_shoulder_pan_motor"/>
