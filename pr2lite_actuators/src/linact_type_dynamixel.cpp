@@ -1,6 +1,7 @@
 // Include linear actuator definition
 #include "pr2lite_actuators/LinearActuator.hpp"
 #include "std_msgs/Float64.h"
+#include <string>
 #include "dynamixel_msgs/JointState.h"
 
 namespace pr2lite
@@ -44,6 +45,8 @@ namespace pr2lite
                 LinactDynamixel(ros::NodeHandle& nh, int id, std::string& name)
                     : LinearActuator(nh, id, 1000), m_name(name)
                 {
+                    std::string controller;
+
                     // Load the linear actuator parameters
                     nh.getParam(name + "/base_length", m_base_length);
                     nh.getParam(name + "/extent", m_extent);
@@ -51,7 +54,8 @@ namespace pr2lite
                     // m_state = nh.advertise<dynamixel_msgs::JointState>(name + "/state", 5);
 		    this->setName(name);
                     // Here is where to set up a subscriber
-                    m_command = nh.subscribe(name + "/command", 1000, &LinactDynamixel::command_callback, this);
+                    controller = name.substr(0, name.length() - 5);
+                    m_command = nh.subscribe(controller + "controller/command", 1000, &LinactDynamixel::command_callback, this);
                 }
             };
         }

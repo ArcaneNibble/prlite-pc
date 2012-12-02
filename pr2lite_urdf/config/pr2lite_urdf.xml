@@ -1446,9 +1446,9 @@ hokuyo side bar dimensions:
       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
     </inertial>
     <visual>
-      <origin rpy="0 0 0" xyz="-0.0508 0.0 0.0"/>
+      <origin rpy="0 0 0" xyz="-0.0508 -0.0 0.003175"/>
       <geometry>
-        <box size="0.1016 0.1016 0.0127"/>
+        <box size="0.1016 0.1016 0.00635"/>
       </geometry>
       <material name="Green">
         <color rgba="0 0.9 0.9 1.0"/>
@@ -1848,7 +1848,7 @@ hokuyo side bar dimensions:
     <origin rpy="0 0 0" xyz="0.1778 0 0"/>
     <parent link="right_forearm_link"/>
     <child link="right_wrist_flex_link"/>
-    <axis xyz="0 1 0"/>
+    <axis xyz="0 -1 0"/>
     <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
   </joint>
   <joint name="right_wrist_roll_joint" type="revolute">
@@ -1862,14 +1862,14 @@ hokuyo side bar dimensions:
     <origin rpy="0 0 0" xyz="0.0415 -0.0175 0"/>
     <parent link="right_wrist_roll_link"/>
     <child link="right_gripper_right_link"/>
-    <axis xyz="0 0 -1"/>
+    <axis xyz="0 0 1"/>
     <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
   </joint>
   <joint name="right_gripper_left_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0415 0.0175 0"/>
     <parent link="right_wrist_roll_link"/>
     <child link="right_gripper_left_link"/>
-    <axis xyz="0 0 -1"/>
+    <axis xyz="0 0 1"/>
     <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
   </joint>
   <link name="right_elbow_pan_link">
@@ -1879,9 +1879,9 @@ hokuyo side bar dimensions:
       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
     </inertial>
     <visual>
-      <origin rpy="0 0 0" xyz="-0.0508 0.0 0.0"/>
+      <origin rpy="0 0 0" xyz="-0.0508 0.0 0.003175"/>
       <geometry>
-        <box size="0.1016 0.1016 0.0127"/>
+        <box size="0.1016 0.1016 0.00635"/>
       </geometry>
       <material name="Green">
         <color rgba="0 0.9 0.9 1.0"/>
