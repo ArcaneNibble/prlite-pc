@@ -89,6 +89,7 @@ class FollowController:
         self.position_pub = list()
         self.torque_services = list()
         self.speed_services = list()
+        self.max_speed = 0.1
            
         for c in self.controllers:
           if c != 'left_upper_arm_hinge_controller' and c != 'right_upper_arm_hinge_controller':
@@ -153,13 +154,15 @@ class FollowController:
         rospy.loginfo('init pos ' + str(prev_desired))
         for point in traj.points:
           for i in range(len(self.joints)):
-            desired = point.positions[i] - fudge_value[i]
+            desired = point.positions[i] + fudge_value[i]
             endtime = start + point.time_from_start
             endsecs = endtime.to_sec()
             nowsecs = rospy.Time.now().to_sec()
             velocity = abs((desired-prev_desired[i])/ (endsecs-nowsecs))
+            if velocity > self.max_speed:
+              velocity = self.max_speed
             if self.joints[i] != 'left_upper_arm_hinge_joint' and self.joints[i] != 'right_upper_arm_hinge_joint':
-              if self.joints[i] != 'left_shoulder_tilt_controller' and self.joints[i] != 'right_shoulder_tilt_controller':
+              if self.joints[i] != 'left_shoulder_tilt_joint' and self.joints[i] != 'right_shoulder_tilt_joint':
                  self.speed_services[i] = velocity
               self.position_pub[i].publish(desired)
             rospy.loginfo('Trajectory ' + str(i) + ' ' + self.joints[i] + str(desired) + ' ' + str(point.positions[i]) + ' ' + str(fudge_value[i]) + ' ' + str(velocity))

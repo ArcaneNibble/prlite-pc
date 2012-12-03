@@ -1316,7 +1316,7 @@ hokuyo side bar dimensions:
     <parent link="left_shoulder_pan_link"/>
     <child link="left_shoulder_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
 <!--
     <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-1.12" soft_upper_limit="1.12"/>
 -->
@@ -1394,7 +1394,7 @@ hokuyo side bar dimensions:
     <parent link="left_upper_arm_link"/>
     <child link="left_elbow_pan_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
     <mimic joint="left_shoulder_tilt_joint" multiplier="-1" offset="0"/>
   </joint>
   <joint name="left_elbow_pan_joint" type="revolute">
@@ -1402,42 +1402,42 @@ hokuyo side bar dimensions:
     <parent link="left_elbow_pan_link"/>
     <child link="left_elbow_flex_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
   </joint>
   <joint name="left_elbow_flex_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0762 0.0 0.0254"/>
     <parent link="left_elbow_flex_link"/>
     <child link="left_forearm_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
   </joint>
   <joint name="left_wrist_flex_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.1778 0 0"/>
     <parent link="left_forearm_link"/>
     <child link="left_wrist_flex_link"/>
     <axis xyz="0 1 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
   </joint>
   <joint name="left_wrist_roll_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.07 0 0.023"/>
     <parent link="left_wrist_flex_link"/>
     <child link="left_wrist_roll_link"/>
     <axis xyz="-1 0 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
   </joint>
   <joint name="left_gripper_right_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0415 -0.0175 0"/>
     <parent link="left_wrist_roll_link"/>
     <child link="left_gripper_right_link"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
   </joint>
   <joint name="left_gripper_left_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0415 0.0175 0"/>
     <parent link="left_wrist_roll_link"/>
     <child link="left_gripper_left_link"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
   </joint>
   <link name="left_elbow_pan_link">
     <inertial>
@@ -1736,7 +1736,7 @@ hokuyo side bar dimensions:
     <parent link="right_shoulder_pan_link"/>
     <child link="right_shoulder_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
 <!--
     <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-1.12" soft_upper_limit="1.12"/>
 -->
@@ -1757,7 +1757,7 @@ hokuyo side bar dimensions:
     <parent link="right_shoulder_caster_link"/>
     <child link="right_lower_linear_actuator_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
     <!-- mimic joint="${side}_shoulder_tilt_joint" multiplier="-1" offset="0" -->
   </joint>
   <link name="right_upper_linear_actuator_link">
@@ -1789,7 +1789,7 @@ hokuyo side bar dimensions:
     <child link="right_upper_arm_link"/>
     <axis xyz="0 -1 0"/>
     <!--
-            <limit  lower="-1.04" upper="1.95" effort="300" velocity="1.17" />
+            <limit  lower="-1.04" upper="1.95" effort="300" velocity=".1" />
 -->
     <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
 <!--
@@ -1827,7 +1827,7 @@ hokuyo side bar dimensions:
     <parent link="right_upper_arm_link"/>
     <child link="right_elbow_pan_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
     <mimic joint="right_shoulder_tilt_joint" multiplier="-1" offset="0"/>
   </joint>
   <joint name="right_elbow_pan_joint" type="revolute">
@@ -1835,42 +1835,42 @@ hokuyo side bar dimensions:
     <parent link="right_elbow_pan_link"/>
     <child link="right_elbow_flex_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
   </joint>
   <joint name="right_elbow_flex_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0762 0.0 0.0254"/>
     <parent link="right_elbow_flex_link"/>
     <child link="right_forearm_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
   </joint>
   <joint name="right_wrist_flex_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.1778 0 0"/>
     <parent link="right_forearm_link"/>
     <child link="right_wrist_flex_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
   </joint>
   <joint name="right_wrist_roll_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.07 0 0.023"/>
     <parent link="right_wrist_flex_link"/>
     <child link="right_wrist_roll_link"/>
     <axis xyz="-1 0 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
   </joint>
   <joint name="right_gripper_right_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0415 -0.0175 0"/>
     <parent link="right_wrist_roll_link"/>
     <child link="right_gripper_right_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
   </joint>
   <joint name="right_gripper_left_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0415 0.0175 0"/>
     <parent link="right_wrist_roll_link"/>
     <child link="right_gripper_left_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
   </joint>
   <link name="right_elbow_pan_link">
     <inertial>
