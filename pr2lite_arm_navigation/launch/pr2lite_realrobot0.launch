@@ -13,6 +13,10 @@
 
    <node pkg="robot_monitor" type="robot_monitor" name="robot_monitor" />
 
+
+
+  <node name="reset_arm_server" pkg="pr2lite_arm_navigation" type="dynamixel_reset_arm_server.py" output="screen">
+  </node>
    <node pkg="pr2lite_arm_navigation" type="relax_all_servos.py" name="relax_all_servos" />
 <!--
 -->

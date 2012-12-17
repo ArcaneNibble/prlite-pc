@@ -4,6 +4,6 @@
     <node pkg="move_arm" type="move_arm_simple_action" name="pr2lite_move_left_arm">
         <param name="group" type="string" value="left_arm" />
         <remap from="arm_ik" to="pr2lite_left_arm_kinematics/get_constraint_aware_ik" />
-        <param name="controller_action_name" type="string" value="follow_joint_trajectory" />
+        <param name="controller_action_name" type="string" value="/arm_controller/follow_joint_trajectory" />
     </node>
 </launch>

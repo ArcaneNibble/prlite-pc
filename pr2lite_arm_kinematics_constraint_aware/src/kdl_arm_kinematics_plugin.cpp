@@ -337,8 +337,10 @@ bool KDLArmKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose
     jnt_pos_in(i) = ik_seed_state[i];
   }
   /* ARD: begin pr2lite hack */
-  int j1;
-  int j2;
+  int j1 = -1;
+  int j2 = -1;
+  int j3 = -1;
+  int j4 = -1;
   if ((j1 = getJointIndex("left_upper_arm_hinge_joint")) > 0)
   {
     if ((j2 = getJointIndex("left_shoulder_tilt_joint")) > 0) 
@@ -348,12 +350,12 @@ bool KDLArmKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose
       ROS_INFO_STREAM("set left left_upper_arm_hinge_joint to " << jnt_pos_in(j1));
     }
   }
-  if ((j1 = getJointIndex("right_upper_arm_hinge_joint")) > 0)
+  if ((j3 = getJointIndex("right_upper_arm_hinge_joint")) > 0)
   {
-    if ((j2 = getJointIndex("right_shoulder_tilt_joint")) > 0)
+    if ((j4 = getJointIndex("right_shoulder_tilt_joint")) > 0)
     {
-      jnt_pos_in(j1) = -jnt_pos_in(j2);
-      ROS_INFO_STREAM("set right_upper_arm_hinge_joint to " << jnt_pos_in(j1));
+      jnt_pos_in(j3) = -jnt_pos_in(j4);
+      ROS_INFO_STREAM("set right_upper_arm_hinge_joint to " << jnt_pos_in(j3));
     }
   }
   /* ARD: end pr2lite hack */
@@ -417,8 +419,10 @@ bool KDLArmKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose
 
 
   /* ARD: pr2lite hack */
-  int j1;
-  int j2;
+  int j1 = -1;
+  int j2 = -1;
+  int j3 = -1;
+  int j4 = -1;
   if ((j1 = getJointIndex("left_upper_arm_hinge_joint")) > 0) 
   {
     if ((j2 = getJointIndex("left_shoulder_tilt_joint")) > 0) 
@@ -428,12 +432,12 @@ bool KDLArmKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose
       ROS_INFO_STREAM("set left left_upper_arm_hinge_joint to " << jnt_pos_in(j1));
     }
   }
-  if ((j1 = getJointIndex("right_upper_arm_hinge_joint")) > 0)
+  if ((j3 = getJointIndex("right_upper_arm_hinge_joint")) > 0)
   {
-    if ((j2 = getJointIndex("right_shoulder_tilt_joint")) > 0) 
+    if ((j4 = getJointIndex("right_shoulder_tilt_joint")) > 0) 
     {
-      jnt_pos_in(j1) = -jnt_pos_in(j2);
-      ROS_INFO_STREAM("set right_upper_arm_hinge_joint to " << jnt_pos_in(j1));
+      jnt_pos_in(j3) = -jnt_pos_in(j4);
+      ROS_INFO_STREAM("set right_upper_arm_hinge_joint to " << jnt_pos_in(j3));
     }
   }
   /* ARD: end pr2lite hack */
@@ -454,7 +458,7 @@ bool KDLArmKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose
     }
     int ik_valid = ik_solver_pos_->CartToJnt(jnt_pos_in,pose_desired,jnt_pos_out);                      
     jnt_pos_in = getRandomConfiguration();
-    if(ik_valid < 0)                                                                                                       
+    if(ik_valid < 0)
       continue;
     std::vector<double> solution_local;
     solution_local.resize(dimension_);

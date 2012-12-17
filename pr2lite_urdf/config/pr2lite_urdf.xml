@@ -29,6 +29,42 @@
       width of joints of arms: 0.4126992 meters
       joints of arms: 0.05715
     -->
+  <!-- 
+	<property name="turtlebot_calib_cam_x" value="-1.03976" />
+	<property name="turtlebot_calib_cam_y" value="-0" />
+	<property name="turtlebot_calib_cam_z" value="1.02602" />
+	<property name="turtlebot_calib_cam_rr" value="3.14159" />
+	<property name="turtlebot_calib_cam_rp" value="2.69908e-12" />
+	<property name="turtlebot_calib_cam_ry" value="3.14159" />
+    -->
+
+	<property name="turtlebot_calib_cam_x" value="-1.02944" />
+	<property name="turtlebot_calib_cam_y" value="-0" />
+	<property name="turtlebot_calib_cam_z" value="1.01931" />
+	<property name="turtlebot_calib_cam_rr" value="3.14159" />
+	<property name="turtlebot_calib_cam_rp" value="2.09159e-06" />
+	<property name="turtlebot_calib_cam_ry" value="3.14159" />
+	<property name="turtlebot_kinect_frame_name" value="right_arm_shelf_link" /> 
+
+        <property name="pr2lite_left_calib_cam_x" value="-1.03976" />
+        <property name="pr2lite_left_calib_cam_y" value="-0" />
+        <property name="pr2lite_left_calib_cam_z" value="1.02602" />
+        <property name="pr2lite_left_calib_cam_rr" value="3.14159" />
+        <property name="pr2lite_left_calib_cam_rp" value="2.69908e-12" />
+        <property name="pr2lite_left_calib_cam_ry" value="3.14159" />
+	<property name="pr2lite_left_kinect_frame_name" value="left_arm_shelf_link" />
+
+        <property name="pr2lite_right_calib_cam_x" value="-1.02944" />
+	<property name="pr2lite_right_calib_cam_y" value="-0" />
+	<property name="pr2lite_right_calib_cam_z" value="1.01931" />
+	<property name="pr2lite_right_calib_cam_rr" value="3.14159" />
+	<property name="pr2lite_right_calib_cam_rp" value="2.09159e-06" />
+	<property name="pr2lite_right_calib_cam_ry" value="3.14159" />
+	<property name="pr2lite_right_kinect_frame_name" value="right_arm_shelf_link" />
+
+	<property name="pr2lite_right_kinect_frame_name" value="right_arm_shelf_link" />
+
+
   <material name="Black">
     <color rgba="0.0 0.0 0.0 1.0"/>
   </material>
@@ -235,7 +271,10 @@
     <visual>
       <origin rpy="0 0 0" xyz="-0.0635 0.0 0.38735"/>
       <geometry>
+<!-- ARD
         <box size="0.1524 0.508 0.00635"/>
+-->
+        <box size="0.1524 0.508 0.0127"/>
       </geometry>
       <material name="Grey1">
         <color rgba="0 0.9 0.9 1.0"/>
@@ -287,7 +326,7 @@
   </link>
   <!-- 4x 13.14 -->
   <joint name="head_pan_joint" type="revolute">
-    <limit effort="10" lower="-3.1416" upper="3.1416" velocity="3"/>
+    <limit effort="10" lower="-2.618" upper="2.618" velocity="3"/>
     <parent link="top_neck_link"/>
     <child link="head_pan_link"/>
     <origin rpy="0 0 0" xyz="0.0508 0.0 0.009525"/>
@@ -302,7 +341,10 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
+<!-- ARD: add caster width
         <box size="0.1016 0.333756 0.00635"/>
+-->
+        <box size="0.1016 0.333756 0.0127"/>
       </geometry>
       <material name="Silver1">
         <color rgba="0 0.9 0.9 1.0"/>
@@ -331,7 +373,7 @@
     </visual>
   </link>
   <joint name="head_tilt_joint" type="revolute">
-    <limit effort="10" lower="-3.1416" upper="3.1416" velocity="3"/>
+    <limit effort="10" lower="-2.618" upper="2.618" velocity="3"/>
     <parent link="head_side_link"/>
     <child link="kinect_side_link"/>
     <origin rpy="0 0 0" xyz="0.0 -0.00635 0.0127"/>
@@ -453,7 +495,16 @@
     </collision>
   </link>
   <joint name="kinect_depth_joint" type="fixed">
+<!--
+
+    kinect_frames.launch : -0.025 and -0.045
+    current turtlebot xacro : 0.018 and -0.005
+    the yujin lads xacro : 0.0125 and -0.0125
+
     <origin rpy="0 0 0" xyz="0 0.018 0"/>
+see "https://github.com/turtlebot/turtlebot/issues/9"
+-->
+    <origin rpy="0 0 0" xyz="0 -0.025 0"/>
     <parent link="kinect_link"/>
     <child link="kinect_depth_frame"/>
   </joint>
@@ -477,7 +528,11 @@
     </inertial>
   </link>
   <joint name="kinect_rgb_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 -0.045 0"/>
+<!--
     <origin rpy="0 0 0" xyz="0 -0.005 0"/>
+    <origin rpy="0 0 0" xyz="0 -0.0125 0"/>
+-->
     <parent link="kinect_link"/>
     <child link="kinect_rgb_frame"/>
   </joint>
@@ -531,7 +586,7 @@ hokuyo side bar dimensions:
     </visual>
   </link>
   <joint name="lidar_tilt_joint" type="revolute">
-    <limit effort="10" lower="-3.1416" upper="3.1416" velocity="3"/>
+    <limit effort="10" lower="-2.618" upper="2.618" velocity="3"/>
     <parent link="lidar_bar_link"/>
     <child link="lidar_tilt_link"/>
     <origin rpy="0 0 0" xyz="0.0531876 -0.00635 0.0"/>
@@ -1316,7 +1371,7 @@ hokuyo side bar dimensions:
     <parent link="left_shoulder_pan_link"/>
     <child link="left_shoulder_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
 <!--
     <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-1.12" soft_upper_limit="1.12"/>
 -->
@@ -1337,7 +1392,7 @@ hokuyo side bar dimensions:
     <parent link="left_shoulder_caster_link"/>
     <child link="left_lower_linear_actuator_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity="1.17"/>
     <!-- mimic joint="${side}_shoulder_tilt_joint" multiplier="-1" offset="0" -->
   </joint>
   <joint name="left_linear_actuator_joint" type="prismatic">
@@ -1353,11 +1408,7 @@ hokuyo side bar dimensions:
     <parent link="left_shoulder_link"/>
     <child link="left_upper_arm_link"/>
     <axis xyz="0 -1 0"/>
-    <!--
-            <limit  lower="-1.04" upper="1.95" effort="300" velocity="1.17" />
-    <limit effort="300" lower=".5" upper="1" velocity="1.17"/>
--->
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="0.268" upper="1.213" velocity=".23"/>
 <!--
     <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-0.94719755" soft_upper_limit="1.872222"/>
 -->
@@ -1390,11 +1441,14 @@ hokuyo side bar dimensions:
 -->
 
   <joint name="left_upper_arm_hinge_joint" type="revolute">
+<!-- ARD
     <origin rpy="0.0 0 0.0" xyz="0.3556 0.0 0.00635"/>
+-->
+    <origin rpy="0.0 0 0.0" xyz="0.41 0.0 0.00635"/>
     <parent link="left_upper_arm_link"/>
     <child link="left_elbow_pan_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-1.213" upper="-0.268" velocity=".23"/>
     <mimic joint="left_shoulder_tilt_joint" multiplier="-1" offset="0"/>
   </joint>
   <joint name="left_elbow_pan_joint" type="revolute">
@@ -1402,42 +1456,42 @@ hokuyo side bar dimensions:
     <parent link="left_elbow_pan_link"/>
     <child link="left_elbow_flex_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <joint name="left_elbow_flex_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0762 0.0 0.0254"/>
     <parent link="left_elbow_flex_link"/>
     <child link="left_forearm_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <joint name="left_wrist_flex_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.1778 0 0"/>
     <parent link="left_forearm_link"/>
     <child link="left_wrist_flex_link"/>
     <axis xyz="0 1 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <joint name="left_wrist_roll_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.07 0 0.023"/>
     <parent link="left_wrist_flex_link"/>
     <child link="left_wrist_roll_link"/>
     <axis xyz="-1 0 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <joint name="left_gripper_right_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0415 -0.0175 0"/>
     <parent link="left_wrist_roll_link"/>
     <child link="left_gripper_right_link"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <joint name="left_gripper_left_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0415 0.0175 0"/>
     <parent link="left_wrist_roll_link"/>
     <child link="left_gripper_left_link"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <link name="left_elbow_pan_link">
     <inertial>
@@ -1625,9 +1679,13 @@ hokuyo side bar dimensions:
   </link>
   <link name="left_upper_arm_link">
     <visual>
-      <origin rpy="0 0 0" xyz="0.1778 0.0 0.0"/>
+      <origin rpy="0 0 0" xyz="0.205 0.0 0.0"/>
       <geometry>
+<!-- ARD
+        <origin rpy="0 0 0" xyz="0.1778 0.0 0.0"/>
         <box size="0.3556 0.1016 0.00635"/>
+-->
+        <box size="0.41 0.1016 0.00635"/>
       </geometry>
       <material name="Silver1">
         <color rgba="0 0.9 0.9 1.0"/>
@@ -1736,7 +1794,7 @@ hokuyo side bar dimensions:
     <parent link="right_shoulder_pan_link"/>
     <child link="right_shoulder_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
 <!--
     <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-1.12" soft_upper_limit="1.12"/>
 -->
@@ -1757,7 +1815,7 @@ hokuyo side bar dimensions:
     <parent link="right_shoulder_caster_link"/>
     <child link="right_lower_linear_actuator_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
     <!-- mimic joint="${side}_shoulder_tilt_joint" multiplier="-1" offset="0" -->
   </joint>
   <link name="right_upper_linear_actuator_link">
@@ -1791,7 +1849,7 @@ hokuyo side bar dimensions:
     <!--
             <limit  lower="-1.04" upper="1.95" effort="300" velocity=".1" />
 -->
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity="1.17"/>
+    <limit effort="300" lower="0.268" upper="1.213" velocity=".23"/>
 <!--
     <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-0.94719755" soft_upper_limit="1.872222"/>
 -->
@@ -1823,11 +1881,14 @@ hokuyo side bar dimensions:
   </link>
 -->
   <joint name="right_upper_arm_hinge_joint" type="revolute">
+<!-- ARD
     <origin rpy="0.0 0 0.0" xyz="0.3556 0.0 0.00635"/>
+-->
+    <origin rpy="0.0 0 0.0" xyz="0.41 0.0 0.00635"/>
     <parent link="right_upper_arm_link"/>
     <child link="right_elbow_pan_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-1.213" upper="-0.268" velocity=".23"/>
     <mimic joint="right_shoulder_tilt_joint" multiplier="-1" offset="0"/>
   </joint>
   <joint name="right_elbow_pan_joint" type="revolute">
@@ -1835,42 +1896,42 @@ hokuyo side bar dimensions:
     <parent link="right_elbow_pan_link"/>
     <child link="right_elbow_flex_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <joint name="right_elbow_flex_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0762 0.0 0.0254"/>
     <parent link="right_elbow_flex_link"/>
     <child link="right_forearm_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <joint name="right_wrist_flex_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.1778 0 0"/>
     <parent link="right_forearm_link"/>
     <child link="right_wrist_flex_link"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <joint name="right_wrist_roll_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.07 0 0.023"/>
     <parent link="right_wrist_flex_link"/>
     <child link="right_wrist_roll_link"/>
     <axis xyz="-1 0 0"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <joint name="right_gripper_right_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0415 -0.0175 0"/>
     <parent link="right_wrist_roll_link"/>
     <child link="right_gripper_right_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <joint name="right_gripper_left_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0.0415 0.0175 0"/>
     <parent link="right_wrist_roll_link"/>
     <child link="right_gripper_left_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-3.1416" upper="3.1416" velocity=".1"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <link name="right_elbow_pan_link">
     <inertial>
@@ -2044,9 +2105,13 @@ hokuyo side bar dimensions:
   </link>
   <link name="right_upper_arm_link">
     <visual>
-      <origin rpy="0 0 0" xyz="0.1778 0.0 0.0"/>
+      <origin rpy="0 0 0" xyz="0.205 0.0 0.0"/>
       <geometry>
+<!-- ARD
+      <origin rpy="0 0 0" xyz="0.1778 0.0 0.0"/>
         <box size="0.3556 0.1016 0.00635"/>
+-->
+        <box size="0.41 0.1016 0.00635"/>
       </geometry>
       <material name="Silver1">
         <color rgba="0 0.9 0.9 1.0"/>

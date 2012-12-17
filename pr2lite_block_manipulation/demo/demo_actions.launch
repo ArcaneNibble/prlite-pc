@@ -1,8 +1,17 @@
 <launch>
+  <include file="$(find pr2lite_arm_navigation)/launch/move_left_arm.launch" />
+  <include file="$(find pr2lite_arm_navigation)/launch/move_right_arm.launch" />
+  <param name="use_robot_data" value="true"/>
+  <param name="set_planning_scene_diff_name" value="environment_server/set_planning_scene_diff"/>
 
+  <include file="$(find planning_environment)/launch/environment_server.launch">
+    <arg name="use_monitor" value="true" />
+    <arg name="use_collision_map" value="false" />
+  </include>
   <include file="$(find openni_camera)/launch/openni_node.launch" />
-  <include file="$(find turtlebot_block_manipulation)/launch/block_manipulation_old_kinect.launch" />
+  <include file="$(find pr2lite_block_manipulation)/launch/block_manipulation_old_kinect.launch" />
 
-  <node name="block_manipulation_action_demo" pkg="turtlebot_block_manipulation" type="block_manipulation_action_demo" output="screen" />
+  <node name="block_manipulation_action_demo" pkg="pr2lite_block_manipulation" type="block_manipulation_action_demo" output="screen" />
+  <include file="$(find pr2lite_arm_navigation)/launch/planning_components_visualizer_block_manip.launch" />
   
 </launch>

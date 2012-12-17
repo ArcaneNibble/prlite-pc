@@ -28,7 +28,7 @@ class JointStatePR2Message():
     def __init__(self):
         #self.jspr2msg = JointStatePR2() 
         self.jspr2msg = JointState()
-        self.jspr2msg.name = [ "left_shoulder_tilt_joint", "left_lin_act_cyl_joint", "left_upper_arm_hinge_joint","left_linear_actuator_joint", "right_shoulder_tilt_joint", "right_lin_act_cyl_joint", "right_upper_arm_hinge_joint","right_linear_actuator_joint"]
+        self.jspr2msg.name = [ "left_shoulder_tilt_joint", "left_lin_act_cyl_joint", "left_upper_arm_hinge_joint","left_linear_actuator_joint", "right_shoulder_tilt_joint", "right_lin_act_cyl_joint", "right_upper_arm_hinge_joint","right_linear_actuator_joint", "torso_lift_joint"]
         self.jspr2msg.position = [0.0 for name in self.jspr2msg.name]
         self.jspr2msg.velocity = [0.0 for name in self.jspr2msg.name]
         #self.jspr2msg.effort = []
@@ -59,7 +59,9 @@ class Fake_LA_pos():
             do_copy = do_copy + 1
           if joint_name == "right_linear_actuator_joint":
             do_copy = do_copy + 1
-        if do_copy == 1:
+          if joint_name == "torso_lift_joint":
+            do_copy = do_copy + 1
+        if do_copy >= 1:
           rospy.loginfo("copying joint state message")
           indx = 0
           for joint_name in jsmsg.name:

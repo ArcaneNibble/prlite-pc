@@ -102,7 +102,7 @@ public:
     ROS_INFO("Connected to server");
 
 
-    gripper = nh_.advertise<std_msgs::Float64>("/gripper_controller/command", 1, false);
+    gripper = nh_.advertise<std_msgs::Float64>("/parallel_gripper_controller/command", 1, false);
   }
 
   void goalCB()
@@ -146,7 +146,7 @@ public:
     gripper.publish( grip_msg );
     ros::Duration(2.0).sleep(); 
 
-    goalA.motion_plan_request.group_name = "right_arm";
+    goalA.motion_plan_request.group_name = "/move_right_arm";
     goalA.motion_plan_request.num_planning_attempts = 1;
     goalA.motion_plan_request.allowed_planning_time = ros::Duration(5.0);
 
@@ -157,7 +157,7 @@ public:
     goalA.motion_plan_request.goal_constraints.set_position_constraints_size(1);
     goalA.motion_plan_request.goal_constraints.position_constraints[0].header.stamp = ros::Time::now();       
 
-goalA.motion_plan_request.goal_constraints.position_constraints[0].header.frame_id = "right_arm_base_link";
+goalA.motion_plan_request.goal_constraints.position_constraints[0].header.frame_id = "right_arm_shelf_link";
    
     goalA.motion_plan_request.goal_constraints.position_constraints[0].link_name = "right_wrist_roll_link";
 
@@ -166,26 +166,23 @@ goalA.motion_plan_request.goal_constraints.position_constraints[0].header.frame_
     goalA.motion_plan_request.goal_constraints.position_constraints[0].position.y = start_pose.position.y;
     goalA.motion_plan_request.goal_constraints.position_constraints[0].position.z = z_up;
 
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_shape.type =
-
-arm_navigation_msgs::Shape::BOX;
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_shape.dimensions.push_back
-
-(0.0381);
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_shape.dimensions.push_back
-
-(0.0381);
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_shape.dimensions.push_back
-
-(0.0381);
+    goalA.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_shape.type = arm_navigation_msgs::Shape::BOX;
+    goalA.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_shape.dimensions.push_back (0.0381);
+    goalA.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_shape.dimensions.push_back (0.0381);
+    goalA.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_shape.dimensions.push_back (0.0381);
     goalA.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_orientation.w = 1.0;
     goalA.motion_plan_request.goal_constraints.position_constraints[0].weight = 1.0;
 
     goalA.motion_plan_request.goal_constraints.set_orientation_constraints_size(1);
     goalA.motion_plan_request.goal_constraints.orientation_constraints[0].header.stamp = ros::Time::now();
+    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].header.frame_id = arm_link; 
+/*
+    // goal.header.frame_id = arm_link;
+    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].header.frame_id = "right_arm_shelf_link";       
     goalA.motion_plan_request.goal_constraints.orientation_constraints[0].header.frame_id = "right_arm_base_link";       
+*/
 
-    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].link_name = "r_wrist_roll_link";
+    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].link_name = "right_wrist_roll_link";
 
     /* arm straight up */
     btQuaternion temp;

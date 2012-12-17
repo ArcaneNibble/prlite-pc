@@ -17,17 +17,17 @@
   <node pkg="tf" type="static_transform_publisher" name="link2_broadcaster" args="0 0 0 0 0 0 kinect_rgb_optical_frame arm_base_link 100" />
   
   <!-- Launch all the actions. (originally just launch/block_manipulation_old_kinect.launch) -->
-  <node name="block_detection_action_server" pkg="turtlebot_block_manipulation" type="block_detection_action_server" output="screen">
+  <node name="block_detection_action_server" pkg="pr2lite_block_manipulation" type="block_detection_action_server" output="screen">
     <remap from="/camera/depth_registered/points" to="/camera/rgb/points" />
   </node>
 
-  <include file="$(find turtlebot_block_manipulation)/launch/pick_and_place.launch" />
+  <include file="$(find pr2lite_block_manipulation)/launch/pick_and_place.launch" />
   
-  <node name="interactive_manipulation_action_server" pkg="turtlebot_block_manipulation" type="interactive_manipulation_action_server" output="screen">
+  <node name="interactive_manipulation_action_server" pkg="pr2lite_block_manipulation" type="interactive_manipulation_action_server" output="screen">
   </node>
 
   <!-- Launch the server that calls all the actions. -->
-  <node name="block_manipulation_action_demo" pkg="turtlebot_block_manipulation" type="block_manipulation_action_demo" output="screen">
+  <node name="block_manipulation_action_demo" pkg="pr2lite_block_manipulation" type="block_manipulation_action_demo" output="screen">
     <param name="arm_link" value="/right_arm_shelf_link" /> <!-- replacement for /arm_base_link -->
     <param name="table_height" value="-0.37" /> <!-- Height of the table (in m) relative to /arm_base_link -->
     <param name="block_size" value="0.0381" /><!-- Side dimension of the blocks (in m) -->

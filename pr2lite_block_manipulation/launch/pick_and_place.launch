@@ -12,7 +12,9 @@
       <param name="center_right" value="0.18" />
       <param name="invert_left" value="True" />
   </node>
+<!--
   <include file="$(find pr2lite_arm_navigation)/launch/planning_components_visualizer.launch" />
+-->
 
 
 </launch>
