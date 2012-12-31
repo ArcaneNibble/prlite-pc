@@ -272,6 +272,8 @@
       <origin rpy="0 0 0" xyz="-0.0635 0.0 0.38735"/>
       <geometry>
 <!-- ARD
+      <origin rpy="0 0 0" xyz="-0.0635 0.0 0.406"/>
+      <origin rpy="0 0 0" xyz="-0.0635 0.0 0.38735"/>
         <box size="0.1524 0.508 0.00635"/>
 -->
         <box size="0.1524 0.508 0.0127"/>
@@ -286,6 +288,10 @@
     <parent link="top_shelf_link"/>
     <child link="neck_link"/>
     <origin rpy="0 0 0" xyz="-0.073025 0.0 0.38735"/>
+<!-- ARD
+    <origin rpy="0 0 0" xyz="-0.073025 0.0 0.406"/>
+    <origin rpy="0 0 0" xyz="-0.073025 0.0 0.38735"/>
+-->
   </joint>
   <link name="neck_link">
     <inertial>
@@ -339,12 +345,12 @@
       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
     </inertial>
     <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0127"/>
       <geometry>
-<!-- ARD: add caster width
         <box size="0.1016 0.333756 0.00635"/>
--->
+<!-- ARD: add caster width
         <box size="0.1016 0.333756 0.0127"/>
+-->
       </geometry>
       <material name="Silver1">
         <color rgba="0 0.9 0.9 1.0"/>
@@ -714,6 +720,9 @@ hokuyo side bar dimensions:
     <parent link="top_shelf_link"/>
     <child link="left_arm_shelf_link"/>
     <origin rpy="0 0 0" xyz="0.0 0.1778 0.376174"/>
+<!-- ARD
+    <origin rpy="0 0 0" xyz="0.0 0.1778 0.376174"/>
+-->
   </joint>
   <link name="left_arm_shelf_link">
     <inertial>
@@ -743,6 +752,9 @@ hokuyo side bar dimensions:
     <parent link="top_shelf_link"/>
     <child link="right_arm_shelf_link"/>
     <origin rpy="0 0 0" xyz="0.0 -0.1778 0.376174"/>
+<!--
+    <origin rpy="0 0 0" xyz="0.0 -0.1778 0.376174"/>
+-->
   </joint>
   <link name="right_arm_shelf_link">
     <inertial>

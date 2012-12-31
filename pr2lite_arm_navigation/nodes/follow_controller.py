@@ -89,7 +89,8 @@ class FollowController:
         self.position_pub = list()
         self.torque_services = list()
         self.speed_services = list()
-        self.max_speed = 0.1
+        self.last_speed = list()
+        self.max_speed = 0.2
            
         for c in self.controllers:
           if c != 'left_upper_arm_hinge_controller' and c != 'right_upper_arm_hinge_controller':
@@ -101,11 +102,14 @@ class FollowController:
               rospy.wait_for_service(speed_service)
               srv = rospy.ServiceProxy(speed_service, SetSpeed)
               self.speed_services.append(srv)
+              srv(self.max_speed)
+              self.last_speed.append(self.max_speed)
               rospy.loginfo("Real speed " + c)
             else:
               # add dummy service so positions align
               srv = self.speed_services[-1]
               self.speed_services.append(srv)
+              self.last_speed.append(self.max_speed)
               rospy.loginfo("Dummy speed " + c)
           else:
             # add dummy services so positions align
@@ -113,6 +117,7 @@ class FollowController:
             self.position_pub.append(c_srv)
             srv = self.speed_services[-1]
             self.speed_services.append(srv)
+            self.last_speed.append(self.max_speed)
             rospy.loginfo("Dummy speed " + c)
             rospy.loginfo("Dummy pos pub " + c) 
           rospy.loginfo("Starting " + c + "/command")
@@ -163,7 +168,9 @@ class FollowController:
               velocity = self.max_speed
             if self.joints[i] != 'left_upper_arm_hinge_joint' and self.joints[i] != 'right_upper_arm_hinge_joint':
               if self.joints[i] != 'left_shoulder_tilt_joint' and self.joints[i] != 'right_shoulder_tilt_joint':
-                 self.speed_services[i] = velocity
+                 if self.last_speed[i] != velocity:
+                   self.speed_services[i](velocity)
+                   self.last_speed[i] = velocity
               self.position_pub[i].publish(desired)
             rospy.loginfo('Trajectory ' + str(i) + ' ' + self.joints[i] + str(desired) + ' ' + str(point.positions[i]) + ' ' + str(fudge_value[i]) + ' ' + str(velocity))
             prev_desired[i] = desired

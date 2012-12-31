@@ -17,3 +17,4 @@ pkill -f static_transform
 pkill -f move_arm
 pkill -f linact_s
 pkill -f python
+pkill -f base_controller

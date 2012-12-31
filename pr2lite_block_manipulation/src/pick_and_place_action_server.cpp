@@ -32,12 +32,14 @@
 #include <tf/tf.h>
 #include <std_msgs/Float64.h>
 #include <actionlib/server/simple_action_server.h>
-#include <turtlebot_block_manipulation/PickAndPlaceAction.h>
+#include <actionlib/client/simple_action_client.h>
 
+#include <turtlebot_block_manipulation/PickAndPlaceAction.h>
 #include <actionlib/client/simple_action_client.h>
 
 #include <geometry_msgs/PoseArray.h>
 #include <arm_navigation_msgs/MoveArmAction.h>
+#include <arm_navigation_msgs/utils.h>
 
 #define EXECUTE_GOAL \
     if (nh_.ok()) \
@@ -154,56 +156,58 @@ public:
     nh_.param<std::string>("planner_service_name",goalA.planner_service_name,std::string
 
 ("ompl_planning/plan_kinematic_path"));
-    goalA.motion_plan_request.goal_constraints.set_position_constraints_size(1);
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].header.stamp = ros::Time::now();       
 
-goalA.motion_plan_request.goal_constraints.position_constraints[0].header.frame_id = "right_arm_shelf_link";
-   
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].link_name = "right_wrist_roll_link";
-
-    /* hover over */
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].position.x = start_pose.position.x;
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].position.y = start_pose.position.y;
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].position.z = z_up;
-
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_shape.type = arm_navigation_msgs::Shape::BOX;
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_shape.dimensions.push_back (0.0381);
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_shape.dimensions.push_back (0.0381);
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_shape.dimensions.push_back (0.0381);
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_orientation.w = 1.0;
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].weight = 1.0;
-
-    goalA.motion_plan_request.goal_constraints.set_orientation_constraints_size(1);
-    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].header.stamp = ros::Time::now();
-    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].header.frame_id = arm_link; 
-/*
-    // goal.header.frame_id = arm_link;
-    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].header.frame_id = "right_arm_shelf_link";       
-    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].header.frame_id = "right_arm_base_link";       
-*/
-
-    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].link_name = "right_wrist_roll_link";
+    arm_navigation_msgs::SimplePoseConstraint desired_pose;
+    desired_pose.header.frame_id = arm_link;
+    desired_pose.link_name = "right_wrist_roll_link";
 
     /* arm straight up */
     btQuaternion temp;
     temp.setRPY(0,1.57,0);
-    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].orientation.x = temp.getX();
-    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].orientation.y = temp.getY();
-    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].orientation.z = temp.getZ();
-    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].orientation.w = temp.getW();
-   
-/*
-    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].absolute_roll_tolerance = 0.04;
-    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].absolute_pitch_tolerance = 0.04;
-    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].absolute_yaw_tolerance = 0.04;
-*/
 
-    goalA.motion_plan_request.goal_constraints.orientation_constraints[0].weight = 1.0;
+    desired_pose.pose.position.x = start_pose.position.x;
+    desired_pose.pose.position.y = start_pose.position.y;
+    desired_pose.pose.position.z = z_up;
+
+    desired_pose.pose.orientation.x = temp.getX();
+    desired_pose.pose.orientation.y = temp.getY();
+    desired_pose.pose.orientation.z = temp.getZ();
+    desired_pose.pose.orientation.w = temp.getW();
+
+    desired_pose.absolute_position_tolerance.x = 0.2;
+    desired_pose.absolute_position_tolerance.y = 0.2;
+    desired_pose.absolute_position_tolerance.z = 0.2;
+
+    desired_pose.absolute_roll_tolerance = 0.4;
+    desired_pose.absolute_pitch_tolerance = 0.4;
+    desired_pose.absolute_yaw_tolerance = 0.4;
+  
+    arm_navigation_msgs::addGoalConstraintToMoveArmGoal(desired_pose,goalA);
     EXECUTE_GOAL;
     ros::Duration(2.0).sleep();
 
+/* get_fk.py output picking up using right arm
+ [header: 
+  seq: 0
+  stamp: 
+    secs: 0
+    nsecs: 0
+  frame_id: top_shelf_link
+pose: 
+  position: 
+    x: 0.666436563998
+    y: -0.253894656661
+    z: 0.30756118584
+  orientation: 
+    x: 0.998651674778
+    y: -0.0519056675811
+    z: -0.000795318077425
+    w: 4.00672677996e-05]
+*/
+
     /* go down */
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].position.z = start_pose.position.z;
+    desired_pose.pose.position.z = start_pose.position.z;
+    arm_navigation_msgs::addGoalConstraintToMoveArmGoal(desired_pose,goalA);
     EXECUTE_GOAL;
     ros::Duration(2.0).sleep();
 
@@ -213,21 +217,22 @@ goalA.motion_plan_request.goal_constraints.position_constraints[0].header.frame_
     ros::Duration(2.0).sleep();   
 
     /* go up */
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].position.z = z_up;
-
+    desired_pose.pose.position.z = z_up;
+    arm_navigation_msgs::addGoalConstraintToMoveArmGoal(desired_pose,goalA);
     EXECUTE_GOAL;
     ros::Duration(2.0).sleep();
 
     /* hover over */
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].position.x = end_pose.position.x;
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].position.y = end_pose.position.y;
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].position.z = z_up;
-
+    desired_pose.pose.position.x = end_pose.position.x;
+    desired_pose.pose.position.y = end_pose.position.y;
+    desired_pose.pose.position.z = z_up;
+    arm_navigation_msgs::addGoalConstraintToMoveArmGoal(desired_pose,goalA);
     EXECUTE_GOAL;
     ros::Duration(2.0).sleep();
 
     /* go down */
-    goalA.motion_plan_request.goal_constraints.position_constraints[0].position.z = end_pose.position.z;
+    desired_pose.pose.position.z = end_pose.position.z;
+    arm_navigation_msgs::addGoalConstraintToMoveArmGoal(desired_pose,goalA);
     EXECUTE_GOAL;
     ros::Duration(2.0).sleep();
 
