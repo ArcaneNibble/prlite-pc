@@ -38,6 +38,7 @@
 	<property name="turtlebot_calib_cam_ry" value="3.14159" />
     -->
 
+  <!-- 
 	<property name="turtlebot_calib_cam_x" value="-1.02944" />
 	<property name="turtlebot_calib_cam_y" value="-0" />
 	<property name="turtlebot_calib_cam_z" value="1.01931" />
@@ -63,6 +64,7 @@
 	<property name="pr2lite_right_kinect_frame_name" value="right_arm_shelf_link" />
 
 	<property name="pr2lite_right_kinect_frame_name" value="right_arm_shelf_link" />
+    -->
 
 
   <material name="Black">
@@ -381,11 +383,11 @@
   <joint name="head_tilt_joint" type="revolute">
     <limit effort="10" lower="-2.618" upper="2.618" velocity="3"/>
     <parent link="head_side_link"/>
-    <child link="kinect_side_link"/>
+    <child link="head_tilt_link"/>
     <origin rpy="0 0 0" xyz="0.0 -0.00635 0.0127"/>
     <axis xyz="0 1 0"/>
   </joint>
-  <link name="kinect_side_link">
+  <link name="head_tilt_link">
     <inertial>
       <mass value="0"/>
       <origin xyz="0.0 0.0 0.0"/>
@@ -402,7 +404,7 @@
     </visual>
   </link>
   <joint name="kinect_side_joint" type="fixed">
-    <parent link="kinect_side_link"/>
+    <parent link="head_tilt_link"/>
     <child link="kinect_base_link"/>
     <origin rpy="0 0 0" xyz="-0.0 0.0 -0.054991"/>
   </joint>

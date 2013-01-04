@@ -1,0 +1,14 @@
+<launch>
+  <!-- Set the same namespace as used with the ax12 controllers -->
+<!--
+  <arg name="ax12_namespace" value="" />
+  <node ns="$(arg ax12_namespace)" name="point_head_node" pkg="pr2lite_arm_navigation" type="point_head.py" output="screen" />
+-->
+
+  <!-- Start the point_head node -->
+  <node name="point_head_node" pkg="pr2lite_arm_navigation" type="point_head.py" output="screen" />
+  
+  <!-- Start the GUI 
+  <node ns="$(arg ax12_namespace)" name="head_pointer_gui" pkg="pi_demo" type="head_pointer_gui.py" output="screen" />
+  -->
+</launch>
