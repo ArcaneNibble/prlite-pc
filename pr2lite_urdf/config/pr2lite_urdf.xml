@@ -29,24 +29,8 @@
       width of joints of arms: 0.4126992 meters
       joints of arms: 0.05715
     -->
-  <!-- 
-	<property name="turtlebot_calib_cam_x" value="-1.03976" />
-	<property name="turtlebot_calib_cam_y" value="-0" />
-	<property name="turtlebot_calib_cam_z" value="1.02602" />
-	<property name="turtlebot_calib_cam_rr" value="3.14159" />
-	<property name="turtlebot_calib_cam_rp" value="2.69908e-12" />
-	<property name="turtlebot_calib_cam_ry" value="3.14159" />
-    -->
 
   <!-- 
-	<property name="turtlebot_calib_cam_x" value="-1.02944" />
-	<property name="turtlebot_calib_cam_y" value="-0" />
-	<property name="turtlebot_calib_cam_z" value="1.01931" />
-	<property name="turtlebot_calib_cam_rr" value="3.14159" />
-	<property name="turtlebot_calib_cam_rp" value="2.09159e-06" />
-	<property name="turtlebot_calib_cam_ry" value="3.14159" />
-	<property name="turtlebot_kinect_frame_name" value="right_arm_shelf_link" /> 
-
         <property name="pr2lite_left_calib_cam_x" value="-1.03976" />
         <property name="pr2lite_left_calib_cam_y" value="-0" />
         <property name="pr2lite_left_calib_cam_z" value="1.02602" />
@@ -55,14 +39,20 @@
         <property name="pr2lite_left_calib_cam_ry" value="3.14159" />
 	<property name="pr2lite_left_kinect_frame_name" value="left_arm_shelf_link" />
 
-        <property name="pr2lite_right_calib_cam_x" value="-1.02944" />
-	<property name="pr2lite_right_calib_cam_y" value="-0" />
-	<property name="pr2lite_right_calib_cam_z" value="1.01931" />
-	<property name="pr2lite_right_calib_cam_rr" value="3.14159" />
-	<property name="pr2lite_right_calib_cam_rp" value="2.09159e-06" />
-	<property name="pr2lite_right_calib_cam_ry" value="3.14159" />
-	<property name="pr2lite_right_kinect_frame_name" value="right_arm_shelf_link" />
+	<property name="turtlebot_calib_cam_x" value="nan" />
+	<property name="turtlebot_calib_cam_y" value="nan" />
+	<property name="turtlebot_calib_cam_z" value="nan" />
+	<property name="turtlebot_calib_cam_rr" value="-nan" />
+	<property name="turtlebot_calib_cam_rp" value="1.5708" />
+	<property name="turtlebot_calib_cam_ry" value="0" />
+	<property name="turtlebot_kinect_frame_name" value="right_arm_shelf_link" />
 
+	<property name="pr2lite_right_calib_cam_x" value="nan" />
+	<property name="pr2lite_right_calib_cam_y" value="nan" />
+	<property name="pr2lite_right_calib_cam_z" value="nan" />
+	<property name="pr2lite_right_calib_cam_rr" value="-nan" />
+	<property name="pr2lite_right_calib_cam_rp" value="1.5708" />
+	<property name="pr2lite_right_calib_cam_ry" value="0" />
 	<property name="pr2lite_right_kinect_frame_name" value="right_arm_shelf_link" />
     -->
 
@@ -240,7 +230,7 @@
   <joint name="torso_body_joint2" type="fixed">
     <parent link="torso_link"/>
     <child link="bottom_outer_torso_link"/>
-    <origin rpy="0 0 0" xyz="0 0 -0.1524"/>
+    <origin rpy="0 0 0" xyz="0 0 -0.0975"/>
   </joint>
   <link name="bottom_outer_torso_link">
     <inertial>
@@ -262,23 +252,25 @@
   <joint name="top_shelf_joint" type="fixed">
     <parent link="bottom_outer_torso_link"/>
     <child link="top_shelf_link"/>
-    <origin rpy="0 0 0" xyz="0 0.00635 0.127"/>
+    <origin rpy="0 0 0" xyz="0.0127 0.00 0.1619250"/>
   </joint>
   <link name="top_shelf_link">
     <inertial>
       <mass value="0"/>
-      <origin xyz="0.0 0.0 0.0"/>
+      <origin xyz="0.0127 0.0 0.0"/>
       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
     </inertial>
     <visual>
-      <origin rpy="0 0 0" xyz="-0.0635 0.0 0.38735"/>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.217"/>
       <geometry>
 <!-- ARD
+      <origin rpy="0 0 0" xyz="-0.0635 0.0 0.38735"/>
       <origin rpy="0 0 0" xyz="-0.0635 0.0 0.406"/>
       <origin rpy="0 0 0" xyz="-0.0635 0.0 0.38735"/>
         <box size="0.1524 0.508 0.00635"/>
+.434
 -->
-        <box size="0.1524 0.508 0.0127"/>
+        <box size="0.00635 0.1524 0.434"/>
       </geometry>
       <material name="Grey1">
         <color rgba="0 0.9 0.9 1.0"/>
@@ -289,10 +281,13 @@
   <joint name="neck_joint" type="fixed">
     <parent link="top_shelf_link"/>
     <child link="neck_link"/>
-    <origin rpy="0 0 0" xyz="-0.073025 0.0 0.38735"/>
+    <origin rpy="0 0 0" xyz="-0.073025 0.0 0.434"/>
 <!-- ARD
+    <origin rpy="0 0 0" xyz="-0.073025 0.0 0.38735"/>
     <origin rpy="0 0 0" xyz="-0.073025 0.0 0.406"/>
     <origin rpy="0 0 0" xyz="-0.073025 0.0 0.38735"/>
+.0127 + .08255=.09525
+
 -->
   </joint>
   <link name="neck_link">
@@ -302,7 +297,7 @@
       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
     </inertial>
     <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.08255"/>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.09525 "/>
       <geometry>
         <box size="-0.00635 0.14605 0.1651"/>
       </geometry>
@@ -314,7 +309,8 @@
   <joint name="top_neck_joint" type="fixed">
     <parent link="neck_link"/>
     <child link="top_neck_link"/>
-    <origin rpy="0 0 0" xyz="0.0 0.0 0.1651"/>
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.17145"/>
+<!-- 0.00635 + .1651 -->
   </joint>
   <link name="top_neck_link">
     <inertial>
@@ -721,7 +717,7 @@ hokuyo side bar dimensions:
   <joint name="left_arm_shelf_joint" type="fixed">
     <parent link="top_shelf_link"/>
     <child link="left_arm_shelf_link"/>
-    <origin rpy="0 0 0" xyz="0.0 0.1778 0.376174"/>
+    <origin rpy="0 0 0" xyz="-0.0 0.1778 0.434"/>
 <!-- ARD
     <origin rpy="0 0 0" xyz="0.0 0.1778 0.376174"/>
 -->
@@ -733,9 +729,10 @@ hokuyo side bar dimensions:
       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
     </inertial>
     <visual>
-      <origin rpy="0 0 0" xyz="-0.0635 0.0 0.0"/>
+      <axis xyz="0 0 -1"/>
+      <origin rpy="0 0 0" xyz="-0.0762 -0.05505 0.00635"/>
       <geometry>
-        <box size="0.1524 0.1524 0.00635"/>
+        <box size="0.1524 0.2625 0.0127"/>
       </geometry>
       <material name="Silver1">
         <color rgba="0 0.9 0.9 1.0"/>
@@ -748,12 +745,12 @@ hokuyo side bar dimensions:
     <axis xyz="0 0 -1"/>
     <parent link="left_arm_shelf_link"/>
     <child link="left_shoulder_pan_link"/>
-    <origin rpy="0 3.14 3.14" xyz="-0.0635 0.0 0.0"/>
+    <origin rpy="0 3.14 3.14" xyz="-0.0635 0.0 -0.00635"/>
   </joint>
   <joint name="right_arm_shelf_joint" type="fixed">
     <parent link="top_shelf_link"/>
     <child link="right_arm_shelf_link"/>
-    <origin rpy="0 0 0" xyz="0.0 -0.1778 0.376174"/>
+    <origin rpy="0 0 0" xyz="-0.0 -0.1778 0.434"/>
 <!--
     <origin rpy="0 0 0" xyz="0.0 -0.1778 0.376174"/>
 -->
@@ -766,9 +763,14 @@ hokuyo side bar dimensions:
     </inertial>
     <visual>
       <axis xyz="0 0 -1"/>
-      <origin rpy="0 0 0" xyz="-0.0635 0.0 0.0"/>
+      <origin rpy="0 0 0" xyz="-0.0762 0.05505 0.00635"/>
       <geometry>
+<!--
+      <origin rpy="0 0 0" xyz="-0.0635 0.05505 0.0"/>
         <box size="0.1524 0.1524 0.00635"/>
+525 / 2 = 2625
+-->
+        <box size="0.1524 0.2625 0.0127"/>
       </geometry>
       <material name="Silver1">
         <color rgba="0 0.9 0.9 1.0"/>
@@ -780,7 +782,7 @@ hokuyo side bar dimensions:
   <joint name="right_arm_base_link" type="fixed">
     <parent link="right_arm_shelf_link"/>
     <child link="right_shoulder_pan_link"/>
-    <origin rpy="0 3.14 3.14" xyz="-0.0635 0.0 0.0"/>
+    <origin rpy="0 3.14 3.14" xyz="-0.0635 0.0 -0.00635"/>
   </joint>
   <joint name="wheel_linear_actuator_joint" type="prismatic">
     <axis xyz="1 0 0"/>
@@ -2232,7 +2234,7 @@ hokuyo side bar dimensions:
   <joint name="hokuyo_torso_joint" type="fixed">
     <parent link="base_link"/>
     <child link="hokuyo_torso_link"/>
-    <origin rpy="0 0 0" xyz="0.2286 0 0.0"/>
+    <origin rpy="0 0 0" xyz="0.1586 0 -0.02"/>
   </joint>
   <link name="hokuyo_torso_link">
     <inertial>
