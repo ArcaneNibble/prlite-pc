@@ -1,0 +1,5 @@
+<launch>
+    <include file="$(find pr2lite_arm_navigation)/launch/move_groups.launch" />
+    <include file="$(find pr2lite_arm_navigation)/launch/point_head.launch" />
+    <include file="$(find pr2lite_arm_navigation)/launch/torso_follow_controller.launch" />
+</launch>

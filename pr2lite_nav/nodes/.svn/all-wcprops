@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/114/trunk/rbx_vol_1/rbx1_nav/nodes
+END
+timed_out_and_back.py
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/109/trunk/rbx_vol_1/rbx1_nav/nodes/timed_out_and_back.py
+END
+calibrate_angular.py
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/112/trunk/rbx_vol_1/rbx1_nav/nodes/calibrate_angular.py
+END
+move_base_square.py
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/105/trunk/rbx_vol_1/rbx1_nav/nodes/move_base_square.py
+END
+calibrate_linear.py
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/112/trunk/rbx_vol_1/rbx1_nav/nodes/calibrate_linear.py
+END
+nav_test.py
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/72/trunk/rbx_vol_1/rbx1_nav/nodes/nav_test.py
+END
+nav_square.py
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/64/trunk/rbx_vol_1/rbx1_nav/nodes/nav_square.py
+END
+odom_out_and_back.py
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/114/trunk/rbx_vol_1/rbx1_nav/nodes/odom_out_and_back.py
+END

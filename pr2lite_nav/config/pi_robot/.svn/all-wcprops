@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/105/trunk/rbx_vol_1/rbx1_nav/config/pi_robot
+END
+costmap_common_params.yaml
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/64/trunk/rbx_vol_1/rbx1_nav/config/pi_robot/costmap_common_params.yaml
+END
+local_costmap_params.yaml
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/64/trunk/rbx_vol_1/rbx1_nav/config/pi_robot/local_costmap_params.yaml
+END
+base_local_planner_params.yaml
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/105/trunk/rbx_vol_1/rbx1_nav/config/pi_robot/base_local_planner_params.yaml
+END
+global_costmap_params.yaml
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/64/trunk/rbx_vol_1/rbx1_nav/config/pi_robot/global_costmap_params.yaml
+END

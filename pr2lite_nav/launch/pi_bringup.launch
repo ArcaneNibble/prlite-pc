@@ -1,0 +1,21 @@
+<launch>
+
+  <!-- Start the Serializer controller -->
+  <include file="$(find pi_bringup)/launch/serializer.launch" />
+
+  <!-- Start the ArbotiX controller -->
+  <include file="$(find pi_bringup)/launch/arbotix.launch" />
+
+  <!-- Start the Hokuyo laser driver -->
+  <include file="$(find pi_bringup)/launch/hokuyo.launch" />
+ 
+  <!-- Keep the head upright and centered -->
+  <node pkg="pi_bringup" type="lock_head.py" name="lock_head" output="screen" />
+ 
+  <!-- Start the OpenNI node -->
+  <include file="$(find pi_navigation)/launch/openni_node.launch" />
+
+  <!-- The move_base and amcl nodes -->
+  <include file="$(find pi_navigation)/launch/nav_amcl.launch" />
+ 
+</launch>

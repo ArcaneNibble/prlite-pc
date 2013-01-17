@@ -27,19 +27,40 @@ namespace pr2lite
                 // Command callback
                 void command_callback(const std_msgs::Float64::ConstPtr& command)
                 {
+                  double length = 0.0;
+
+                  // if (m_id == 15 || m_id == 14) 
+                  if (m_name == "left_shoulder_tilt_joint" 
+                      || m_name == "right_shoulder_tilt_joint") 
+                  {
                     // Since this is just the raw, provide a simple write to service
-                    ROS_INFO("Setting \"%s\" to %lf radians", m_name.c_str(), command->data);
-                    
-                    // Calculate from the angle the length of the actuator, then the number to sent to it
-                    double length = sqrt(-162.2 * cos(1.44129 - command->data) + 256.0) - m_base_length;
+                    ROS_INFO("Setting \"%s\" to %lf radians", m_name.c_str(), 
+                             command->data);
+
+                    // Calculate from the angle the length of the actuator, 
+                    // then the number to sent to it
+                    length = sqrt(-162.2 * cos(1.44129 - command->data) + 256.0)
+                             - m_base_length;
                     length *= (1000.0f / m_extent);
 
-                    // Bound the value
-                    if(length < 10.0f) length = 10.0f;
-                    if(length >  1000.0f) length = 1000.0f;
+                  } else if (m_name == "torso_lift_joint"
+                          || m_name == "wheel_linear_actuator_joint")
+                  // else if (m_id == 13 || m_id == 12) 
+                  {
+                    // 1 inch == 0.0254 meters
+                    // length = 1000.0 - (1000.0f * command->data / (m_extent * 0.0254));
+                    length = (1000.0f * command->data / (m_extent * 0.0254));
+                    ROS_INFO("Setting \"%s\" to %lf meters (len %lf)", 
+                       m_name.c_str(), command->data, length);
+                  } else
+                      ROS_INFO("no actuator registered");
+
+                  // Bound the value
+                  if(length < 10.0f) length = 10.0f;
+                  if(length >  1000.0f) length = 1000.0f;
                     
-                    // Set the position
-		    this->setPosition(length);
+                  // Set the position
+		  this->setPosition(length);
                 }
             public:
                 LinactDynamixel(ros::NodeHandle& nh, int id, std::string& name)

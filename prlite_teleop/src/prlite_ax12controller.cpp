@@ -421,8 +421,10 @@ void joint_state_callback(const dynamixel_msgs::JointState& joint_msg_ptr)
        return;
     }
 
+/*
     if (prlite_ax12joint[joint].joint_state.current_pos != joint_msg_ptr.current_pos)
        ROS_INFO_STREAM("state callback " << joint << " " << joint_msg_ptr.current_pos);
+*/
     prlite_ax12joint[joint].joint_state = joint_msg_ptr;
 }
 

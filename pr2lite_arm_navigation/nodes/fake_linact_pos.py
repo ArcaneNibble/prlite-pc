@@ -17,7 +17,7 @@ GNU General Public License for more details at:
 http://www.gnu.org/licenses/gpl.html
 """
 
-import roslib; roslib.load_manifest('pi_dynamixel_controller')
+import roslib; roslib.load_manifest('pr2lite_arm_navigation')
 import rospy
 
 #from sensor_msgs.msg import JointState as JointStatePR2
@@ -52,7 +52,7 @@ class Fake_LA_pos():
             rospy.sleep(0.9)
           
     def arm_linact_state_handler(self, jsmsg):
-        rospy.loginfo("arm linact state hander")
+        # rospy.loginfo("arm linact state hander")
         do_copy = 0
         for joint_name in jsmsg.name:
           if joint_name == "left_linear_actuator_joint":
@@ -62,7 +62,7 @@ class Fake_LA_pos():
           if joint_name == "torso_lift_joint":
             do_copy = do_copy + 1
         if do_copy >= 1:
-          rospy.loginfo("copying joint state message")
+          # rospy.loginfo("copying joint state message")
           indx = 0
           for joint_name in jsmsg.name:
             indx2 = 0
@@ -74,9 +74,9 @@ class Fake_LA_pos():
             indx = indx + 1
      
     def publish_LA_states(self):
-        rospy.loginfo("pub LA states")
+        # rospy.loginfo("pub LA states")
         self.msg.jspr2msg.header.stamp = rospy.Time.now()
-        rospy.loginfo("pub LA states 2")
+        # rospy.loginfo("pub LA states 2")
         #self.msg.header.stamp = rospy.Time.now()
         self.joint_states_pub.publish(self.msg.jspr2msg)
         

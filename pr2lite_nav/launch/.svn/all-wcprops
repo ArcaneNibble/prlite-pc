@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/72/trunk/rbx_vol_1/rbx1_nav/launch
+END
+fake_move_base.launch
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/60/trunk/rbx_vol_1/rbx1_nav/launch/fake_move_base.launch
+END
+joystick_teleop.launch
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/56/trunk/rbx_vol_1/rbx1_nav/launch/joystick_teleop.launch
+END
+keyboard_teleop.launch
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/67/trunk/rbx_vol_1/rbx1_nav/launch/keyboard_teleop.launch
+END
+tb_nav_test.launch
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/65/trunk/rbx_vol_1/rbx1_nav/launch/tb_nav_test.launch
+END
+tb_move_base_blank_map.launch
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/61/trunk/rbx_vol_1/rbx1_nav/launch/tb_move_base_blank_map.launch
+END
+fake_nav_test.launch
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/64/trunk/rbx_vol_1/rbx1_nav/launch/fake_nav_test.launch
+END
+fake_move_base_blank_map.launch
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/67/trunk/rbx_vol_1/rbx1_nav/launch/fake_move_base_blank_map.launch
+END
+move_base_obstacle.launch
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/60/trunk/rbx_vol_1/rbx1_nav/launch/move_base_obstacle.launch
+END
+move_base.launch
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/60/trunk/rbx_vol_1/rbx1_nav/launch/move_base.launch
+END
+tb_amcl.launch
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/72/trunk/rbx_vol_1/rbx1_nav/launch/tb_amcl.launch
+END
+gmapping.launch
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/65/trunk/rbx_vol_1/rbx1_nav/launch/gmapping.launch
+END
+fake_move_base_obstacle.launch
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/61/trunk/rbx_vol_1/rbx1_nav/launch/fake_move_base_obstacle.launch
+END
+fake_amcl.launch
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/64/trunk/rbx_vol_1/rbx1_nav/launch/fake_amcl.launch
+END
+tb_move_base.launch
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/62/trunk/rbx_vol_1/rbx1_nav/launch/tb_move_base.launch
+END

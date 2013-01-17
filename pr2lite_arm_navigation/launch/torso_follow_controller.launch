@@ -1,0 +1,10 @@
+<launch>
+  <!-- Start the point_head node -->
+  <node name="torso_follow_controller" pkg="pr2lite_arm_navigation" type="torso_follow_controller.py" output="screen" >
+<!--
+       <remap from="goal" to="command" />
+-->
+  </node>
+
+  
+</launch>

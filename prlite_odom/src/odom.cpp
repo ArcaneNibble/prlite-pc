@@ -54,6 +54,37 @@ double th = 0.0;
 void odometryUpdate(void)
 {
   static tf::TransformBroadcaster odom_broadcaster;
+  boost::array<double, 36> odom_pose_covariance = {
+    {1e-3, 0, 0, 0, 0, 0, 
+     0, 1e-3, 0, 0, 0, 0, 
+     0, 0, 1e6, 0, 0, 0, 
+     0, 0, 0, 1e6, 0, 0, 
+     0, 0, 0, 0, 1e6, 0, 
+     0, 0, 0, 0, 0, 1e3}};
+
+  boost::array<double, 36> odom_pose_covariance2 = {
+     {1e-9, 0, 0, 0, 0, 0, 
+     0, 1e-3, 1e-9, 0, 0, 0, 
+     0, 0, 1e6, 0, 0, 0,
+     0, 0, 0, 1e6, 0, 0, 
+     0, 0, 0, 0, 1e6, 0, 
+     0, 0, 0, 0, 0, 1e-9}};
+    
+  boost::array<double, 36> odom_twist_covariance = {
+    {1e-3, 0, 0, 0, 0, 0, 
+     0, 1e-3, 0, 0, 0, 0, 
+     0, 0, 1e6, 0, 0, 0, 
+     0, 0, 0, 1e6, 0, 0, 
+     0, 0, 0, 0, 1e6, 0, 
+     0, 0, 0, 0, 0, 1e3}};
+
+  boost::array<double, 36> odom_twist_covariance2 = {
+    {1e-9, 0, 0, 0, 0, 0, 
+     0, 1e-3, 1e-9, 0, 0, 0, 
+     0, 0, 1e6, 0, 0, 0, 
+     0, 0, 0, 1e6, 0, 0, 
+     0, 0, 0, 0, 1e6, 0, 
+     0, 0, 0, 0, 0, 1e-9}};
 
   current_time = ros::Time::now();
 
@@ -72,7 +103,7 @@ void odometryUpdate(void)
   //first, we'll publish the transform over tf
   geometry_msgs::TransformStamped odom_trans;
   odom_trans.header.stamp = current_time;
-  odom_trans.header.frame_id = "odom";
+  odom_trans.header.frame_id = "wheelodom";
   odom_trans.child_frame_id = "base_link";
 
   odom_trans.transform.translation.x = x;
@@ -86,19 +117,21 @@ void odometryUpdate(void)
   //next, we'll publish the odometry message over ROS
   nav_msgs::Odometry odom;
   odom.header.stamp = current_time;
-  odom.header.frame_id = "odom";
+  odom.header.frame_id = "wheelodom";
 
   //set the position
   odom.pose.pose.position.x = x;
   odom.pose.pose.position.y = y;
   odom.pose.pose.position.z = 0.0;
   odom.pose.pose.orientation = odom_quat;
+  odom.pose.covariance = odom_pose_covariance;
 
   //set the velocity
   odom.child_frame_id = "base_link";
   odom.twist.twist.linear.x = vx;
   odom.twist.twist.linear.y = vy;
   odom.twist.twist.angular.z = vth;
+  odom.twist.covariance = odom_twist_covariance;
 
   //publish the message
   odom_pub.publish(odom);
@@ -164,7 +197,7 @@ int main(int argc, char** argv)
 
   ros::NodeHandle n;
   ros::param::get("~fake_localization", fake_localization);
-  odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
+  odom_pub = n.advertise<nav_msgs::Odometry>("wheelodom", 50);
   ros::Subscriber odom_sub;
   if (fake_localization)
     odom_sub = n.subscribe("cmd_vel", 50, cmdVelCallback);
