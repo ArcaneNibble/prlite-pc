@@ -1,0 +1,10 @@
+cd /opt/ros/electric/stacks/prlite/pr2lite_arm_navigation/launch
+./pr2lite_demo
+cd /opt/ros/electric/stacks/prlite/pr2lite_block_manipulation/demo
+roslaunch demo_actions_pr2lite.launch &
+sleep 5
+cd /opt/ros/electric/stacks/prlite/pr2lite_arm_navigation/launch
+roslaunch planning_components_visualizer_block_manip.launch &
+cd /opt/ros/electric/stacks/prlite/pr2lite_block_manipulation/demo
+
+

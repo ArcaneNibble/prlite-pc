@@ -1,0 +1,41 @@
+Teleop:
+	Gamepad:
+		Base: DONE
+		Head: DONE
+		Arm: TODO
+	Tablet:
+		Base:
+			Laser Scan:
+			Kinect PointCloud:
+			Map:
+				Navigate: DONE
+				GPS:
+				Fiducials:
+				Laser:
+		Head:
+			Face Tracking:
+			Face Recognition:
+		Arm:
+			Fixed Gestures:
+			Move Hand:
+
+Skype:
+	Desktop to Tablet:
+		Video:
+		Audio:
+			Mic:
+			Speakers:	
+
+Wireless:
+	P2P: DONE (Change router address space?)
+	Hop:
+	
+	
+Hardware:
+	Wheels:
+	Tablet Stand:
+	Torso:
+		Mount at Rear:
+		Dual:
+		Telescope:
+		

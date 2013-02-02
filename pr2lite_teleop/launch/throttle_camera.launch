@@ -1,0 +1,3 @@
+<launch>
+   <node name="openni_throttle" type="throttle" pkg="topic_tools" args="messages /camera/rgb/image_color 10 /camera/rgb/image_color_throttle" />
+</launch>

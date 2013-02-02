@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/746/trunk/experimental/pi_teleop/js
+END
+jquery-1.8.1.min.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/701/trunk/experimental/pi_teleop/js/jquery-1.8.1.min.js
+END
+ros2.js
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/726/trunk/experimental/pi_teleop/js/ros2.js
+END
+kinetic-v4.0.0.js
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/701/trunk/experimental/pi_teleop/js/kinetic-v4.0.0.js
+END
+joystick.js
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/701/trunk/experimental/pi_teleop/js/joystick.js
+END
+pi_teleop.js
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/746/trunk/experimental/pi_teleop/js/pi_teleop.js
+END
+keyboard.js
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/701/trunk/experimental/pi_teleop/js/keyboard.js
+END
+pi_teleop2.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/726/trunk/experimental/pi_teleop/js/pi_teleop2.js
+END
+ros_compatible.js
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/726/trunk/experimental/pi_teleop/js/ros_compatible.js
+END
+ros.js
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/701/trunk/experimental/pi_teleop/js/ros.js
+END

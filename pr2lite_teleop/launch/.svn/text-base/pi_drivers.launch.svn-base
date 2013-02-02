@@ -1,0 +1,17 @@
+<launch>
+  <include file="$(find pi_bringup)/launch/all_sensors.launch" />
+
+  <node pkg="pi_teleop" type="laptop_battery.py" name="laptop_battery" output="screen">
+     <rosparam>
+        rate: 1
+        battery_number: 1
+     </rosparam>
+  </node>
+
+  <node pkg="pi_teleop" type="detect_obstacle_laser.py" name="detect_obstacle_laser" output="screen">
+     <rosparam>
+        safe_distance: 0.6
+        sector_width: 45
+     </rosparam>
+  </node>
+</launch>

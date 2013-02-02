@@ -1,0 +1,27 @@
+<launch>
+
+  <rosparam ns="/pr2lite_teleop">
+     map_file: /maps/test_map.png
+     max_linear_speed: 0.4
+     max_angular_speed: 1.5
+     turtlebot: False
+     video_topic: /kinect/rgb/image_color
+     video_quality: 70
+  </rosparam>
+
+  
+  <node name="rosbridge" pkg="rosbridge" type="rosbridge.py" output="screen" />
+
+  <node name="mjpeg_server" pkg="mjpeg_server" type="mjpeg_server" output="screen" />
+  <node pkg="pr2lite_teleop" type="detect_obstacle_laser.py" name="detect_obstacle_laser" output="screen">
+     <rosparam>
+        safe_distance: 0.6
+        sector_width: 45
+     </rosparam>
+  </node>
+
+  
+  <include file="$(find pr2lite_teleop)/launch/throttle_camera.launch" />
+
+
+</launch>

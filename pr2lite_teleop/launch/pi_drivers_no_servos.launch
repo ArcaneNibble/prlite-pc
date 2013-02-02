@@ -1,0 +1,17 @@
+<launch>
+  <include file="$(find pr2lite_bringup)/launch/no_servos.launch" />
+
+  <node pkg="pr2lite_teleop" type="laptop_battery.py" name="laptop_battery" output="screen">
+     <rosparam>
+        rate: 1
+        battery_number: 1
+     </rosparam>
+  </node>
+
+  <node pkg="pr2lite_teleop" type="detect_obstacle_laser.py" name="detect_obstacle_laser" output="screen">
+     <rosparam>
+        safe_distance: 0.3
+        sector_width: 0.79
+     </rosparam>
+  </node>
+</launch>

@@ -1,0 +1,23 @@
+<launch>
+
+  <include file="$(find pi_bringup)/launch/openni_node.launch" />
+  
+  <!--
+  <include file="$(find pi_teleop)/launch/throttle_camera.launch" />
+  -->
+
+  <include file="$(find pi_teleop)/launch/pi_drivers.launch" />
+    
+  <include file="$(find pi_teleop)/launch/pi_rosbridge.launch" />
+  
+  <include file="$(find rbx1_nav)/launch/fake_move_base.launch" />
+  
+  <!-- Run the map server with a blank map + obstacle -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find pi_teleop)/maps/test_map.yaml"/>
+
+  <!-- Run fake localization compatible with AMCL output -->
+  <node pkg="fake_localization" type="fake_localization" name="fake_localization" output="screen">
+  	<remap from="base_pose_ground_truth" to="odom" />
+  </node>
+
+</launch>

@@ -12,6 +12,7 @@
   <node pkg="prlite_base" type="base_controller" name="base_controller" output="screen">
      <remap from="/cmd_vel" to="base_controller/command"/>
   </node>
-  <include file="$(find pr2lite_nav)/launch/nav_amcl.launch" />
+  <include file="$(find pr2lite_nav)/launch/nav_amcl.launch" /> 
+  <include file="$(find pr2lite_nav)/launch/gmapping.launch" />
 
 </launch>

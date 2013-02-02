@@ -4,8 +4,13 @@
 
 
     <!-- Load the joystick service -->
-    <node name="joystick_service" pkg="joy" type="joy_node" 
-args="" output="screen"/>
+    <node name="joystick_service" pkg="joy" type="joy_node" args="" output="screen">
+<!--
+        <param name="dev" type="string" value="/dev/hidraw3" />
+-->
+        <param name="dev" type="string" value="/dev/input/js1" />
+    </node>
+
 
     <!--
     <include file="$(find prlite_base)/controller.launch" />

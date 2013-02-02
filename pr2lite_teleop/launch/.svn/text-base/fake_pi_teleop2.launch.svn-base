@@ -1,0 +1,35 @@
+<launch>
+
+  <rosparam ns="/pi_teleop">
+     map_file: /maps/test_map.png
+     max_linear_speed: 0.4
+     max_angular_speed: 1.5
+     turtlebot: False
+  </rosparam>
+
+  <include file="$(find rbx1_bringup)/launch/fake_pi_robot.launch" />
+
+  <node pkg="pi_teleop" type="laptop_battery.py" name="laptop_battery" output="screen">
+     <param name="rate" value="1" />
+     <param name="battery_number" value="1" />
+  </node>
+
+  <node pkg="diagnostic_aggregator" type="aggregator_node" name="diagnostic_aggregator" >
+    <rosparam command="load" file="$(find pi_teleop)/config/diagnostics.yaml" />
+  </node>
+
+  <include file="$(find rbx1_nav)/launch/fake_move_base.launch" />
+  
+  <!-- Run the map server with a blank map + obstacle -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find pi_teleop)/maps/test_map.yaml"/>
+
+  <!-- Run fake localization compatible with AMCL output -->
+  <node pkg="fake_localization" type="fake_localization" name="fake_localization" output="screen">
+  	<remap from="base_pose_ground_truth" to="odom" />
+  </node>
+  
+  <node name="rosbridge_server" pkg="rosbridge_server" type="rosbridge.py" output="screen" />
+
+  <node name="mjpeg_server" pkg="mjpeg_server" type="mjpeg_server" output="screen" />
+
+</launch>

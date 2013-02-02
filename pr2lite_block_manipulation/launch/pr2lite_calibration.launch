@@ -1,0 +1,28 @@
+<launch>
+<!-- run pr2lite_demo first
+     run twice - for both the left and right grippers -->
+<node name="calibrate_kinect_checkerboard" pkg="turtlebot_kinect_arm_calibration" type="calibrate_kinect_checkerboard" output="screen">
+ <param name="camera_frame" value="/kinect_rgb_optical_frame" />
+   <!-- choices: kinect_rgb_frame kinect_rgb_optical_frame -->
+<!--`
+ <param name="fixed_frame" value="/left_arm_shelf_link" />
+-->
+ <param name="fixed_frame" value="/right_arm_shelf_link" />
+ <param name="gripper_tip_x" value="-0.002" />
+ <param name="gripper_tip_y" value="0.020" />
+ <param name="gripper_tip_z" value="-0.0185" />
+<!--
+ <remap from="/kinect/rgb/camera_info" to="/camera/rgb/camera_info" />
+ <remap from="/kinect/rgb/image_mono" to="/camera/rgb/image_mono" />
+-->
+ <remap from="/camera/rgb/camera_info" to="/kinect/rgb/camera_info" />
+ <remap from="/camera/rgb/image_mono" to="/kinect/rgb/image_mono" />
+ </node>
+
+ <node name="checkerboard_image_view" pkg="image_view" type="image_view">
+   <remap from="image"
+
+to="/calibrate_kinect_checkerboard/calibration_pattern_out" />
+   <param name="autosize" value="true" />
+ </node>
+</launch> 

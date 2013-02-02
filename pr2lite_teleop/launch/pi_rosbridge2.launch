@@ -1,0 +1,13 @@
+<launch>
+
+  <rosparam ns="/pr2lite_teleop">
+     map_file: /maps/test_map.png
+     max_linear_speed: 0.2
+     max_angular_speed: 0.8
+     turtlebot: False
+  </rosparam>
+
+  <node name="rosbridge_server" pkg="rosbridge_server" type="rosbridge.py" output="screen" />
+  <node name="mjpeg_server" pkg="mjpeg_server" type="mjpeg_server" output="screen" />
+
+</launch>

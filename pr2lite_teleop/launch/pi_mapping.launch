@@ -1,0 +1,8 @@
+<launch>
+
+  <include file="$(find pr2lite_nav)/launch/move_base.launch" />
+  
+  <!-- Run the map server with a test map -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find pr2lite_teleop)/maps/test_map.yaml"/>
+
+</launch>

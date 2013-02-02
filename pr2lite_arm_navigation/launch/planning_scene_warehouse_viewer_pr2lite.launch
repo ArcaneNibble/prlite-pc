@@ -3,6 +3,9 @@
   <include file="$(find pr2lite_arm_navigation)/launch/pr2lite_planning_environment.launch" />
   <node pkg="planning_environment" name="wall_clock_server" type="fake_time.py" />
 
+<!--
+  <param name="warehouse_host" value="192.168.1.14"/>
+-->
   <param name="warehouse_host" value="localhost"/>
   <param name="warehouse_port" value="27020"/>
   <node name="mongo" type="wrapper.py" pkg="mongodb">

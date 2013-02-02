@@ -741,11 +741,13 @@ hokuyo side bar dimensions:
   </link>
   <!--
 -->
-  <joint name="left_arm_base_link" type="fixed">
-    <axis xyz="0 0 -1"/>
+  <joint name="left_shoulder_pan_joint" type="revolute">
+    <axis xyz="0 0 1"/>
     <parent link="left_arm_shelf_link"/>
     <child link="left_shoulder_pan_link"/>
     <origin rpy="0 3.14 3.14" xyz="-0.0635 0.0 -0.00635"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
+    <dynamics damping="50" friction="1"/>
   </joint>
   <joint name="right_arm_shelf_joint" type="fixed">
     <parent link="top_shelf_link"/>
@@ -779,10 +781,13 @@ hokuyo side bar dimensions:
   </link>
   <!--
 -->
-  <joint name="right_arm_base_link" type="fixed">
+  <joint name="right_shoulder_pan_joint" type="revolute">
     <parent link="right_arm_shelf_link"/>
     <child link="right_shoulder_pan_link"/>
     <origin rpy="0 3.14 3.14" xyz="-0.0635 0.0 -0.00635"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
+    <dynamics damping="50" friction="1"/>
   </joint>
   <joint name="wheel_linear_actuator_joint" type="prismatic">
     <axis xyz="1 0 0"/>
@@ -1381,21 +1386,9 @@ hokuyo side bar dimensions:
 </xacro:pr2lite_torso>
   <!--
 -->
-  <joint name="left_shoulder_pan_joint" type="revolute">
-    <origin rpy="0 0 0" xyz="0.0 0 0.0"/>
-    <!-- parent link="${side}_arm_base_link" /-->
-    <parent link="left_shoulder_pan_link"/>
-    <child link="left_shoulder_link"/>
-    <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
-<!--
-    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-1.12" soft_upper_limit="1.12"/>
--->
-    <dynamics damping="50" friction="1"/>
-  </joint>
   <joint name="left_shoulder_caster_joint" type="fixed">
     <axis xyz="0 0 0"/>
-    <parent link="left_shoulder_link"/>
+    <parent link="left_shoulder_pan_link"/>
     <child link="left_shoulder_caster_link"/>
     <origin rpy="0 0 0" xyz="-0.0508 0.0 0.1868805"/>
   </joint>
@@ -1420,8 +1413,11 @@ hokuyo side bar dimensions:
     <child link="left_upper_linear_actuator_link"/>
   </joint>
   <joint name="left_shoulder_tilt_joint" type="revolute">
+<!--
     <origin rpy="0 0 0" xyz="0.0508 0 0.0"/>
-    <parent link="left_shoulder_link"/>
+-->
+    <origin rpy="0 0 0" xyz="0.057 0 0.0"/>
+    <parent link="left_shoulder_pan_link"/>
     <child link="left_upper_arm_link"/>
     <axis xyz="0 -1 0"/>
     <limit effort="300" lower="0.268" upper="1.213" velocity=".23"/>
@@ -1639,22 +1635,6 @@ hokuyo side bar dimensions:
       </material>
     </visual>
   </link>
-  <link name="left_shoulder_link">
-    <inertial>
-      <mass value="0.405"/>
-      <origin rpy="0 0 0" xyz="0.02988871 0 0.02056699"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <geometry>
-        <box size="0.1016 0.1016 0.00635"/>
-      </geometry>
-      <material name="Silver1">
-        <color rgba="0 0.9 0.9 1.0"/>
-      </material>
-    </visual>
-  </link>
   <link name="left_shoulder_caster_link">
     <!-- 14.715 inches from linact to caster -->
     <visual>
@@ -1804,21 +1784,9 @@ hokuyo side bar dimensions:
     <stopKp value="1000000.0"/>
     <fudgeFactor value="1.0"/>
   </gazebo>
-  <joint name="right_shoulder_pan_joint" type="revolute">
-    <origin rpy="0 0 0" xyz="0.0 0 0.0"/>
-    <!-- parent link="${side}_arm_base_link" /-->
-    <parent link="right_shoulder_pan_link"/>
-    <child link="right_shoulder_link"/>
-    <axis xyz="0 0 1"/>
-    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
-<!--
-    <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-1.12" soft_upper_limit="1.12"/>
--->
-    <dynamics damping="50" friction="1"/>
-  </joint>
   <joint name="right_shoulder_caster_joint" type="fixed">
     <axis xyz="0 0 0"/>
-    <parent link="right_shoulder_link"/>
+    <parent link="right_shoulder_pan_link"/>
     <child link="right_shoulder_caster_link"/>
     <origin rpy="0 0 0" xyz="-0.0508 0.0 0.1868805"/>
   </joint>
@@ -1858,8 +1826,11 @@ hokuyo side bar dimensions:
     <child link="right_upper_linear_actuator_link"/>
   </joint>
   <joint name="right_shoulder_tilt_joint" type="revolute">
+<!--
     <origin rpy="0 0 0" xyz="0.0508 0 0.0"/>
-    <parent link="right_shoulder_link"/>
+-->
+    <origin rpy="0 0 0" xyz="0.057 0 0.0"/>
+    <parent link="right_shoulder_pan_link"/>
     <child link="right_upper_arm_link"/>
     <axis xyz="0 -1 0"/>
     <!--
@@ -2064,22 +2035,6 @@ hokuyo side bar dimensions:
   </link>
 <!-- ==========ARD CUT HERE ========== -->
   <link name="right_shoulder_pan_link">
-    <inertial>
-      <mass value="0.405"/>
-      <origin rpy="0 0 0" xyz="0.02988871 0 0.02056699"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-    <visual>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
-      <geometry>
-        <box size="0.1016 0.1016 0.00635"/>
-      </geometry>
-      <material name="Silver1">
-        <color rgba="0 0.9 0.9 1.0"/>
-      </material>
-    </visual>
-  </link>
-  <link name="right_shoulder_link">
     <inertial>
       <mass value="0.405"/>
       <origin rpy="0 0 0" xyz="0.02988871 0 0.02056699"/>

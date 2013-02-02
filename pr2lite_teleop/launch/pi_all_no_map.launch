@@ -1,0 +1,11 @@
+<launch>
+
+  <include file="$(find pr2lite_bringup)/launch/openni_node.launch" />
+  
+  <include file="$(find pr2lite_teleop)/launch/throttle_camera.launch" />
+
+  <include file="$(find pr2lite_teleop)/launch/pi_drivers.launch" />
+    
+  <include file="$(find pr2lite_teleop)/launch/pi_rosbridge.launch" />
+  
+</launch>

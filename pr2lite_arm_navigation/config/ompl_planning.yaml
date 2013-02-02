@@ -21,7 +21,7 @@ right_arm:
     - LBKPIECEkConfig1
   projection_evaluator: joint_state
 left_arm_cartesian:
-  parent_frame: top_shelf_link
+  parent_frame: left_arm_shelf_link
   physical_group: left_arm
   planner_type: RPYIKTaskSpacePlanner
   state_spaces:
@@ -54,11 +54,11 @@ left_arm_cartesian:
     - LBKPIECEkConfig1
   kinematics_solver: arm_kinematics_constraint_aware/KDLArmKinematicsPlugin
   tip_name: left_wrist_roll_link
-  root_name: top_shelf_link
+  root_name: left_arm_shelf_link
   projection_evaluator: joint_state
   longest_valid_segment_fraction: 0.001
 right_arm_cartesian:
-  parent_frame: top_shelf_link
+  parent_frame: right_arm_shelf_link
   physical_group: right_arm
   planner_type: RPYIKTaskSpacePlanner
   state_spaces:
@@ -91,8 +91,6 @@ right_arm_cartesian:
     - LBKPIECEkConfig1
   kinematics_solver: arm_kinematics_constraint_aware/KDLArmKinematicsPlugin
   tip_name: right_wrist_roll_link
-  root_name: top_shelf_link
+  root_name: right_arm_shelf_link
   projection_evaluator: joint_state
   longest_valid_segment_fraction: 0.001
-
-

@@ -6,9 +6,10 @@
     <!--  If your IMU is oriented to base link, you can just fill the frame with base link.  Otherwise, publish a static tf publisher from base_link to imu_frame for how your IMU is oriented relative to your base_link. 
    change: imu_link to: base_link
    change: imu_link to: base_footprint?
+
+    <node pkg="tf" type="static_transform_publisher" name="imu_tf" args="0 0 1.0 3 0 0 0 map imu_link 50" />
 -->
 
-    <node pkg="tf" type="static_transform_publisher" name="imu_tf" args="0 0 1.03 0 0 0 map base_footprint 50" />
 
     <node pkg="imu_um6" type="imu_pose.py" name="imu_pose" output="screen" respawn="false">
         <remap from="imu_data" to="imu/data"/>

@@ -103,7 +103,8 @@ void odometryUpdate(void)
   //first, we'll publish the transform over tf
   geometry_msgs::TransformStamped odom_trans;
   odom_trans.header.stamp = current_time;
-  odom_trans.header.frame_id = "wheelodom";
+  // odom_trans.header.frame_id = "wheelodom";
+  odom_trans.header.frame_id = "odom";
   odom_trans.child_frame_id = "base_link";
 
   odom_trans.transform.translation.x = x;
@@ -112,12 +113,16 @@ void odometryUpdate(void)
   odom_trans.transform.rotation = odom_quat;
 
   //send the transform
-  odom_broadcaster.sendTransform(odom_trans);
+  // don't send tf per http://answers.ros.org/question/11682/robot_pose_ekf-with-an-external-sensor/
+  // odom_broadcaster.sendTransform(odom_trans);
 
   //next, we'll publish the odometry message over ROS
   nav_msgs::Odometry odom;
   odom.header.stamp = current_time;
-  odom.header.frame_id = "wheelodom";
+  // odom.header.frame_id = "wheelodom";
+  // odom.header.frame_id = "odom";
+  // use odom_combined per http://answers.ros.org/question/11682/robot_pose_ekf-with-an-external-sensor/
+  odom.header.frame_id = "odom_combined";
 
   //set the position
   odom.pose.pose.position.x = x;
@@ -127,7 +132,9 @@ void odometryUpdate(void)
   odom.pose.covariance = odom_pose_covariance;
 
   //set the velocity
-  odom.child_frame_id = "base_link";
+  // odom.child_frame_id = "base_link";
+  // use base_footprint per http://answers.ros.org/question/11682/robot_pose_ekf-with-an-external-sensor/
+  odom.child_frame_id = "base_footprint";
   odom.twist.twist.linear.x = vx;
   odom.twist.twist.linear.y = vy;
   odom.twist.twist.angular.z = vth;
@@ -197,7 +204,8 @@ int main(int argc, char** argv)
 
   ros::NodeHandle n;
   ros::param::get("~fake_localization", fake_localization);
-  odom_pub = n.advertise<nav_msgs::Odometry>("wheelodom", 50);
+  // odom_pub = n.advertise<nav_msgs::Odometry>("wheelodom", 50);
+  odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
   ros::Subscriber odom_sub;
   if (fake_localization)
     odom_sub = n.subscribe("cmd_vel", 50, cmdVelCallback);
