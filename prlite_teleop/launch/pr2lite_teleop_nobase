@@ -1,0 +1,11 @@
+/opt/ros/electric/stacks/prlite/prlite_teleop/launch/pr2lite_kill
+cd /opt/ros/electric/stacks/prlite
+roscore &
+./pc_485net_raw/src/pc_485net_raw.py &
+sleep 5
+./net_485net_packet_handler/src/485net_packet_sorter.py &
+sleep 5
+./net_485net_id_handler/src/id_server.py &
+sleep 5
+cd /opt/ros/electric/stacks/prlite/prlite_teleop/launch
+roslaunch prlite_electric.launch 
