@@ -10,6 +10,12 @@
   <url>http://ros.org/wiki/pc_485net_raw</url>
   <depend package="rospy"/>
   <depend package="packets_485net"/>
+  <depend package="pr2_controllers_msgs"/>
+  <depend package="dynamixel_controllers"/>
+  <depend package="dynamixel_driver"/>
+  <depend package="dynamixel_msgs"/>
+  <depend package="sensor_msgs"/>
+
 
 </package>
 

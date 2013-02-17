@@ -93,17 +93,27 @@ def tx_packet(packet):
 	#There is no good way to determine if the bus is free
 	#We just transmit
 	global ser
+	delay150us = bytearray.fromhex(u'FF') * 19
+	delay312us = bytearray.fromhex(u'FF') * 39
+	#ser.setRTS(False)
+	#ser.setDTR(False)
+	#ser.write(packet.data)
+	#ser.flush()
 	ser.setRTS(False)
 	ser.setDTR(False)
 	ser.write(packet.data)
 	ser.flush()
-	#we really really need a fix for this
-	time.sleep(0.01)
-	#change time from 0.2 to 0.01 and appear ok
-	#send command twice in a row; the second time, no one should be on the bus
+	ser.write(delay312us)
+	ser.flush()
 	ser.write(packet.data)
 	ser.flush()
-	time.sleep(0.01)
+	ser.write(delay150us)
+	ser.flush()
+	#we really really need a fix for this
+	#time.sleep(0.01)
+	#change time from 0.2 to 0.01 and appear ok
+	#send command twice in a row; the second time, no one should be on the bus
+	#time.sleep(0.01)
 	ser.setRTS(True)
 	ser.setDTR(True)
 

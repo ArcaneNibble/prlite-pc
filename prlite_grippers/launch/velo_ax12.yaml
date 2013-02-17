@@ -1,0 +1,14 @@
+velo_controller:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller_dual_motor
+        type: JointPositionControllerDual
+    joint_name: velo_joint
+    joint_speed: 1.0
+    motor_master:
+        id: 9
+        init: 512
+        min: 0
+        max: 1023
+    motor_slave:
+        id: 25

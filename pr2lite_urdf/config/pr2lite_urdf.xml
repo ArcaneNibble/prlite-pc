@@ -1478,7 +1478,10 @@ hokuyo side bar dimensions:
     <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <joint name="left_wrist_flex_joint" type="revolute">
+<!-- ARD
     <origin rpy="0 0 0" xyz="0.1778 0 0"/>
+-->
+    <origin rpy="0 0 0" xyz="0.18 0 0"/>
     <parent link="left_forearm_link"/>
     <child link="left_wrist_flex_link"/>
     <axis xyz="0 1 0"/>
@@ -1893,7 +1896,10 @@ hokuyo side bar dimensions:
     <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <joint name="right_wrist_flex_joint" type="revolute">
+<!--
     <origin rpy="0 0 0" xyz="0.1778 0 0"/>
+-->
+    <origin rpy="0 0 0" xyz="0.18 0 0"/>
     <parent link="right_forearm_link"/>
     <child link="right_wrist_flex_link"/>
     <axis xyz="0 -1 0"/>

@@ -1,0 +1,15 @@
+http://vanadium-ros-pkg.googlecode.com/svn/trunk/simple_arms/simple_arm_server/src/simple_move_arm_server.cpp
+
+
+        gripper = nh.advertise<std_msgs::Float64>("/gripper_controller/command", 1, false);
+
+            else if( action.type == simple_arm_server::ArmAction::MOVE_GRIPPER )
+            {
+                ROS_INFO("Move gripper to %f.", action.command);
+                std_msgs::Float64 msg;
+                msg.data = action.command;
+                gripper.publish( msg );
+                ros::Duration(action.move_time).sleep();
+            }
+
+distance apart is the msg.data

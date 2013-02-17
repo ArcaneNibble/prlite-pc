@@ -1,0 +1,18 @@
+<package>
+  <description brief="prlite_grippers">
+
+     prlite_grippers
+
+  </description>
+  <author>ros</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/prlite_grippers</url>
+  <depend package="rospy"/>
+  <depend package="trajectory_msgs"/>
+  <depend package="dynamixel_controllers"/>
+  <depend package="tf"/>
+
+</package>
+
+

@@ -1,0 +1,28 @@
+<!-- -*- mode: XML -*- -->
+
+<launch>
+     <!-- Start gripper single joint controllers and gripper action controller -->
+    <rosparam file="$(find wubble2_robot)/config/wubble_gripper.yaml" command="load"/>
+    <node name="gripper_controller_spawner" pkg="dynamixel_hardware_interface" type="controller_spawner.py"
+          args="--manager=wubble_motor_manager
+                --port=wubble2LowerArm
+                left_finger_controller
+                right_finger_controller"
+          output="screen"/>
+          
+    <node name="gripper_action_controller_spawner" pkg="dynamixel_hardware_interface" type="controller_spawner.py"
+          args="--manager=wubble_motor_manager
+                --port=multi_joint_dummy_port
+                l_gripper_controller"
+          output="screen"/>
+          
+    <!-- Start gripper grasp action controller -->
+    <node name="gripper_grasp_controller" pkg="wubble2_robot" type="wubble_gripper_grasp_controller.py" output="screen" >
+        <param name="object_presence_pressure_threshold" value="1073.50"/>
+        <param name="object_presence_opening_threshold" value="0.026"/>
+        <param name="gripper_action_name" value="/wubble_gripper_action"/>
+        <param name="posture_action_name" value="/wubble_gripper_grasp_action"/>
+        <param name="grasp_query_name" value="/wubble_grasp_status"/>
+    </node>
+</launch>
+
