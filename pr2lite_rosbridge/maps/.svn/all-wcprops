@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/maps
+END
+test_map.png
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/maps/test_map.png
+END
+test_map.yaml
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/maps/test_map.yaml
+END

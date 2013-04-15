@@ -1,0 +1,8 @@
+<launch>
+  <node pkg="pi_remote" type="laptop_battery.py" name="laptop_battery" output="screen">
+     <rosparam>
+        rate: 1
+        battery_number: 1
+     </rosparam>
+  </node>
+</launch>

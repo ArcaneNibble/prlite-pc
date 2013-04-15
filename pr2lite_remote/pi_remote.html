@@ -1,0 +1,418 @@
+<!-- pi_remote.html - Version 0.1 2012-09-22
+
+     An HTML5/rosbridge script to teleop and monitor a ROS robot
+
+     Created for the Pi Robot Project: http://www.pirobot.org
+     Copyright (c) 2012 Patrick Goebel.  All rights reserved.
+
+     This program is free software; you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+     the Free Software Foundation; either version 2 of the License, or
+     (at your option) any later version.5
+    
+     This program is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details at:
+    
+     http://www.gnu.org/licenses/gpl.html
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+  
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+  <title>Pi Remote</title>
+
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=0.75, user-scalable=yes">
+
+  <!-- Load the rosbridge library -->
+  <script type="text/javascript" src="js/ros.js"></script>
+
+  <!-- Load the Kinectic JS library -->
+  <script type="text/javascript" src="js/kinetic-v4.3.3.min.js"></script>
+ 
+  <!-- Load one of the jQWidgets styles -->
+  <link rel="stylesheet" href="js/jqwidgets/styles/jqx.base.css" type="text/css" />
+  <link rel="stylesheet" href="js/jqwidgets/styles/jqx.darkblue.css" type="text/css" />
+  <link rel="stylesheet" href="js/jqwidgets/styles/jqx.ui-start.css" type="text/css" />
+  <link rel="stylesheet" href="js/jqwidgets/styles/jqx.summer.css" type="text/css" />
+
+  <!-- Load the pi_remote styles -->
+  <link rel="stylesheet" href="styles/pi_remote.css" type="text/css" />
+
+  <!-- Load the jQuery script -->
+  <script type="text/javascript" src="js/jqwidgets/scripts/jquery-1.8.1.min.js"></script>
+
+  <!-- Load the jQWidgets framework -->
+  <script type="text/javascript" src="js/jqwidgets/jqxcore.js"></script>
+  <script type="text/javascript" src="js/jqwidgets/jqxtouch.js"></script>
+
+  <!-- Load one or more widgets -->
+  <script type="text/javascript" src="js/jqwidgets/jqxbuttons.js"></script>
+  <script type="text/javascript" src="js/jqwidgets/jqxswitchbutton.js"></script>
+  <script type="text/javascript" src="js/jqwidgets/jqxtabs.js"></script>
+  <script type="text/javascript" src="js/jqwidgets/jqxchart.js"></script>
+  <script type="text/javascript" src="js/jqwidgets/jqxdata.js"></script>
+  <script type="text/javascript" src="js/jqwidgets/jqxgauge.js"></script>
+  <script type="text/javascript" src="js/jqwidgets/jqxslider.js"></script>
+  <script type="text/javascript" src="js/jqwidgets/jqxscrollbar.js"></script>
+
+  <script type="text/javascript">
+    function init() {
+        function waitForDOM() {
+            var video = document.getElementById('video_container');
+            var video2 = document.getElementById('video2_container');
+            if (video == null || video2 == null) {
+                setTimeout(waitForDOM, 100);
+            }
+        }    
+    }
+
+    var leftHanded = true;
+
+    $(document).ready(function () {
+       // Create Switch Button.
+       $(".moveBase").jqxTouch();
+       $("#moveBase").jqxButton({ theme: 'ui-start', width: '200', height: '50', roundedCorners: 'all' });
+       $("#moveBaseCancel").jqxButton({ theme: 'ui-start', width: '200', height: '50' });
+
+       $('#headPanTemp').jqxLinearGauge({
+          caption: 'Head Pan',
+          orientation: 'vertical',
+          max: 70,
+          min: 0,
+          width: 150,
+          height: 350,
+          pointer: {size: 30, offset: 0, style: {fill: "#33FF33"}},
+          colorScheme: 'scheme02',
+          labels: {position: 'near', interval: 10, offset: 5},
+          ticksPosition: 'near', 
+          ticksMajor: { size: '20%', interval: 10 },
+          ticksMinor: { visible: false },
+          showRanges: false,
+          value: 0
+       });
+
+       $('#headTiltTemp').jqxLinearGauge({
+          caption: 'Head Tilt',
+          orientation: 'vertical',
+          max: 70,
+          min: 0,
+          width: 150,
+          height: 350,
+          pointer: {size: 30, offset: 0, style: {fill: "#33FF33"}},
+          colorScheme: 'scheme02',
+          labels: {position: 'near', interval: 10, offset: 5},
+          ticksPosition: 'near', 
+          ticksMajor: { size: '20%', interval: 10},
+          ticksMinor: { visible: false },
+          showRanges: false,
+          value: 0
+       });
+
+       $('#baseLinearSpeed').html(maxLinearSpeed + ' m/s');
+
+       $('#baseLinearSpeedSlider').jqxSlider({
+          max: 0.5,
+          min: 0,
+          width: 380,
+          height: 100,
+          step: 0.1,
+          ticksPosition: 'both',
+          ticksFrequency: 0.1,
+          tickSize: 10,
+          showTicks: true,
+          value: 0.25
+       });
+
+       $('#baseLinearSpeedSlider').bind('change', function (event) {
+          $('#baseLinearSpeed').html(Math.round(event.args.value * 100)/100  + ' m/s');
+          maxLinearSpeed = Math.round(event.args.value * 100)/100;
+       });
+
+       $('#baseAngularSpeed').html(maxAngularSpeed + ' rad/s');
+
+       $('#baseAngularSpeedSlider').jqxSlider({
+          max: 3,
+          min: 0,
+          width: 380,
+          height: 100,
+          step: 0.2,
+          ticksPosition: 'both',
+          ticksFrequency: 0.2,
+          tickSize: 10,
+          showTicks: true,
+          value: 1.0
+       });
+
+       $('#baseAngularSpeedSlider').bind('change', function (event) {
+          $('#baseAngularSpeed').html(Math.round(event.args.value * 100)/100  + ' rad/s');
+          maxAngularSpeed = Math.round(event.args.value * 100)/100;
+       });
+
+/*
+       var baseLaserChartSettings = {
+          title: "",
+          description: "",
+          showLegend: false,
+          showBorderLine: false,
+          padding: { left: 5, top: 5, right: 5, bottom: 5 },
+          titlePadding: { left: 90, top: 0, right: 0, bottom: 10 },
+          source: baseLaserScanArray,
+          categoryAxis:
+          {
+             dataField: 'index',
+             showGridLines: false,
+             unitInterval: 5
+          },
+          colorScheme: 'scheme02',
+          seriesGroups:
+          [
+             {
+                type: 'column',
+                columnsGapPercent: 20,
+                seriesGapPercent: 20,
+                valueAxis:
+                {
+                    unitInterval: 1.0,
+                    minValue: 0.1,
+                    maxValue: 3,
+                    displayValueAxis: false,
+                    description: '',
+                    axisSize: 'auto',
+                    tickMarksColor: '#888888'
+                },
+                series: [
+                        { dataField: 'range', displayText: 'Range'},
+                    ]
+            }
+        ]
+      };
+
+      $('#baseLaserChart').jqxChart(baseLaserChartSettings);
+*/
+
+       // create jqxtabs.
+       $('#jqxtabs').jqxTabs({
+           width: '100%',
+           keyboardNavigation: false
+        });
+
+       $('#jqxtabs').bind('selected', function (event) {
+         var item = event.args.item;
+         var title = $('#jqxtabs').jqxTabs('getTitleAt', item);
+       });
+     });
+  </script>
+</head>
+  <body class="default" onLoad="init();" style="background:#AAAAAA;">
+    <div id='jqxtabs'>
+        <ul style='margin-left: 20px; font-size: 22px;'>
+            <li>Main Panel</li>
+            <li>Navigation</li>
+            <li>Diagnostics</li>
+            <li>Parameters</li>
+        </ul>
+        <div>
+           <!-- *** The Main Tab  *** -->
+	   <form method="get" action="./" name="controller">
+	     <!-- <h1>Pi Robot Remote Control</h1> -->
+	     <table width="100%" border="1" cellpadding="1" cellspacing="1">
+	     <tr>
+	       <td>
+		 <table width="100%" border="0" align="center">
+                   <tr>
+		     <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+		     <td style="width:720px;">
+		       <div id="video_container" style="margin-left:15px;position:relative;display:block;"></div>
+		       <div id="video2_container" style="margin-left:15px;position:relative;display:none;"></div>
+		     </td>
+                   </tr>
+                   <tr>
+		     <td style="text-align:center;height:25px;">
+		       <span id="video_messages">Video Status Messages Here</span>
+		     </td>
+		   </tr>
+                 </table>
+	       </td>
+	       <td style="vertical-align:top;">
+                 <fieldset><legend >Base Control</legend>
+                   <div id="base_messages" style="height:35px;margin-left:40px;"></div>
+                   <table border="0" width="80%" align="center">
+                     <tr>
+                       <td>&nbsp;</td>
+                       <td align="middle"><img id="base_forward" src="images/arrow-up.jpg" width="72" height="72" onClick="driveRobot('forward');" align="middle"></td>
+                       <td>&nbsp;</td>
+                     </tr>
+                     <tr>
+                       <td align="right"><img id="base_left" src="images/arrow-left.jpg" width="72" height="72" onClick="driveRobot('left');"></td>
+                       <td align="middle"><input type="button" class="stop_robot" value="STOP" onClick="stopRobot();"></td>
+                       <td align="left"><img id="base_right" src="images/arrow-right.jpg" width="72" height="72" onClick="driveRobot('right');"></td>
+                     </tr>
+                     <tr>
+                       <td>&nbsp;</td>
+                       <td align="middle"><img id="base_backward" src="images/arrow-down.jpg" width="72" height="72" onClick="driveRobot('backward');"></td>
+                       <td>&nbsp;</td>
+                     </tr>
+                     <tr>
+		       <td colspan="3">
+			 <table border="0">
+			   <tr><td>&nbsp;<br/></td></tr>
+			   <tr>
+			     <td align="middle"><span style="font-size:16px;font-weight:bold;">Speed: <output id="fixed_linear_speed_display">0.12</output></span><br><input type="range" id="fixed_linear_speed" name="fixed_linear_speed" min="0.01" max="0.5" step="0.01" value="0.12" onChange="fixed_linear_speed_display.value=this.value;setFixedLinearSpeed(this.value);" /></td>
+			     <td align="middle"><span style="font-size:16px;font-weight:bold;">Rotation: <output id="fixed_angular_speed_display">0.4</output></span><br><input type="range" id="fixed_angular_speed" name="fixed_angular_speed" min="0.1" max="2.0" step="0.1" value="0.4" onChange="fixed_angular_speed_display.value=this.value;setFixedAngularSpeed(this.value);" /></td>
+			   </tr>
+			 </table>
+			 <tr><td>&nbsp;<br/></td></tr>
+		     </tr>
+                   </table>
+                 </fieldset>
+		 <fieldset><legend>Head Pan/Tilt</legend>
+		   <br>
+		   <table border="0" align="center" cellpadding="2">
+                     <tr>
+                       <td><input type="button" class="center_servos" value="Center" onClick="centerHeadServos();"></td>
+                       <td><input type="button" class="relax_servos" value="Relax" onClick="relaxAllServos();"></td>
+                       <td><input type="button" class="drive_view" value="Drive View" onClick="drivePanTilt();"></td>
+                     </tr>
+                   </table>
+		 </fieldset>
+	       </td>
+	     </tr>
+	     <tr>
+	       <td style="vertical-align: top;">
+		 <fieldset><legend>Robot Status</legend>
+		   <table width="100%" style="vertical-align:top;text-align:center;"><tr>
+		       <td align="center">
+                         <table border="0">
+                           <tr><td align="middle"><meter id="robot_battery" style="width:120px;height:25px;#F00;text-align:center;" min="0" max="100" low="25" high="40" optimum="100" value="50">RB</meter></td>
+                             <td><span id="robot_charging">&nbsp;<p></span></td>
+                           </tr>
+                           <tr>
+                             <td align="middle"><span id="robot_battery_status" style="font-size:16px;">Robot Battery</span></td>
+                             <td>&nbsp;</td>
+                           </tr>
+                         </table>
+		       <td><div style="text-align: center;"><input type="button" id="servo_status" class="servo_status" value="  "></div><br><span style="font-size:18px;">Servos</span></td>
+		       <td align="center">
+                         <table border="0">
+                           <tr><td align="middle"><meter id="laptop_battery" style="width:120px;height:25px;#F00;text-align:center;" min="0" max="100" low="25" high="40" optimum="100" value="50">LB</meter></td>
+                             <td><span id="laptop_charging">&nbsp;<p></span></td>
+                           </tr>
+                           <tr>
+                             <td align="middle"><span id="laptop_battery_status" style="font-size:16px;">Laptop Battery</span></td>
+                             <td>&nbsp;</td>
+                           </tr>
+                         </table>
+		       </td>
+		   </tr></table>
+		 </fieldset>
+	       </td>
+	       <td style="vertical-align: top;">
+		 <fieldset><legend>Auto Stop</legend>
+                   <table border="0">
+                     <tr><td>
+			 <span style="font-size:16px;font-weight:bold;">Sonar Auto Stop? </span><input type="checkbox" id="sonar_auto_stop" onChange="toggleSonarAutoStop();" checked><p>
+			   <span style="font-size:16px;font-weight:bold;">Laser Auto Stop? </span><input type="checkbox" id="laser_auto_stop" onChange="toggleLaserAutoStop();" checked>
+                       </td>
+                       <td align="center"><span style="font-size:16px;font-weight:bold;">Range: <output id="auto_stop_range_display">2</output> feet</span><p>
+                           <input type="range" id="auto_stop_range" name="auto_stop_range" min="1" max="6" step="0.2" value="2" onChange="auto_stop_range_display.value=this.value;setAutoStopRange(this.value);" />
+</td>
+                     </tr>
+                   </table>
+		 </fieldset>
+	       </td>
+	     </tr>
+	     </table>
+	     <br>
+	   </form>
+        </div>
+        <div>
+           <!-- *** The Navigation Tab *** -->
+	   <form method="get" action="./" name="controller">
+	     <table style="width: 100%;" border="1" cellpadding="1" cellspacing="1">
+	       <tbody>
+		 <tr>
+		   <td style="vertical-align: top;">
+		     <fieldset><legend>Navigation Map</legend>
+		       <table width="100%"><tr>
+			   <td width="20%">
+			     &nbsp;
+			   </td>
+			   <td width="40%">
+			     <div id="map_container"></div>
+			   </td>
+			   <td width="20%" align="right">
+			     <div style="text-align: center;"><input type="button" class="set_pose" id="set_pose" value="Set Pose" onClick="setPose();"></div><br><br>
+			     <div style="text-align: center;"><input type="button" class="move_base" id="move_base" value="Move Base" onClick="moveBase();"></div><br><br>
+			     <div style="text-align: center;"><input type="button" class="move_base_cancel" id="move_base_cancel" value="Pause/Cancel" onClick="moveBaseCancel();"></div><br>
+			     <!--
+				 <div style="text-align: center;"><input type="button" value="Zoom +" style="font-size:18px;" onClick="zoomInMap();"></div>
+				 <br>
+				 <div style="text-align: center;"><input type="button" value="Zoom -" style="font-size:18px;" onClick="zoomOutMap();"></div>
+				 -->
+			   </td>
+		       </tr></table>
+		     </fieldset>
+		   </td>
+		 </tr>
+	       </tbody>
+	     </table>
+	   </form>
+        </div>
+        <div>
+           <!-- *** The Diagnostics Tab ***-->
+	   <form method="get" action="./" name="controller">
+	     <!-- <h1>Pi Robot Remote Control</h1> -->
+	     <table width="100%" border="1" cellpadding="1" cellspacing="1">
+	       <tbody>
+		 <tr>
+		   <td style="vertical-align: top;">
+		     <fieldset><legend>Servo Temp</legend>
+		       <table><tr>
+			   <td style="text-align:center; font-size: 18px;"><div id="headPanTemp"></div>Pan</td>
+			   <td>&nbsp;</td>
+			   <td style="text-align:center; font-size: 18px;"><div id="headTiltTemp"></div>Tilt</td>
+		       </tr></table>
+		     </fieldset>
+		     <br>
+		   </td>
+		 </tr>
+	       </tbody>
+	     </table>
+	   </form>
+        </div>
+        <div>
+           <!-- *** The Parameters Tab *** -->
+	   <form method="get" action="./" name="controller">
+
+	     <table width="100%" border="1" cellpadding="1" cellspacing="1">
+	       <tbody>
+		 <tr>
+		   <td style="vertical-align: top;">
+		     <fieldset><legend>Base Speed</legend>
+		       <table border="1" style="font-size:18px;">
+			 <tr><td style="text-align:right;verticle-align:top;font-size:18px;" >Max Linear Speed
+			     <div id="baseLinearSpeed"></div>
+     			     <div id="baseLinearSpeedSlider"></div>
+			 </td></tr>
+			 <tr><td>Max Angular Speed
+			     <div style="text-align:right;verticle-align:top;font-size:18px;" id="baseAngularSpeed"></div>
+  			     <div id="baseAngularSpeedSlider" style="verticle-align:bottom;"></div>
+			 </td></tr>
+		       </table>
+		     </fieldset>
+		 </td></tr>
+	       </tbody>
+	     </table>
+	   </form>
+        </div>
+    </div>
+</div>
+<!-- The rosbridge/kineticJS code has to be included at the end -->
+<script type="text/javascript" src="js/pi_remote.js"></script>
+</body>
+</html>

@@ -122,15 +122,11 @@ FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
         self.max_speed = 0.1
           
         for c in self.controllers:
-          if c != 'left_upper_arm_hinge_controller' and c !=
-
-'right_upper_arm_hinge_controller':
+          if c != 'left_upper_arm_hinge_controller' and c != 'right_upper_arm_hinge_controller':
             c_srv = rospy.Publisher(c + '/command', Float64)
             self.position_pub.append(c_srv)
             rospy.loginfo("Real pos pub " + c)
-            if c != 'left_shoulder_tilt_controller' and c !=
-
-'right_shoulder_tilt_controller':
+            if c != 'left_shoulder_tilt_controller' and c != 'right_shoulder_tilt_controller':
               speed_service = c + '/set_speed'
               rospy.wait_for_service(speed_service)
               srv = rospy.ServiceProxy(speed_service, SetSpeed)
@@ -243,17 +239,11 @@ self.fudge_value[j]
           velocity = abs((desired-msg.position[j])/ (endsecs-nowsecs))
           if velocity > self.max_speed:
             velocity = self.max_speed
-          if self.joints[j] != 'left_upper_arm_hinge_joint' and self.joints[j] !=
-
-'right_upper_arm_hinge_joint':
-            if self.joints[j] != 'left_shoulder_tilt_joint' and self.joints[j] !=
-
-'right_shoulder_tilt_joint':
+          if self.joints[j] != 'left_upper_arm_hinge_joint' and self.joints[j] != 'right_upper_arm_hinge_joint':
+            if self.joints[j] != 'left_shoulder_tilt_joint' and self.joints[j] != 'right_shoulder_tilt_joint':
                self.speed_services[j] = velocity
             self.position_pub[j].publish(desired)
-            rospy.loginfo('Trajectory ' + str(j) + ' ' + self.joints[j] + str
-
-(desired) + ' ' +  + str(fudge_value[j]) + ' ' + str(velocity))
+            rospy.loginfo('Trajectory ' + str(j) + ' ' + self.joints[j] + str(desired) + ' ' +  + str(fudge_value[j]) + ' ' + str(velocity))
         return      
 
 if __name__ == '__main__':

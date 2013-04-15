@@ -1,0 +1,7 @@
+<launch>
+  <!-- run chess_board_locator & friends -->
+
+  <node pkg="pr2lite_chess" type="chess_board_locator" name="chess_board_locator"/>
+  <node pkg="pr2lite_chess" type="tf_turnpike.py" name="tf_turnpike"/>
+
+</launch>

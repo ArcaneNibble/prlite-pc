@@ -1,0 +1,7 @@
+pyserial:
+  ubuntu:
+    oneric: 
+      apt:
+        packages: [python-serial]
+
+

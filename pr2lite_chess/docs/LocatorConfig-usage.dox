@@ -1,0 +1,11 @@
+\subsubsection usage Usage
+\verbatim
+<node name="chess_board_locator" pkg="pr2lite_chess" type="chess_board_locator">
+  <param name="h_rho" type="int" value="1" />
+  <param name="h_threshold" type="int" value="50" />
+  <param name="h_min_length" type="int" value="100" />
+  <param name="channel" type="int" value="0" />
+  <param name="output_image" type="bool" value="True" />
+</node>
+\endverbatim
+

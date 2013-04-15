@@ -1,0 +1,19 @@
+<launch>
+
+  <node name="joy" pkg="joy" type="joy_node" output="screen">
+     <param name="deadzone" value="0.1" />
+  </node>
+  
+  <node name="pi_joystick" pkg="pi_remote" type="pi_joystick.py" output="screen">
+     <rosparam>
+        max_linear_speed: 0.2
+        max_angular_speed: 0.8
+        speed_increment: 0.025
+        angular_deadzone: 0.5
+        default_head_pan_speed: 0.45
+        default_head_tilt_speed: 0.3
+        tilt_deadzone: 0.4
+        use_servos: True
+     </rosparam>
+  </node>
+</launch>

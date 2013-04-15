@@ -16,7 +16,7 @@ client = actionlib.SimpleActionClient('torso_controller/position_joint_action',
 client.wait_for_server()
 
 #client.send_goal(SingleJointPositionGoal(position = 0.2))
-client.send_goal(SingleJointPositionGoal(position = 0.0))
+client.send_goal(SingleJointPositionGoal(position = 0.17))
 client.wait_for_result()
 if client.get_state() == GoalStatus.SUCCEEDED:
     print "Success"

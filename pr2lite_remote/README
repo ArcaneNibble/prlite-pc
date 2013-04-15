@@ -1,0 +1,110 @@
+INSTALLING the pi_remote ROS PACKAGE:
+
+STEP 1: Install the rosbridge package (Version 1.0)
+
+NOTE: This package uses version 1.0 of rosbridge, not version 2.0.  To get version 1.0, move into your
+personal ROS directory and run:
+
+$ svn co http://brown-ros-pkg.googlecode.com/svn/trunk/distribution/brown_remotelab/rosbridge
+$ cd rosbridge
+$ rosmake --rosdep-install
+
+STEP 2: Install mjpeg_server package
+
+Move into your personal ROS directory and run:
+
+$ svn co http://svn.code.sf.net/p/bosch-ros-pkg/code/trunk/stacks/mjpeg_server
+$ cd mjpeg_server
+$ rosmake --rosdep-install
+
+STEP 3: Install the pi_remote package
+
+Move into your personal ROS directory, then run the commands:
+
+$ svn co http://pi-robot-ros-pkg.googlecode.com/svn/trunk/experimental/pi_remote
+$ cd pi_remote
+$ rosmake --rosdep-install
+
+
+STEP 4: (Optional but recommended): Install the ROS By Example stack:
+
+If you want to be able to test the pi_remote package using a simple simulator, then
+install the ROS By Example stack as follows.  Move into your personal ROS directory and run:
+
+$ svn co http://ros-by-example.googlecode.com/svn/trunk/rbx_vol_1
+$ rosmake rbx_vol_1
+$ rospack profile
+
+Get the pi_remote package (if you don't already have it):
+
+STEP 5: Setting up a Web Server
+
+Before using the pi_remote package, you will need to make the pi_remote directory accessible to a web server
+running on your robot.  If you are already running the Apache webserver and you know how to add access
+to the pi_remote directory, you can go that route.
+
+A simpler method is to use the small dhttpd web server.  First, install the dhttpd package as follows:
+
+$ sudo apt-get install dhttpd
+
+(If apt-get cannot find the package, you can get it from https://launchpad.net/ubuntu/precise/i386/dhttpd/1.02a-18)
+
+The dhttpd will attempt to start on port 80 immediately after being installed and may or may not be
+successful depending on whether or not you are already using port 80.  In any event, kill this initial
+process like this:
+
+$ sudo pkill dhttpd
+
+Now run the dhttpd process on an unpriviledge port like 8181 and set the 
+pi_remote directory as the document root.  The command to do this is:
+
+$ dhttpd -p 8181 -r `rospack find pi_remote`
+
+(You can also use the shell script dhttpd.sh to accomplish the same thing.)
+
+To test that you have the webserver running correctly, bring up an HTML5 web browser like
+Google Chrome and point to
+
+http://localhost:8181/pi_remote.html
+
+or 
+
+http://localhost:8181/pi_remote_trackpads.html
+
+You should see the pi_remote GUI.
+
+STEP 6: Testing with a Fake Robot
+
+If you installed the ROS By Example stack in STEP 4 above, you can test many of the pi_remote
+controls using a fake robot and RViz.
+
+First launch the fake robot, a test map, a move_base node, and fake localization:
+
+$ roslaunch pi_remote fake_pi_remote.launch
+
+Now fire up RViz:
+
+$ rosrun rviz rviz -d `rospack find rbx1_nav`/nav_electric.vcg
+
+Then, on the same machine, point your browser to:
+
+http://localhost:8181/pi_remote.html
+
+If you already had this page up, click on the Reload button.
+
+You should now be able to move the robot in RViz with the Base Control trackpad on the right of the 
+pi_remote interface and you can pan and tilt the head of the fake robot using the left trackpad.
+
+Click on the Navigation tab and you can send the robot to different locations in the test map.
+
+STEP 7: Testing on a Tablet or a different Computer
+
+Once this is working, try it on a tablet on or another machine on your local network
+using an HTML5 browser (e.g. Chrome) and point to:
+
+http://a.b.c.d:8181/
+
+where a.b.d.d is the IP address of the webserver machine.
+
+Try the controls and observe the fake robot's motion in RViz.
+

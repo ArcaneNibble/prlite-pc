@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/798/trunk/maxwell_apps/chess_player
+END
+manifest.xml
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/798/trunk/maxwell_apps/chess_player/manifest.xml
+END
+notes
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/724/trunk/maxwell_apps/chess_player/notes
+END
+nodelets.xml
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/724/trunk/maxwell_apps/chess_player/nodelets.xml
+END
+CMakeLists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/724/trunk/maxwell_apps/chess_player/CMakeLists.txt
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/792/trunk/maxwell_apps/chess_player/Makefile
+END
+play.launch
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/798/trunk/maxwell_apps/chess_player/play.launch
+END

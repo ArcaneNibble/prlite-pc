@@ -1,13 +1,18 @@
 <launch>
+
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find pr2lite_urdf)/config/pr2lite_urdf.xml'" />
+
     <node pkg="move_arm" type="move_arm_simple_action" name="pr2lite_move_right_arm">
         <param name="group" type="string" value="right_arm" />
         <remap from="arm_ik" to="pr2lite_right_arm_kinematics/get_constraint_aware_ik" />
+        <remap from="arm_fk" to="pr2lite_right_arm_kinematics/get_fk" /> 
         <param name="controller_action_name" type="string" value="/arm_controllerR/follow_joint_trajectory" />
-
-
+        <param name="planner_service_name" type="string" value="/ompl_planning/plan_kinematic_path" />
     </node>
 </launch>
 <!--
+    <node pkg="move_arm" type="move_arm_simple_action" name="pr2lite_move_right_arm" launch-prefix="xterm -e gdb " >
+    <remap from="arm_ik" to="/opt/ros/electric/stacks/prlite/pr2lite_arm_kinematics_constraint_aware/bin/arm_kinematics_constraint_aware" />
     <node pkg="move_arm" type="move_arm_simple_action" name="pr2lite_move_right_arm" launch-prefix="xterm -e gdb dash-args" >
     <node pkg="move_arm" type="move_arm_simple_action" name="pr2lite_move_right_arm">
 -->

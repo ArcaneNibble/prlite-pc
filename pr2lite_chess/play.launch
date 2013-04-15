@@ -1,0 +1,23 @@
+<launch>
+  <!-- run stable components of chess playing -->
+
+  <!-- also run maxwell_defs bringup.launch -->
+  <include file="launch/head_camera.launch" />
+  <!-- <include file="launch/simple_arm_server.launch" /> -->
+
+<!--
+  <node pkg="pr2lite_chess" type="chess_board_locator" name="chess_board_locator" respawn="true"/>
+-->
+  <include file="launch/setup-board-locator.launch" />
+  <!-- <node pkg="pr2lite_chess" type="tf_turnpike.py" name="tf_turnpike"/> -->
+  <!-- <include file="launch/run.launch" /> -->
+  <include file="launch/run-piece-locator.launch" />
+
+  <node pkg="pr2lite_chess" type="festival_launcher.py" name="launcher"/>
+  <!--<node pkg="pr2lite_chess" type="chess_executive.py" name="chess_executive" output="screen"/>-->
+  <param name="side" value="white" />
+  <node pkg="pr2lite_chess" type="chess_executive.py" name="chess_executive" output="screen">
+    <param name="side" value="white" />
+  </node>
+
+</launch>

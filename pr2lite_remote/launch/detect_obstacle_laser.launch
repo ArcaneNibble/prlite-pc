@@ -1,0 +1,8 @@
+<launch>
+  <node pkg="pi_remote" type="detect_obstacle_laser.py" name="detect_obstacle_laser" output="screen">
+     <rosparam>
+        safe_distance: 0.6
+        sector_width: 45
+     </rosparam>
+  </node>
+</launch>

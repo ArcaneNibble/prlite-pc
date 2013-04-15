@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/765/trunk/experimental/pi_remote/launch
+END
+pi_joystick.launch
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/765/trunk/experimental/pi_remote/launch/pi_joystick.launch
+END
+fake_pi_remote.launch
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/765/trunk/experimental/pi_remote/launch/fake_pi_remote.launch
+END
+laptop_battery.launch
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/765/trunk/experimental/pi_remote/launch/laptop_battery.launch
+END
+test_mapping.launch
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/765/trunk/experimental/pi_remote/launch/test_mapping.launch
+END
+detect_obstacle_laser.launch
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/765/trunk/experimental/pi_remote/launch/detect_obstacle_laser.launch
+END
+throttle_laser.launch
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/763/trunk/experimental/pi_remote/launch/throttle_laser.launch
+END
+throttle_camera.launch
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/763/trunk/experimental/pi_remote/launch/throttle_camera.launch
+END
+fake_pi_joystick.launch
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/765/trunk/experimental/pi_remote/launch/fake_pi_joystick.launch
+END
+laptop_cam.launch
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/763/trunk/experimental/pi_remote/launch/laptop_cam.launch
+END
+tb_remote.launch
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/765/trunk/experimental/pi_remote/launch/tb_remote.launch
+END
+pi_remote.launch
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/765/trunk/experimental/pi_remote/launch/pi_remote.launch
+END

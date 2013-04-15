@@ -1,0 +1,21 @@
+<launch>
+
+  <rosparam ns="/pi_remote">
+     map_file: /maps/test_map.png
+     max_linear_speed: 0.27
+     max_angular_speed: 1.0
+     turtlebot: False
+     video_fps: 10
+     video_topic: /camera/rgb/image_color
+     video_quality: 70
+     robot_battery_topic: /arduino/sensor/main_voltage
+     <!--
+     video2_topic: /camera2/image_raw
+     video2_quality: 70
+     -->
+  </rosparam>
+
+  <node name="rosbridge" pkg="rosbridge" type="rosbridge.py" output="screen" />
+  <node name="mjpeg_server" pkg="mjpeg_server" type="mjpeg_server" output="screen" />
+
+</launch>

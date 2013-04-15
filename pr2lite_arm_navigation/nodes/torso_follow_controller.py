@@ -31,6 +31,7 @@ class TorsoFollowTrajController:
     def __init__(self):
 
         # action server for FollowController
+        self.active = 0
         self.name = "torso_controller/position_joint_action"
         #self.server = actionlib.SimpleActionServer(self.name, FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
         self.server = actionlib.SimpleActionServer(self.name, SingleJointPositionAction, execute_cb=self.actionCb, auto_start=False)
@@ -39,7 +40,6 @@ class TorsoFollowTrajController:
         # self.torso_pub = rospy.Publisher('torso_lift_joint/command', Float64)
         self.torso_pub = rospy.Publisher('torso_lift_controller/command', Float64)
         self.current_pos = -1
-        self.active = 0
         rospy.loginfo("Started TorsoFollowTrajController")
         self.server.start()
 

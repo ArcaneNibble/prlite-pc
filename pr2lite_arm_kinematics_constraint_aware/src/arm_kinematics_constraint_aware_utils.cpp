@@ -263,12 +263,22 @@ namespace arm_kinematics_constraint_aware
   bool checkLinkNames(const std::vector<std::string> &link_names,
                       const kinematics_msgs::KinematicSolverInfo &chain_info)
   {
-    if(link_names.empty())
+    if(link_names.empty()) 
+    {
+      ROS_ERROR("IK Empty Link Name: possible choices are:");
+      for(unsigned int i=0; i < chain_info.link_names.size(); i++)
+      {
+        ROS_ERROR("%s",chain_info.link_names[i].c_str());
+      }
       return false;
+    }
     for(unsigned int i=0; i < link_names.size(); i++)
     {
       if(!checkLinkName(link_names[i],chain_info))
+      {
+        ROS_ERROR("IK bad Link Name: %s",link_names[i].c_str());
         return false;
+      }
     }
     return true;   
   }
@@ -280,6 +290,11 @@ namespace arm_kinematics_constraint_aware
     {
       if(link_name == chain_info.link_names[i])
         return true;
+    }
+    ROS_ERROR("IK bad Link Name: %s",link_name.c_str());
+    for(unsigned int i=0; i < chain_info.link_names.size(); i++)
+    {
+      ROS_ERROR("IK Link chain: %s",chain_info.link_names[i].c_str());
     }
     return false;   
   }

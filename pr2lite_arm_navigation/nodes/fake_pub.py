@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import roslib; roslib.load_manifest("turtlebot_arm_bringup")
+import roslib; roslib.load_manifest("pr2lite_arm_navigation")
 import rospy
 from sensor_msgs.msg import JointState
 

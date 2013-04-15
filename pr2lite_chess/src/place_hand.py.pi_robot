@@ -1,0 +1,123 @@
+#! /usr/bin/python
+import roslib
+roslib.load_manifest('pi_dynamixel_controller')
+
+import rospy
+import actionlib
+from actionlib_msgs.msg import *
+from pr2_controllers_msgs.msg import *
+from trajectory_msgs.msg import *
+from math import pi
+from dynamixel_controllers.srv import TorqueEnable
+#from move_arm_msgs.msg import *
+from arm_navigation_msgs.msg import *
+from control_msgs.msg import FollowJointTrajectoryAction
+#from motion_planning_msgs.msg import *
+#from geometric_shapes_msgs import *
+
+def poseConstraintToPositionOrientationConstraints(pose_constraint):
+    position_constraint = PositionConstraint()
+    orientation_constraint = OrientationConstraint()
+    position_constraint.header = pose_constraint.header
+    position_constraint.link_name = pose_constraint.link_name
+    position_constraint.position = pose_constraint.pose.position
+    position_constraint.constraint_region_shape.type = 0
+    position_constraint.constraint_region_shape.dimensions.append(2*pose_constraint.absolute_position_tolerance.x)
+    position_constraint.constraint_region_shape.dimensions.append(2*pose_constraint.absolute_position_tolerance.y)
+    position_constraint.constraint_region_shape.dimensions.append(2*pose_constraint.absolute_position_tolerance.z)
+
+    position_constraint.constraint_region_orientation.x = 0.0
+    position_constraint.constraint_region_orientation.y = 0.0
+    position_constraint.constraint_region_orientation.z = 0.0
+    position_constraint.constraint_region_orientation.w = 1.0
+
+    position_constraint.weight = 1.0
+
+    orientation_constraint.header = pose_constraint.header
+    orientation_constraint.link_name = pose_constraint.link_name
+    orientation_constraint.orientation = pose_constraint.pose.orientation
+    orientation_constrain.ttypi = pose_constraint.orientation_constraint_type
+
+    orientation_constraint.absolute_roll_tolerance = pose_constraint.absolute_roll_tolerance
+    orientation_constraint.absolute_pitch_tolerance = pose_constraint.absolute_pitch_tolerance
+    orientation_constraint.absolute_yaw_tolerance = pose_constraint.absolute_yaw_tolerance
+    orientation_constraint.weight = 1.0
+    
+    return (position_constraint, orientation_constraint)
+
+
+def addGoalConstraintToMoveArmGoal(pose_constraint, move_arm_goal):
+    position_constraint, orientation_constraint = poseConstraintToPositionOrientationConstraints(pose_constraint);
+    move_arm_goal.motion_plan_request.goal_constraints.position_constraints.append(position_constraint)
+    move_arm_goal.motion_plan_request.goal_constraints.orientation_constraints.append(orientation_constraint)
+
+
+rospy.init_node('pose_arm', anonymous=True)
+side = rospy.get_param("~side", "left")
+
+move_arm = actionlib.SimpleActionClient("move_"+side+"_arm", MoveArmAction)
+
+dynamixel_namespace = '/dynamixel_controller'
+dynamixels = rospy.get_param(dynamixel_namespace+'/dynamixels', dict())
+
+servo_torque_enable = list()
+
+for name in sorted(dynamixels):
+    rospy.wait_for_service(dynamixel_namespace+'/'+name+'_controller/torque_enable')  
+    servo_torque_enable.append(rospy.ServiceProxy(dynamixel_namespace+'/'+name+'_controller/torque_enable', TorqueEnable))
+
+move_arm.wait_for_server()
+rospy.loginfo("Connected to move_"+side+"_arm server")
+
+goal = MoveArmGoal()
+
+goal.motion_plan_request.group_name = side + "_arm"
+goal.motion_plan_request.num_planning_attempts = 1
+goal.motion_plan_request.allowed_planning_time = rospy.Duration(5.0)
+
+goal.motion_plan_request.planner_id = ""
+goal.planner_service_name = "ompl_planning/plan_kinematic_path"
+
+desired_pose = SimplePoseConstraint()
+desired_pose.header.frame_id = "lower_torso_link"
+desired_pose.link_name = side + "_hand_link";
+desired_pose.pose.position.x = 0.250444592611;
+desired_pose.pose.position.y =  0.0451484692705;
+desired_pose.pose.position.z = -0.0184543878573;
+
+desired_pose.pose.orientation.x = -0.317087795624;
+desired_pose.pose.orientation.y = -0.632872961772;
+desired_pose.pose.orientation.z = -0.347284978521;
+desired_pose.pose.orientation.w = 0.615077464892;
+
+desired_pose.absolute_position_tolerance.x = 0.05;
+desired_pose.absolute_position_tolerance.y = 0.05;
+desired_pose.absolute_position_tolerance.z = 0.05;
+
+desired_pose.absolute_roll_tolerance = 0.2;
+desired_pose.absolute_pitch_tolerance = 0.2;
+desired_pose.absolute_yaw_tolerance = 0.2;
+
+addGoalConstraintToMoveArmGoal(desired_pose, goal)
+
+finished_within_time = False
+move_arm.send_goal(goal) 
+finished_within_time = move_arm.wait_for_result(rospy.Duration(200));
+if not finished_within_time:
+    move_arm.cancel_goal()
+    rospy.loginfo("Timed out achieving goal")
+else:
+    state = move_arm.get_state()
+    if state == GoalStatus.SUCCEEDED:
+      rospy.loginfo("Action succeeded!")
+    else:
+      rospy.loginfo("Action failed with error code: " + str(state))
+        
+#rospy.shut_down()
+
+# Relax all servos to give them a rest.
+#for torque_enable in servo_torque_enable:
+#    torque_enable(False)
+    
+print "Finished"
+

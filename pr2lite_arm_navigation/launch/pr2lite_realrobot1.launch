@@ -2,9 +2,10 @@
     <param name="robot_description" textfile="$(find pr2lite_urdf)/config/pr2lite_urdf.xml" />
     <include file="$(find pr2lite_arm_navigation)/launch/arbotix_arm.launch" />
     <!-- include file="$(find pr2lite_arm_markers)/launch/pr2lite_arm_markers.launch" -->
-    <!-- include file="$(find pr2lite_arm_navigation)/launch/arbotix_linact.launch" -->
-    <node pkg="pr2lite_arm_navigation" type="fake_pub.py" name="fake_pub" />
+    <!-- include file="$(find pr2lite_arm_navigation)/launch/arbotix_linact.launch"/>
     <node pkg="pr2lite_arm_navigation" type="fake_linact_pos.py" name="fake_linact_pos" />
+    -->
+    <node pkg="pr2lite_arm_navigation" type="fake_pub.py" name="fake_pub" />
 
     <node pkg="tf" type="static_transform_publisher" name="quaternion_bc" args="0 0 0 0 0 1 world_joint /base_footprint 100" />
 <!--

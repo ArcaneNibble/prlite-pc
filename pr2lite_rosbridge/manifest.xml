@@ -1,0 +1,22 @@
+<package>
+  <description brief="pi_teleop">
+
+     HTML5/Rosbridge teleop control for both tablet and desktop browsers
+
+  </description>
+  <author>Patrick Goebel</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/pi_teleop</url>
+  <depend package="rospy"/>
+  <depend package="std_msgs"/>
+  <depend package="rosbridge"/>
+  <depend package="mjpeg_server"/>
+  <depend package="dynamixel_controllers"/>
+  <depend package="dynamixel_driver"/>
+  <depend package="dynamixel_msgs"/>
+  <rosdep name="pyserial"/>
+ 
+</package>
+
+

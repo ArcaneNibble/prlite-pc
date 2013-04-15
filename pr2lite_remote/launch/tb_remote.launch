@@ -1,0 +1,18 @@
+<launch>
+  
+  <rosparam ns="/pi_remote">
+     map_file: /maps/test_map.png
+     max_linear_speed: 0.2
+     max_angular_speed: 0.8
+     turtlebot: True
+     video_topic: /camera/rgb/image_color
+     video_quality: 70
+     video_fps: 10
+  </rosparam>
+
+  <node name="rosbridge" pkg="rosbridge" type="rosbridge.py" output="screen" />
+  <node name="mjpeg_server" pkg="mjpeg_server" type="mjpeg_server" output="screen" />
+  
+  <include file="$(find pi_remote)/launch/throttle_camera.launch" />
+
+</launch>

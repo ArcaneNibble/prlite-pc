@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/721/trunk/maxwell_apps/chess_msgs
+END
+manifest.xml
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/721/trunk/maxwell_apps/chess_msgs/manifest.xml
+END
+CMakeLists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/718/trunk/maxwell_apps/chess_msgs/CMakeLists.txt
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/718/trunk/maxwell_apps/chess_msgs/Makefile
+END

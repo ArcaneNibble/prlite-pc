@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/797/trunk/maxwell_apps/chess_player/nodes
+END
+tf_turnpike.py
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/724/trunk/maxwell_apps/chess_player/nodes/tf_turnpike.py
+END
+festival_launcher.py
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/724/trunk/maxwell_apps/chess_player/nodes/festival_launcher.py
+END
+js_capture.py
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/724/trunk/maxwell_apps/chess_player/nodes/js_capture.py
+END
+chess_executive.py
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/797/trunk/maxwell_apps/chess_player/nodes/chess_executive.py
+END

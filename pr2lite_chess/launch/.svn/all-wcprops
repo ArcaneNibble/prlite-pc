@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/797/trunk/maxwell_apps/chess_player/launch
+END
+setup-board-locator.launch
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/792/trunk/maxwell_apps/chess_player/launch/setup-board-locator.launch
+END
+run-piece-locator.launch
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/792/trunk/maxwell_apps/chess_player/launch/run-piece-locator.launch
+END
+run-board-locator.launch
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/792/trunk/maxwell_apps/chess_player/launch/run-board-locator.launch
+END
+simple-arm-server.launch
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/797/trunk/maxwell_apps/chess_player/launch/simple-arm-server.launch
+END

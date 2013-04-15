@@ -90,7 +90,7 @@ class FollowController:
         self.torque_services = list()
         self.speed_services = list()
         self.last_speed = list()
-        self.max_speed = 0.2
+        self.max_speed = 0.01
            
         for c in self.controllers:
           if c != 'left_upper_arm_hinge_controller' and c != 'right_upper_arm_hinge_controller':
