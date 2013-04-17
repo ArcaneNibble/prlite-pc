@@ -27,14 +27,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 # Pi Robot references:
-# http://code.google.com/p/pi-robot-ros-
-
-pkg/source/browse/trunk/experimental/ros_by_example/pi_actions/nodes/head_track_n
-
-ode.py?r=558
-# https://github.com/someh4x0r/prlite-
-
-pc/blob/master/pr2lite_arm_navigation/nodes/relax_all_servos.py
+# http://code.google.com/p/pi-robot-ros-pkg/source/browse/trunk/experimental/ros_by_example/pi_actions/nodes/head_track_node.py?r=558
+# https://github.com/someh4x0r/prlite-pc/blob/master/pr2lite_arm_navigation/nodes/relax_all_servos.py
 
 # upper arm tilt (linar actuators):
 # min radians = 0.26799389
@@ -55,9 +49,7 @@ from dynamixel_controllers.srv import TorqueEnable, SetSpeed
 
 
 class FollowController:
-    """ A controller for joint chains, exposing a FollowJointTrajectory action.
-
-"""
+    """ A controller for joint chains, exposing a FollowJointTrajectory action.  """
     def __init__(self):
 
         name = rospy.get_name()
@@ -84,31 +76,24 @@ class FollowController:
         self.fudge_factor = list()
         self.current_pos = list()
         # traj = goal.trajectory
+        self.trajectory_goal = list()
         self.execute_goal = list()
         self.execute_joints = list()
         for joint in self.joints:
             #self.device.servos[joint].controller = self
-            # Remove "_joint" from the end of the joint name to get the
-
-controller names.
+            # Remove "_joint" from the end of the joint name to get the controller names.
             servo_nm = joint.split("_joint")[0]
             self.controllers.append(servo_nm + "_controller")
             self.current_pos.append(0)
 
         # action server for FollowController
-        name = rospy.get_param('~controllers/'+name
-
-+'/action_name','follow_joint_trajectory')
+        name = rospy.get_param('~controllers/'+name +'/action_name','follow_joint_trajectory')
         self.server = actionlib.SimpleActionServer(name,
 
 FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
-        rospy.loginfo("Started FollowController ("+name+"). Joints: " + str
+        rospy.loginfo("Started FollowController ("+name+"). Joints: " + str (self.joints) + " Controllers: " + str(self.controllers))
 
-(self.joints) + " Controllers: " + str(self.controllers))
-
-        self.fudge_value = [rospy.get_param('~fudge_factor/' + joint + '/value',
-
-0.0) for joint in self.joints]
+        self.fudge_value = [rospy.get_param('~fudge_factor/' + joint + '/value', 0.0) for joint in self.joints]
 
         # /joint_states
         rospy.Subscriber('joint_states', JointState, self.getJointState)
@@ -119,7 +104,7 @@ FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
         self.position_pub = list()
         self.torque_services = list()
         self.speed_services = list()
-        self.max_speed = 0.1
+        self.max_speed = 0.01
           
         for c in self.controllers:
           if c != 'left_upper_arm_hinge_controller' and c != 'right_upper_arm_hinge_controller':
@@ -154,9 +139,7 @@ FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
         traj = goal.trajectory
 
         if set(self.joints) != set(traj.joint_names):
-            msg = "Trajectory joint names does not match action controlled
-
-joints." + str(traj.joint_names) + " versus" + str(self.joints)
+            msg = "Trajectory joint names does not match action controlled joints." + str(traj.joint_names) + " versus" + str(self.joints)
             rospy.logerr(msg)
             self.server.set_aborted(text=msg)
             return
@@ -175,7 +158,7 @@ joints." + str(traj.joint_names) + " versus" + str(self.joints)
             self.server.set_aborted(text=msg)
             return
 
-        if len(execute_traj) = 0:
+        if len(execute_traj) == 0:
           self.execute_goal = goal
           self.execute_joints = self.joints
           rospy.loginfo('new goal')
@@ -196,43 +179,37 @@ joints." + str(traj.joint_names) + " versus" + str(self.joints)
               # remove trajectories already completed
               for k in range(len(self.execute_joints)):
                 if execute_joint == joint_state_name:
-                  desired = self.trajectory_goal[0].points[0].positions[k] +
-
-self.fudge_value[i]
+                  desired = self.trajectory_goal[0].points[0].positions[k] + self.fudge_value[i]
                   if abs(desired - msg.position[j]) < .01:
                     # close enough to consider the goal met
                     del self.trajectory_goal[0].points[0].position[k]
                     del self.execute_joints[k]
-                  rospy.loginfo(joint + ' des:' + str(desired) + ' pos:' str
-
-(msg.position[j]))
+                  rospy.loginfo(joint + ' des:' + str(desired) + ' pos:' + str (msg.position[j]))
             j += 1
           i += 1
 
         # phase 2: if at desired trajectory, do next trajectory or goal
         # if trajectory points are empty, then done
-        if len(self.trajectory_goal) = 0:
+        if len(self.trajectory_goal) == 0:
           return
         if len(self.trajectory_goal[0].points[0]) == 0:
           # if no more joints in current point, try next point.
           del self.trajectory_goal[0].points[0]
           # if no more points, try new goal.
-          if len(self.trajectory_goal[0].points) = 0:
+          if len(self.trajectory_goal[0].points) == 0:
             del self.trajectory_goal[0]
-            if len(self.trajectory_goal) = 0:
+            if len(self.trajectory_goal) == 0:
               return
           self.execute_joints = self.joints
 
         # phase 3: execute goal positions
         for i in range(len(self.execute_joints)):
-          for j in range(len(self.joints):
+          for j in range(len(self.joints)):
             if self.joints[j] == self.execute_joints[i]:
               match = j
               break
           start = self.trajectory_goal[0].header.stamp
-          desired = self.trajectory_goal[0].point[0].positions[i] +
-
-self.fudge_value[j]
+          desired = self.trajectory_goal[0].point[0].positions[i] + self.fudge_value[j]
           endtime = start + self.trajectory_goal[0].point[0].time_from_start
           endsecs = endtime.to_sec()
           nowsecs = rospy.Time.now().to_sec()
@@ -241,7 +218,8 @@ self.fudge_value[j]
             velocity = self.max_speed
           if self.joints[j] != 'left_upper_arm_hinge_joint' and self.joints[j] != 'right_upper_arm_hinge_joint':
             if self.joints[j] != 'left_shoulder_tilt_joint' and self.joints[j] != 'right_shoulder_tilt_joint':
-               self.speed_services[j] = velocity
+               # self.speed_services[j] = velocity
+               self.speed_services[j](velocity)
             self.position_pub[j].publish(desired)
             rospy.loginfo('Trajectory ' + str(j) + ' ' + self.joints[j] + str(desired) + ' ' +  + str(fudge_value[j]) + ' ' + str(velocity))
         return      

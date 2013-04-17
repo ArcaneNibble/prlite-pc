@@ -120,6 +120,7 @@ class ChessExecutive:
         self.board.newGame()
         rospy.loginfo("look at board")
         self.head.look_at_board()
+        self.planner.begin_game_pos()
         rospy.sleep(5.0)
 
         # are we white/black?

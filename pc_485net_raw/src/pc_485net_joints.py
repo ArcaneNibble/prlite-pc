@@ -62,28 +62,30 @@ def shoulder_handler(packet):
       RIGHT_UPPER_ARM_HINGE_JOINT = 6
       RIGHT_LINEAR_ACTUATOR_JOINT = 7
 
-      cur_pos = struct.unpack("B", packet.data[4])
+      # bytes 4 & 5 are length
+      b = struct.unpack('B', packet.data[4])[0]
+      b2 = struct.unpack('B', packet.data[5])[0]
+      cur_pos = 256.0 * b2 + b
       m_arrived = struct.unpack("B", packet.data[4+2])
-      length = (1000.0 - cur_pos[0]) * 4.0 / 1000.0
-      # Calculate from the angle the length of the actuator
-      angle = 1.44129 - math.acos((math.pow((length + 9.9), 2.0) - 256.0)/(-162.2))
-      # Bound the value
-      if angle > 3.14159:
-         angle = 3.14159
-      if angle < -3.14159:
-         angle = -3.14159
-
+      length = (cur_pos) * 4.0 / 1000.0
       linact_length = length * INCHES_TO_METERS
-      linact_cyl_angle = math.asin( (BAR_LEN*INCHES_TO_METERS) * math.sin(ONE_PI - angle) / (linact_length + (LINACT_DWN*INCHES_TO_METERS))) + FIXED_LA_ANGLE
-      # upper_arm_angle = -1 * angle
+
+      # linact_cyl_angle is the upper arm tilt & uppper_armhing
+      angle=1.44129-math.acos((math.pow((length + 9.9), 2.0) - 256.0)/(-162.2));
+      linact_cyl_angle = math.asin( (BAR_LEN*INCHES_TO_METERS) * math.sin(ONE_PI-angle) / (linact_length + (LINACT_DWN*INCHES_TO_METERS))) 
+
+      # Bound the angle values to +- PI ?
       upper_arm_angle = angle
-      linact_length -= (.5 * INCHES_TO_METERS)
+      # prevent false collisions: unnecessary with fixed la angle?
+      # the linact_cyl_angle is mostly for looks.  It's probably off by
+      # a tiny fixed bracket angle.  Currently OK as it avoids false conflicts.
 
       if packet.source == LEFT_SHOULDER_LINACT:
         jspr2msg.position[LEFT_LINEAR_ACTUATOR_JOINT] = linact_length
         jspr2msg.position[LEFT_LIN_ACT_CYL_JOINT] = linact_cyl_angle
         jspr2msg.position[LEFT_SHOULDER_TILT_JOINT] = upper_arm_angle
         jspr2msg.position[LEFT_UPPER_ARM_HINGE_JOINT] = -1 * upper_arm_angle
+        #print "linact: Left Shoulder len %f angle %f" %  ( jspr2msg.position[LEFT_LINEAR_ACTUATOR_JOINT], jspr2msg.position[LEFT_SHOULDER_TILT_JOINT])
         if m_arrived:
           jspr2msg.velocity[LEFT_LINEAR_ACTUATOR_JOINT] = 0
           jspr2msg.velocity[LEFT_LIN_ACT_CYL_JOINT] = 0
@@ -97,6 +99,7 @@ def shoulder_handler(packet):
           jspr2msg.position[RIGHT_LIN_ACT_CYL_JOINT] = linact_cyl_angle
           jspr2msg.position[RIGHT_SHOULDER_TILT_JOINT] = upper_arm_angle
           jspr2msg.position[RIGHT_UPPER_ARM_HINGE_JOINT] = -1 * upper_arm_angle
+          #print "linact: Right Shoulder len %f angle %f" %  ( jspr2msg.position[RIGHT_LINEAR_ACTUATOR_JOINT], jspr2msg.position[RIGHT_SHOULDER_TILT_JOINT])
           if m_arrived:
             jspr2msg.velocity[RIGHT_LINEAR_ACTUATOR_JOINT] = 0
             jspr2msg.velocity[RIGHT_LIN_ACT_CYL_JOINT] = 0
@@ -112,11 +115,15 @@ def torso_handler(packet):
       TORSO_LIFT_JOINT = 8
       INCHES_TO_METERS = 0.0254
       FAST_LINACT_VEL = 2   # inches per second */
-      cur_pos = struct.unpack("B", packet.data[4])
-      # print "cur_pos %d" % cur_pos
+      #cur_pos = struct.unpack("B", packet.data[4])
+      b = struct.unpack('B', packet.data[4])[0]
+      b2 = struct.unpack('B', packet.data[5])[0]
+      cur_pos = 256.0 * b2 + b
+      # print "linact: torso cur_pos %d" % cur_pos
       # print cur_pos
       m_arrived = struct.unpack("B", packet.data[4+2])
-      length = (1000 - cur_pos[0]) * 12.0 / 1000.0 * INCHES_TO_METERS
+      #length = (1000 - cur_pos) * 12.0 / 1000.0 * INCHES_TO_METERS
+      length = (cur_pos) * 12.0 / 1000.0 * INCHES_TO_METERS
 
       jspr2msg.position[TORSO_LIFT_JOINT] = length
       if m_arrived:
@@ -144,31 +151,32 @@ def base_handler(packet):
       BR_ANCHOR_ROD_JOINT = 18
       BR_PUSH_ROD_JOINT = 19
       BR_CASTER_ROTATION_JOINT = 20
+      INCHES_TO_METERS = 0.0254
 
       cur_pos = struct.unpack("B", packet.data[4])
       m_arrived = struct.unpack("B", packet.data[4+2])
-      length = (1000.0 - cur_pos) * 4.0 / 1000.0 * INCHES_TO_METERS
+      length = (1000.0 - cur_pos[0]) * 4.0 / 1000.0 * INCHES_TO_METERS
       retracted_linact_side_angle = ONE_PI   # straight from linact rod to caster
       retracted_caster_angle = ONE_PI / 2.0 
 
       # a = pushrod ; b = casterlen ; c = side ; C = casterangle
       # cos rule : c = sqrt(a^2 + b^2 - 2ab cos(C))
-      retracted_side = sqrt( pow(PUSH_ROD_LEN,2.0) + pow(CASTER_LEN, 2.0) + 2 * PUSH_ROD_LEN * CASTER_LEN * cos(retracted_caster_angle))
+      retracted_side = math.sqrt( math.pow(PUSH_ROD_LEN,2.0) + math.pow(CASTER_LEN, 2.0) + 2 * PUSH_ROD_LEN * CASTER_LEN * math.cos(retracted_caster_angle))
       retracted_pushrod_angle = 0
 
       # a = side ; b = pushrod_len ; B = caster_angle
       # sin rule : A = asin((sin(B) * a) / b)
       mid_caster_angle = ONE_PI / 4.0
-      mid_side = sqrt( pow(PUSH_ROD_LEN,2.0) + pow(CASTER_LEN, 2.0) + 2 * PUSH_ROD_LEN * CASTER_LEN * cos(mid_caster_angle))
-      mid_pushrod_angle = asin((sin(mid_caster_angle) * mid_side) / PUSH_ROD_LEN)
-      mid_linact_side_angle = TWO_PI - mid_pushrod_angle - mid_caster_angle + (ONE_PI / 2.0)
+      mid_side = math.sqrt( math.pow(PUSH_ROD_LEN,2.0) + math.pow(CASTER_LEN, 2.0) + 2 * PUSH_ROD_LEN * CASTER_LEN * math.cos(mid_caster_angle))
+      mid_pushrod_angle = math.asin((math.sin(mid_caster_angle) * mid_side) / PUSH_ROD_LEN)
+      mid_linact_side_angle = 2 * ONE_PI - mid_pushrod_angle - mid_caster_angle + (ONE_PI / 2.0)
 
       extended_linact_side_angle = 2*ONE_PI  # straight
       extended_caster_angle = 0
-      extended_side = sqrt( pow(PUSH_ROD_LEN,2.0) + pow(CASTER_LEN, 2.0) + 2 * PUSH_ROD_LEN * CASTER_LEN * cos(extended_caster_angle))
-      extended_pushrod_angle = asin((sin(extended_caster_angle) * extended_side) / PUSH_ROD_LEN)
+      extended_side = math.sqrt( math.pow(PUSH_ROD_LEN,2.0) + math.pow(CASTER_LEN, 2.0) + 2 * PUSH_ROD_LEN * CASTER_LEN * math.cos(extended_caster_angle))
+      extended_pushrod_angle = math.asin((math.sin(extended_caster_angle) * extended_side) / PUSH_ROD_LEN)
 
-      jspr2msg.position[WHEEL_LINEAR_ACTUATOR_JOINT] = upper_arm_angle
+      # jspr2msg.position[WHEEL_LINEAR_ACTUATOR_JOINT] = upper_arm_angle
       if length <= 1 * INCHES_TO_METERS :
         inverse = 1
         jspr2msg.position[FL_ANCHOR_ROD_JOINT] = retracted_linact_side_angle*inverse
@@ -259,13 +267,13 @@ def packet_dgram_handler(packet):
       # 4, 5 (int) current position
       # 6 (eight bit boolean) arrived
       # Store if it arrived
-      cur_pos = struct.unpack("B", packet.data[4])
+      # cur_pos = struct.unpack("B", packet.data[4])
       m_arrived = struct.unpack("B", packet.data[4+2])
       if packet.source == LEFT_SHOULDER_LINACT or packet.source == RIGHT_SHOULDER_LINACT:
         shoulder_handler(packet)
       elif packet.source == TORSO_LINACT:
         torso_handler(packet)
-      elif packet.source == TORSO_LINACT:
+      elif packet.source == BASE_LINACT:
         base_handler(packet)
    
 def publish_LA_states():

@@ -27,7 +27,7 @@ left_shoulder_pan_controller:
         module: joint_position_controller_dual_motor
         type: JointPositionControllerDual
     joint_name: left_shoulder_pan_joint
-    joint_speed: .8
+    joint_speed: .2
     motor_master:
         id: 2
         init: 512
@@ -42,7 +42,7 @@ left_elbow_pan_controller:
         module: joint_position_controller
         type: JointPositionController
     joint_name: left_elbow_pan_joint
-    joint_speed: 0.8
+    joint_speed: 0.5
     motor:
         id: 21
         # init: 512 - WRONG HW CONFIG?
@@ -56,7 +56,7 @@ left_elbow_flex_controller:
         module: joint_position_controller_dual_motor
         type: JointPositionControllerDual
     joint_name: left_elbow_flex_joint
-    joint_speed: 1.0
+    joint_speed: .5
     motor_master:
         id: 16
         init: 192
@@ -71,7 +71,7 @@ left_wrist_flex_controller:
         module: joint_position_controller_dual_motor
         type: JointPositionControllerDual
     joint_name: left_wrist_flex_joint
-    joint_speed: 1.0
+    joint_speed: .5
     motor_master:
         id: 9
         init: 512
@@ -86,7 +86,7 @@ left_wrist_roll_controller:
         module: joint_position_controller
         type: JointPositionController
     joint_name: left_wrist_roll_joint
-    joint_speed: 1.0
+    joint_speed: .5
     motor:
         id: 6
         init: 500
@@ -99,7 +99,7 @@ left_gripper_right_controller:
         module: joint_position_controller
         type: JointPositionController
     joint_name: left_gripper_right_joint
-    joint_speed: 1.0
+    joint_speed: .5
     motor:
         id: 7
         init: 400
@@ -113,7 +113,7 @@ left_gripper_left_controller:
         module: joint_position_controller
         type: JointPositionController
     joint_name: left_gripper_left_joint
-    joint_speed: 1.0
+    joint_speed: .5
     motor:
         id: 5
         init: 600
@@ -126,7 +126,7 @@ right_shoulder_pan_controller:
         module: joint_position_controller_dual_motor
         type: JointPositionControllerDual
     joint_name: right_shoulder_pan_joint
-    joint_speed: .8
+    joint_speed: .2
     motor_master:
         id: 17
         init: 512
@@ -141,7 +141,7 @@ right_elbow_flex_controller:
         module: joint_position_controller_dual_motor
         type: JointPositionControllerDual
     joint_name: right_elbow_flex_joint
-    joint_speed: 1.0
+    joint_speed: .5
     motor_master:
         id: 13
         init: 192
@@ -156,7 +156,7 @@ right_elbow_pan_controller:
         module: joint_position_controller
         type: JointPositionController
     joint_name: right_elbow_pan_joint
-    joint_speed: 0.8
+    joint_speed: .5
     motor:
         id: 19
         init: 512
@@ -169,7 +169,7 @@ right_wrist_flex_controller:
         module: joint_position_controller_dual_motor
         type: JointPositionControllerDual
     joint_name: right_wrist_flex_joint 
-    joint_speed: 1.0
+    joint_speed: .5
     motor_master:
         id: 4
         init: 512
@@ -184,7 +184,7 @@ right_wrist_roll_controller:
         module: joint_position_controller
         type: JointPositionController
     joint_name: right_wrist_roll_joint
-    joint_speed: 1.0
+    joint_speed: .5
     motor:
         id: 18
         init: 505
@@ -197,7 +197,7 @@ right_gripper_right_controller:
         module: joint_position_controller
         type: JointPositionController
     joint_name: right_gripper_right_joint
-    joint_speed: 1.0
+    joint_speed: .5
     motor:
         id: 10
         init: 600
@@ -210,7 +210,7 @@ right_gripper_left_controller:
         module: joint_position_controller
         type: JointPositionController
     joint_name: right_gripper_left_joint
-    joint_speed: 1.0
+    joint_speed: .5
     motor:
         id: 15
         init: 400
@@ -223,7 +223,7 @@ head_tilt_controller:
         module: joint_position_controller
         type: JointPositionController
     joint_name: head_tilt_joint
-    joint_speed: 0.80
+    joint_speed: .5
     motor:
         id: 23
         init: 512
@@ -236,7 +236,7 @@ head_pan_controller:
         module: joint_position_controller
         type: JointPositionController
     joint_name: head_pan_joint
-    joint_speed: 0.80
+    joint_speed: .5
     motor:
         id: 1
         init: 512
@@ -249,7 +249,7 @@ lidar_tilt_controller:
         module: joint_position_controller
         type: JointPositionController
     joint_name: lidar_tilt_joint
-    joint_speed: 0.1
+    joint_speed: .5
     motor:
         id: 12
         init: 512

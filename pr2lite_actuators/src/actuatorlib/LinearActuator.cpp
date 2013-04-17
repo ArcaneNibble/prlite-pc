@@ -96,6 +96,8 @@ void LinearActuator::publish_dyna_state(int cur_pos)
     // Calculate from the angle the length of the actuator
     // double length = sqrt(-162.2 * cos(1.44129 - command->data) + 256.0) - m_base_length;
     double angle = 1.44129 - acos((pow((length + 9.9), 2.0) - 256.0)/(-162.2));
+#define BAR_LEN (4.3 - .315)   /* Upper arm bar that LinAct connects to */
+#define HYPOTENUSE (14.968)    /* Len from bottom LinAct hole to Shoulder Joint
     // double angle = (1.44129 - pow(acos((length + 9.9), 2.0) - 256.0)/(-162.2));
 
     // ROS_INFO("current length of \"%s\" dynamixel: %lf radians %d cur_pos", m_name.c_str(), angle, cur_pos);
@@ -106,10 +108,8 @@ void LinearActuator::publish_dyna_state(int cur_pos)
 
 
 /* constants in inches */
-#define BAR_LEN (4.3 - .315)   /* Upper arm bar that LinAct connects to */
 #define LINACT_DWN (9.9)       /* length of LinAct when retracted */
 #define LINACT_UP (13.9)       /* length of LinAct when extended */
-#define HYPOTENUSE (14.968)    /* Len from bottom LinAct hole to Shoulder Joint
 */
 #define LINACT_TO_TOP (14.715) /* len from bottom LinAct hole to top lazy susan
 */
