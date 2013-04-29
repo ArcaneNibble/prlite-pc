@@ -231,13 +231,14 @@ void ArmKinematicsConstraintAware::collisionCheck(const geometry_msgs::Pose &ik_
   }
   if(collision_models_interface_->isKinematicStateInCollision(*(collision_models_interface_->getPlanningSceneState()))) {
     //TODO - broadcast collisions
+    ROS_INFO_STREAM("isKinematicStateInCollision failed");
     error_code = kinematics::STATE_IN_COLLISION;
   } else {
     error_code = kinematics::SUCCESS;
   }
 
-  if(!planning_environment::doesKinematicStateObeyConstraints(*(collision_models_interface_->getPlanningSceneState()), 
-                                                              constraints_)) {
+  if(!planning_environment::doesKinematicStateObeyConstraints(*(collision_models_interface_->getPlanningSceneState()), constraints_, true)) {
+    ROS_INFO_STREAM("doesKinematicStateObeyConstraints failed");
     error_code = kinematics::GOAL_CONSTRAINTS_VIOLATED;
   }
 }

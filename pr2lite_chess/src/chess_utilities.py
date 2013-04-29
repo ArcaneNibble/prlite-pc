@@ -595,9 +595,7 @@ class BoardUpdater(threading.Thread):
             if piece != None:
                 piece.pose.position.x += x*SQUARE_SIZE
                 piece.pose.position.y += y*SQUARE_SIZE
-                # ARD: piece.header.frame_id = "chess_board"
                 piece.header.frame_id = "chess_board"
-
         # look up board location
         try: 
             (translation, rotation) = self.listener.lookupTransform('base_link', 'chess_board_raw', rospy.Time(0)) # was odom
@@ -613,7 +611,6 @@ class BoardUpdater(threading.Thread):
         pose = self.listener.transformPose("base_link", ps) # was odom
         self.translation = (pose.pose.position.x, pose.pose.position.y, pose.pose.position.z)
         self.rotation = rotation
-
         if True: #self.board.output: 
             temp_board.printBoard()
             #self.board.output = False
@@ -622,6 +619,7 @@ class BoardUpdater(threading.Thread):
         self.up_to_date = True
         rospy.loginfo("returning")
         return
+
 
     def run(self):
         br = tf.TransformBroadcaster()

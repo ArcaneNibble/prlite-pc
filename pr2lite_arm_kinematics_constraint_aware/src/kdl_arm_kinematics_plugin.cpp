@@ -452,14 +452,19 @@ bool KDLArmKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose
   }
   for(int i=0; i < max_search_iterations_; i++)
   {
+/*
     for(unsigned int j=0; j < dimension_; j++)
     { 
       ROS_INFO_STREAM("seed state " << j << " " << jnt_pos_in(j));
     }
+*/
     int ik_valid = ik_solver_pos_->CartToJnt(jnt_pos_in,pose_desired,jnt_pos_out);                      
     jnt_pos_in = getRandomConfiguration();
     if(ik_valid < 0)
+    {
+      ROS_INFO_STREAM("IK2 NOT ik_valid " << ik_valid << " iteration " << i);   
       continue;
+    }
     std::vector<double> solution_local;
     solution_local.resize(dimension_);
     for(unsigned int j=0; j < dimension_; j++)
@@ -471,6 +476,7 @@ bool KDLArmKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose
       ROS_INFO_STREAM("Solved after " << i+1 << " iterations");
       return true;
     }
+    ROS_INFO_STREAM("IK2 error code " << error_code << " iteration " << i);   
   }
   ROS_INFO("An IK that satisifes the constraints and is collision free could not be found");   
   error_code = kinematics::NO_IK_SOLUTION;

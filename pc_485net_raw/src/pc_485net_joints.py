@@ -122,7 +122,7 @@ def torso_handler(packet):
       # print "linact: torso cur_pos %d" % cur_pos
       # print cur_pos
       m_arrived = struct.unpack("B", packet.data[4+2])
-      #length = (1000 - cur_pos) * 12.0 / 1000.0 * INCHES_TO_METERS
+      # length = (1000 - cur_pos) * 12.0 / 1000.0 * INCHES_TO_METERS
       length = (cur_pos) * 12.0 / 1000.0 * INCHES_TO_METERS
 
       jspr2msg.position[TORSO_LIFT_JOINT] = length
@@ -306,13 +306,13 @@ crc8_table = [
 
 def valid_dgram_packet(packet):
     if packet.source < 7 or packet.source > 15:
-        print "bad message source : %d" % packet.source
+        # rospy.loginfo( "bad message source : %d" % packet.source)
         return False
     if packet.destination != 0xF0 and packet.destination != 0x00:
-        print "bad message dest : %d" % packet.destination
+        # rospy.loginfo( "bad message dest : %d" % packet.destination)
         return False
     if packet.dport != 7:
-        print "[id %d] invalid dport" % packet.source
+        # rospy.loginfo( "[id %d] invalid dport" % packet.source)
         return False
     # if packet.data.size() != 7:
     if len(packet.data) != 7:
@@ -342,13 +342,13 @@ def handler_incoming(packet):
 	
 	actual_csum = do_checksum(packet.data[:-1])
 	if actual_csum != struct.unpack("B", packet.data[-1])[0]:
-		rospy.logwarn("Packet with bad checksum: %s" % binascii.hexlify(packet.data))
+		# rospy.loginfo("Packet with bad checksum: %s" % binascii.hexlify(packet.data))
 		return
 	
 	if proto == 0x00:
 		#datagram
 		if len(packet.data) < 4:
-			rospy.logwarn("Impossibly short (but valid checksum) packet: %s" % binascii.hexlify(packet.data))
+			# rospy.loginfo("Impossibly short (but valid checksum) packet: %s" % binascii.hexlify(packet.data))
 			return
 		
 		pkt = packet_485net_dgram()
@@ -374,7 +374,7 @@ def handler_incoming(packet):
 	elif proto == 0x40:
 		#stream
 		if len(packet.data) < 7:
-			rospy.logwarn("Impossibly short (but valid checksum) packet: %s" % binascii.hexlify(packet.data))
+			# rospy.loginfo("Impossibly short (but valid checksum) packet: %s" % binascii.hexlify(packet.data))
 			return
 		
 		pkt = packet_485net_stream()
@@ -393,7 +393,7 @@ def handler_incoming(packet):
 	elif proto == 0xC0:
 		#bootloader
 		if len(packet.data) < 4:
-			rospy.logwarn("Impossibly short (but valid checksum) packet: %s" % binascii.hexlify(packet.data))
+			# rospy.loginfo("Impossibly short (but valid checksum) packet: %s" % binascii.hexlify(packet.data))
 			return
 		
 		pkt = packet_485net_bootloader()
@@ -405,9 +405,9 @@ def handler_incoming(packet):
 		pkt.checksum	= struct.unpack("B", packet.data[-1])[0]
 		
 		bootloader_pub.publish(pkt)
-	else:
+	# else:
 		#reserved
-		rospy.logwarn("Packet with reserved protocol: %s" % binascii.hexlify(packet.data))
+		# rospy.loginfo("Packet with reserved protocol: %s" % binascii.hexlify(packet.data))
 
 def handler_stream(packet):
 	global outgoing_pub

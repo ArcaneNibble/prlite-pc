@@ -8,6 +8,10 @@
     </node>
     <node pkg="pr2lite_arm_kinematics_constraint_aware" type="arm_kinematics_constraint_aware" name="pr2lite_right_arm_kinematics">
         <param name="group" type="string" value="right_arm" />
+<!--
+        <param name="right_arm/max_solver_iterations" type="int" value="10000" />
+        <param name="right_arm/max_search_iterations" type="int" value="1000" />
+-->
         <param name="right_arm/root_name" type="string" value="right_arm_shelf_link" />
         <param name="right_arm/tip_name" type="string" value="right_wrist_roll_link" />
         <param name="kinematics_solver" type="string" value="arm_kinematics_constraint_aware/KDLArmKinematicsPlugin" />

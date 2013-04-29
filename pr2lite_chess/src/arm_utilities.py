@@ -31,6 +31,7 @@ from pr2_controllers_msgs.msg import (Pr2GripperCommandGoal, Pr2GripperCommand,
                                       Pr2GripperCommandAction)
 import tf
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
+from pr2lite_arm_utilities import PR2Arm_Planning 
 
 
 from chess_msgs.msg import *
@@ -42,7 +43,6 @@ from arm_navigation_msgs.srv import *
 from sensor_msgs.msg import JointState
 from pr2_controllers_msgs.msg import *
 import roslib
-
 
 
 from chess_utilities import SQUARE_SIZE, castling_extras
@@ -58,16 +58,13 @@ class ArmPlanner:
         rospy.loginfo('ArmPlanner Init')
         print "ArmPlanner Init"
         if client==None:
-            #rospy.wait_for_service('simple_arm_server/move')
-            #self.move = rospy.ServiceProxy('simple_arm_server/move', MoveArm)
+            self.listener = listener
+            self.pr2_arm = PR2Arm_Planning('right', self.listener)
             #ARD: uncomment next line
             rospy.loginfo('ArmPlanner pr2lite_move_right_arm')
             arm = "right"
-            self.move_arm_client = actionlib.SimpleActionClient('move_right_arm', MoveArmAction)
-            #self.move_arm_client = actionlib.SimpleActionClient('move_right_arm', MoveArmAction)
-            #ARD: uncomment next line
-            rospy.loginfo('ArmPlanner wait_for_server')
-            self.move_arm_client.wait_for_server()
+            self.move_arm_client = actionlib.SimpleActionClient('move_right_arm'
+, MoveArmAction)
             if arm is "right":
               service = "r_gripper_controller/gripper_action"
             else:
@@ -84,56 +81,13 @@ class ArmPlanner:
      
         self.success = True
         # setup tf for translating poses
-        self.listener = listener
         rospy.loginfo('ArmPlanner Init done')
-
-    def poseConstraintToPositionOrientationConstraints(self, pose_constraint):
-        position_constraint = PositionConstraint()
-        orientation_constraint = OrientationConstraint()
-        position_constraint.header = pose_constraint.header
-        position_constraint.link_name = pose_constraint.link_name
-        print "poseConstr %s" % pose_constraint.link_name
-        position_constraint.position = pose_constraint.pose.position
-        position_constraint.constraint_region_shape.type = 0
-        position_constraint.constraint_region_shape.dimensions.append(2*pose_constraint.absolute_position_tolerance.x)
-        position_constraint.constraint_region_shape.dimensions.append(2*pose_constraint.absolute_position_tolerance.y)
-        position_constraint.constraint_region_shape.dimensions.append(2*pose_constraint.absolute_position_tolerance.z)
-   
-        position_constraint.constraint_region_orientation.x = 0.0
-        position_constraint.constraint_region_orientation.y = 0.0
-        position_constraint.constraint_region_orientation.z = 0.0
-        position_constraint.constraint_region_orientation.w = 1.0
-   
-        position_constraint.weight = 1.0
-   
-        orientation_constraint.header = pose_constraint.header
-        orientation_constraint.link_name = pose_constraint.link_name
-        print "poseConstraintToPosi... %s" % pose_constraint.link_name
-        orientation_constraint.orientation = pose_constraint.pose.orientation
-        orientation_constraint.type = pose_constraint.orientation_constraint_type
-        orientation_constraint.absolute_roll_tolerance = pose_constraint.absolute_roll_tolerance
-        orientation_constraint.absolute_pitch_tolerance = pose_constraint.absolute_pitch_tolerance
-        orientation_constraint.absolute_yaw_tolerance = pose_constraint.absolute_yaw_tolerance
-        orientation_constraint.weight = 1.0
-        print "poseConstr return"
-        return (position_constraint, orientation_constraint)
-
-    def addGoalConstraintToMoveArmGoal(self, pose_constraint, move_arm_goal):
-        position_constraint, orientation_constraint = self.poseConstraintToPositionOrientationConstraints(pose_constraint);
-        move_arm_goal.motion_plan_request.goal_constraints.position_constraints.append(position_constraint)
-        move_arm_goal.motion_plan_request.goal_constraints.orientation_constraints.append(orientation_constraint)
 
     # called by chess executive
     def execute(self, move, board, nested=False):
 
         rospy.loginfo('ArmPlanner execute')
-        print "ArmPlanner execute"
         """ Execute a move. """
-
-        # untuck arm
-        # ARD ARD ARD
-        # self.tuck_server.untuck()
-        rospy.sleep(3.0)
 
         # get info about move
         (col_f, rank_f) = board.toPosition(move[0:2])
@@ -165,29 +119,8 @@ class ArmPlanner:
 
         # self.addTransit(goal, fr.pose, to.pose)
         self.addTransit(goal, fr, to)
-        self.execute_goal(goal, move, nested, board, to)
         return to.pose
        
-
-    def execute_goal(self, goal, move, nested, board, to):
-        # execute
-        try:
-            #self.success = self.move(req)
-            #print self.success
-            self.move_arm_client.send_goal(goal)
-            self.move_arm_client.wait_for_result()
-            print self.move_arm_client.get_result()
-        except rospy.ServiceException, e:
-            print "Service did not process request: %s"%str(e)
-
-        if move in castling_extras:
-            self.execute(castling_extras[move],board)
-
-        if not nested:
-            # self.tuck_server.tuck()
-            rospy.sleep(5.0)
-        return to.pose
-
     def move_torso(self, position):
         rospy.loginfo('move_torso %f' % position)
         if position < 0:
@@ -196,46 +129,37 @@ class ArmPlanner:
         goal.position = position
         self.torso_client.send_goal(goal)
         self.torso_client.wait_for_result()
-        # if self.torso_client.get_state() == GoalStatus.SUCCEEDED:
-        #     print "Success"
 
     def begin_game_pos(self):
-        self.move_torso(0)
         self.tuck_server.left_tuck()
         self.tuck_server.untuck()
+        rospy.sleep(5.0)
+        self.move_torso(0)
 
     def addTransit(self, goal, fr, to):
         """ Move a piece from 'fr' to 'to' """
 
         rospy.loginfo('ArmPlanner addTransit')
 
-        start_torso_pos = .17     # raise torso for easier planning
+        start_torso_pos = .30     # raise torso for easier planning
+        above_board = .15     # raise torso for easier planning
         self.move_torso(start_torso_pos)
+        self.tuck_server.IKpose()
+        rospy.sleep(3.0)
 
-        print "MotionPlanRequest"
-        motion_plan_request = arm_navigation_msgs.msg.MotionPlanRequest()
-        motion_plan_request.group_name = "right arm"
-        motion_plan_request.num_planning_attempts = 1000;
-        motion_plan_request.allowed_planning_time = rospy.Duration(5.)
-        motion_plan_request.planner_id = 'SBLkConfig1'
-
-        joint_state_message = rospy.wait_for_message("/joint_states", JointState)
-        print "joint_state_message"
-        motion_plan_request.start_state.joint_state = joint_state_message
-
-        q = quaternion_from_euler(0.0, 1.57, 0.0)
+        q = quaternion_from_euler(0.0, 1.57, 0.0, 'sxyz')
         pose = SimplePoseConstraint()
-        #pose.header.frame_id = "base_footprint";
-        #pose.header.frame_id = "right_arm_shelf_link";
-        #pose.header.frame_id = "base_link";
         pose.link_name = "right_wrist_roll_link"
 
-        print "header frame_id"
-        print pose.header.frame_id
-        pose.header.frame_id = fr.header.frame_id
-        pose.pose.position.x = fr.pose.position.x
-        pose.pose.position.y = fr.pose.position.y
-        pose.pose.position.z = 0
+        # fr.header.frame_id = "chess_board_raw"
+        self.listener.mutex.acquire()
+        fr_tfpose = self.listener.transformPose("base_link", fr)
+        self.listener.mutex.release()
+        pose.header.frame_id = "base_link"
+        pose.pose.position.x = fr_tfpose.pose.position.x
+        pose.pose.position.y = fr_tfpose.pose.position.y
+        pose.pose.position.z = above_board
+
         # pose.pose.position.z = 0.15
         pose.pose.orientation.x = q[0]
         pose.pose.orientation.y = q[1]
@@ -244,251 +168,69 @@ class ArmPlanner:
         pose.absolute_position_tolerance.x = 0.05;
         pose.absolute_position_tolerance.y = 0.05;
         pose.absolute_position_tolerance.z = 0.05;
-        pose.absolute_roll_tolerance = 0.2;
-        pose.absolute_pitch_tolerance = 0.2;
-        pose.absolute_yaw_tolerance = 0.2;
+        pose.absolute_roll_tolerance = 0.06;
+        pose.absolute_pitch_tolerance = 0.06;
+        pose.absolute_yaw_tolerance = 0.06;
 
         # hover over piece
-        # action = ArmAction()
-        # action.type = ArmAction.MOVE_ARM
-        # action.move_time = rospy.Duration(2.5)
+        traj = self.pr2_arm.build_trajectory(pose, None)
+        goal = self.pr2_arm.build_follow_trajectory(traj)
+        print "move to FROM pos"
+        self.pr2_arm.follow_trajectory(goal)
+        # self.move_arm_client.send_goal(goal)
+        # finished_within_time = self.move_arm_client.wait_for_result(rospy.Duration(200.0))
+        # print self.move_arm_client.get_result()
 
-        # ARD: pose.header.link_name
-        self.addGoalConstraintToMoveArmGoal(pose, goal)
-
-        print "send_goal1"
-        self.move_arm_client.send_goal(goal)
-        print "wait for result"
-        finished_within_time = self.move_arm_client.wait_for_result(rospy.Duration(200.0))
-        print self.move_arm_client.get_result()
-
-        # goal.motions.append(action)
-        # open gripper
-        # ARD
-        # /parallel_gripper_controller/command
-        # gripper_open = 0.042;
-        # gripper_closed = 0.024;
+        print "open gripper"
         grippergoal = Pr2GripperCommandGoal()
         grippergoal.command.position = 0.08
         grippergoal.command.max_effort = -1 # open fast.
         self.gripper.send_goal(grippergoal)
         self.gripper.wait_for_result()
-        print self.move_arm_client.get_result()
-        #time.sleep(5)
         rospy.sleep(5)
+        rospy.sleep(50)
 
-        # action = ArmAction()
-        # action.type = ArmAction.MOVE_GRIPPER
-        # action.command = GRIPPER_OPEN
-        # action.move_time = rospy.Duration(1.0)
-        # goal.motions.append(action)
-
-#        # lower gripper
-#        pose = SimplePoseConstraint()
-#        # action = MoveArmGoal()
-#        # action = ArmAction()
-#        # action.type = ArmAction.MOVE_ARM
-#        # ARD
-#        # pose.header.link_name = "/base_link"
-#        pose.pose.position.x = fr.pose.position.x
-#        pose.pose.position.y = fr.pose.position.y
-#        pose.pose.position.z = fr.pose.position.z + 0.03
-#        if pose.pose.position.z > 0.05:
-#            pose.pose.position.z = 0.05
-#        #pose.goal.position.z = 0.05 # 0.035
-#        q = quaternion_from_euler(0.0, 1.57, 0.0)
-#        pose.pose.orientation.x = q[0]
-#        pose.pose.orientation.y = q[1]
-#        pose.pose.orientation.z = q[2]
-#        pose.pose.orientation.w = q[3]
-#        pose.absolute_position_tolerance.x = 0.05;
-#        pose.absolute_position_tolerance.y = 0.05;
-#        pose.absolute_position_tolerance.z = 0.05;
-#        pose.absolute_roll_tolerance = 0.2;
-#        pose.absolute_pitch_tolerance = 0.2;
-#        pose.absolute_yaw_tolerance = 0.2;
-#        # action.move_time = rospy.Duration(1.5)
-#        # goal.motions.append(action)
-#        self.addGoalConstraintToMoveArmGoal(pose, goal)
-#        self.move_arm_client.send_goal(goal)
-#        finished_within_time = self.move_arm_client.wait_for_result(rospy.Duration(200.0))
-#        print self.move_arm_client.get_result()
-        lower_to_piece = fr.pose.position.z + 0.03
+        print "lower torso to piece"
+        lower_to_piece = fr.pose.position.z + 0.03 + above_board
         self.move_torso(lower_to_piece)     # raise torso for easier planning
 
         # close gripper
+        print "close gripper"
         grippergoal = Pr2GripperCommandGoal()
         grippergoal.command.position = 0.0
         grippergoal.command.max_effort = 50 # close slowly
         self.gripper.send_goal(grippergoal)
         self.gripper.wait_for_result()
         print self.move_arm_client.get_result()
-        # action = ArmAction()
-        # action.type = ArmAction.MOVE_GRIPPER
-        # action.command = GRIPPER_CLOSE
-        # action.move_time = rospy.Duration(3.0)
-        # goal.motions.append(action)
 
-#        # raise gripper
-#        # action = ArmAction()
-#        # action.type = ArmAction.MOVE_ARM
-#        pose.pose.position.x = fr.pose.position.x
-#        pose.pose.position.y = fr.pose.position.y
-#        #action.pose.position.z = fr.pose.position.z + 0.1
-#        pose.pose.position.z = 0.15
-#        q = quaternion_from_euler(0.0, 1.57, 0.0)
-#        pose.pose.orientation.x = q[0]
-#        pose.pose.orientation.y = q[1]
-#        pose.pose.orientation.z = q[2]
-#        pose.pose.orientation.w = q[3]
-#        # pose.move_time = rospy.Duration(1.0)
-#        #goal.motions.append(action)
-#        self.addGoalConstraintToMoveArmGoal(pose, goal)
-#        self.move_arm_client.send_goal(goal)
-#        finished_within_time = self.move_arm_client.wait_for_result(rospy.Duration(200.0))
-#        print self.move_arm_client.get_result()
-        self.move_torso(start_torso_pos)
-
-        # over over goal
-        # action = ArmAction()
-        # action.type = ArmAction.MOVE_ARM
-        pose.header.frame_id = to.header.frame_id
-        # pose.header.link_name = to.header.link_name
-        pose.pose.position.x = to.pose.position.x
-        pose.pose.position.y = to.pose.position.y
-        pose.pose.position.z = 0.15
+        print "move to TO pos"
+        to_tfpose = self.listener.transformPose("base_link", to)
+        pose.header.frame_id = to_tfpose.header.frame_id
+        pose.pose.position.x = to_tfpose.pose.position.x
+        pose.pose.position.y = to_tfpose.pose.position.y
+        pose.pose.position.z = above_board
         q = quaternion_from_euler(0.0, 1.57, 0.0)
         pose.pose.orientation.x = q[0]
         pose.pose.orientation.y = q[1]
         pose.pose.orientation.z = q[2]
         pose.pose.orientation.w = q[3]
-        # action.move_time = rospy.Duration(2.5)
-        # goal.motions.append(action)
-        self.addGoalConstraintToMoveArmGoal(pose, goal)
-        self.move_arm_client.send_goal(goal)
-        finished_within_time = self.move_arm_client.wait_for_result(rospy.Duration(200.0))
-        print self.move_arm_client.get_result()
+        traj = self.pr2_arm.build_trajectory(pose, None)
+        goal = self.pr2_arm.build_follow_trajectory(traj)
+        self.pr2_arm.follow_trajectory(goal)
+        # self.move_arm_client.send_goal(goal)
 
-#        # lower gripper
-#        # action = ArmAction()
-#        # action.type = ArmAction.MOVE_ARM
-#        pose.pose.position.x = to.pose.position.x
-#        pose.pose.position.y = to.pose.position.y
-#        pose.pose.position.z = 0.06
-#        q = quaternion_from_euler(0.0, 1.57, 0.0)
-#        pose.pose.orientation.x = q[0]
-#        pose.pose.orientation.y = q[1]
-#        pose.pose.orientation.z = q[2]
-#        pose.pose.orientation.w = q[3]
-#        # action.move_time = rospy.Duration(1.5)
-#        #goal.motions.append(pose)
-#        self.addGoalConstraintToMoveArmGoal(pose, goal)
-#        self.move_arm_client.send_goal(goal)
-#        finished_within_time = self.move_arm_client.wait_for_result(rospy.Duration(200.0))
-#        print self.move_arm_client.get_result()
+        print "lower torso"
         self.move_torso(lower_to_piece)     # raise torso for easier planning
        
-        # open gripper
-        # action = ArmAction()
-        # action.type = ArmAction.MOVE_GRIPPER
-        # action.command = GRIPPER_OPEN
-        # action.move_time = rospy.Duration(1.0)
-        # goal.motions.append(action)
+        print "open gripper"
         grippergoal = Pr2GripperCommandGoal()
         grippergoal.command.position = 0.08
         grippergoal.command.max_effort = -1 # open fast.
         self.gripper.send_goal(grippergoal)
         self.gripper.wait_for_result()
-        print self.move_arm_client.get_result()
-        #time.sleep(5)
-        rospy.sleep(5)
+        # print self.move_arm_client.get_result()
+        # rospy.sleep(5)
 
-        # action = ArmAction()
-        # action.type = ArmAction.MOVE_GRIPPER
-        # action.command = GRIPPER_OPEN
-        # action.move_time = rospy.Duration(1.0)
-        # goal.motions.append(action)
-
-        # raise gripper
-        #action = SimplePoseConstraint()
-        # action = ArmAction()
-        # action.type = ArmAction.MOVE_ARM
-        pose.pose.position.x = fr.pose.position.x
-        pose.pose.position.y = fr.pose.position.y
-        pose.pose.position.z = fr.pose.position.z + 0.03
-        if pose.pose.position.z > 0.05:
-            pose.pose.position.z = 0.05
-        #pose.goal.position.z = 0.05 # 0.035
-        q = quaternion_from_euler(0.0, 1.57, 0.0)
-        pose.pose.orientation.x = q[0]
-        pose.pose.orientation.y = q[1]
-        pose.pose.orientation.z = q[2]
-        pose.pose.orientation.w = q[3]
-        pose.absolute_position_tolerance.x = 0.05;
-        pose.absolute_position_tolerance.y = 0.05;
-        pose.absolute_position_tolerance.z = 0.05;
-        pose.absolute_roll_tolerance = 0.2;
-        pose.absolute_pitch_tolerance = 0.2;
-        pose.absolute_yaw_tolerance = 0.2;
-        # action.move_time = rospy.Duration(1.5)
-        #goal.motions.append(action)
-        self.addGoalConstraintToMoveArmGoal(pose, goal)
-        self.move_arm_client.send_goal(goal)
-        finished_within_time = self.move_arm_client.wait_for_result(rospy.Duration(200.0))
-        print self.move_arm_client.get_result()
-
-        # close gripper
-        grippergoal = Pr2GripperCommandGoal()
-        grippergoal.command.position = 0.0
-        grippergoal.command.max_effort = 50 # close slowly
-        self.gripper.send_goal(grippergoal)
-        self.gripper.wait_for_result()
-        print self.move_arm_client.get_result()
-        # action = ArmAction()
-        # action.type = ArmAction.MOVE_GRIPPER
-        # action.command = GRIPPER_CLOSE
-        # action.move_time = rospy.Duration(3.0)
-        # goal.motions.append(action)
-
-#        # raise gripper
-#        # action = ArmAction()
-#        # action.type = ArmAction.MOVE_ARM
-#        pose.pose.position.x = fr.pose.position.x
-#        pose.pose.position.y = fr.pose.position.y
-#        #pose.pose.position.z = fr.position.z + 0.1
-#        pose.pose.position.z = 0.15
-#        q = quaternion_from_euler(0.0, 1.57, 0.0)
-#        pose.pose.orientation.x = q[0]
-#        pose.pose.orientation.y = q[1]
-#        pose.pose.orientation.z = q[2]
-#        pose.pose.orientation.w = q[3]
-#        # pose.move_time = rospy.Duration(1.0)
-#        #goal.motions.append(pose)
-#        self.addGoalConstraintToMoveArmGoal(pose, goal)
-#        self.move_arm_client.send_goal(goal)
-#        finished_within_time = self.move_arm_client.wait_for_result(rospy.Duration(200.0))
-#        print self.move_arm_client.get_result()
-        self.move_torso(start_torso_pos)
-
-        # over over goal
-        # action = ArmAction()
-       
-#        # raise gripper
-#        # action = ArmAction()
-#        # action.type = ArmAction.MOVE_ARM
-#        pose.pose.position.x = to.pose.position.x
-#        pose.pose.position.y = to.pose.position.y
-#        pose.pose.position.z = 0.15
-#        q = quaternion_from_euler(0.0, 1.57, 0.0)
-#        pose.pose.orientation.x = q[0]
-#        pose.pose.orientation.y = q[1]
-#        pose.pose.orientation.z = q[2]
-#        pose.pose.orientation.w = q[3]
-#        # action.move_time = rospy.Duration(1.0)
-#        # goal.motions.append(pose)
-#        self.move_arm_client.send_goal(goal)
-#        finished_within_time = self.move_arm_client.wait_for_result(rospy.Duration(200.0))
-#        print self.move_arm_client.get_result()
         self.move_torso(start_torso_pos)
         self.tuck_server.untuck()
 
@@ -515,7 +257,8 @@ class ArmPlanner:
         # ps.header.frame_id = "chess_board" # ARD
         ps.header.frame_id = "chess_board_raw"
         ps.pose = self.getPose(board.getColIdx(col), int(rank), board)
-        pose = self.listener.transformPose("right_shoulder_pan_link", ps)
+        pose = self.listener.transformPose("right_arm_shelf_link", ps)
+        # pose = self.listener.transformPose("right_shoulder_pan_link", ps)
         print "get reach : chess_board_raw to right_shoulder_pan_link"
         x = pose.pose.position.x
         y = pose.pose.position.y
@@ -523,3 +266,82 @@ class ArmPlanner:
         print reach
         return reach
 
+
+def pose_relative_trans(pose, x=0., y=0., z=0.):
+    """Return a pose translated relative to a given pose."""
+    ps = deepcopy(pose)
+    M_trans = tft.translation_matrix([x,y,z])
+    q_ps = [ps.pose.orientation.x, ps.pose.orientation.y, ps.pose.orientation.z, ps.pose.orientation.w]
+    M_rot = tft.quaternion_matrix(q_ps)
+    trans = np.dot(M_rot,M_trans)
+    ps.pose.position.x += trans[0][-1]
+    ps.pose.position.y += trans[1][-1]
+    ps.pose.position.z += trans[2][-1]
+    #print ps
+    return ps
+
+def pose_relative_rot(pose, r=0., p=0., y=0., degrees=True):
+    """Return a pose rotated relative to a given pose."""
+    ps = deepcopy(pose) 
+    if degrees:
+        r = math.radians(r)
+        p = math.radians(p)
+        y = math.radians(y)
+    des_rot_mat = tft.euler_matrix(r,p,y) 
+    q_ps = [ps.pose.orientation.x, 
+            ps.pose.orientation.y, 
+            ps.pose.orientation.z, 
+            ps.pose.orientation.w]
+    state_rot_mat = tft.quaternion_matrix(q_ps) 
+    final_rot_mat = np.dot(state_rot_mat, des_rot_mat) 
+    ps.pose.orientation = Quaternion(
+                            *tft.quaternion_from_matrix(final_rot_mat))
+    return ps
+
+def find_approach(pose, standoff=0., axis='x'):
+    """Return a PoseStamped pointed down the z-axis of input pose."""
+    ps = deepcopy(pose)
+    if axis == 'x':
+        ps = pose_relative_rot(ps, p=90)
+        ps = pose_relative_trans(ps, -standoff)
+    return ps
+    
+def calc_dist(ps1, ps2):
+    """ Return the cartesian distance between the points of 2 poses."""
+    p1 = ps1.pose.position
+    p2 = ps2.pose.position
+    return math.sqrt((p1.x-p2.x)**2 + (p1.y-p2.y)**2 + (p1.z-p2.z)**2)
+
+class PoseUtilsTest():
+    def __init__(self):
+        rospy.Subscriber('pose_in', PoseStamped, self.cb)
+        self.recd_pub = rospy.Publisher('pose_utils_test_received', PoseStamped)
+        self.trans_pub = rospy.Publisher('pose_utils_test_trans', PoseStamped)
+        self.rot_pub = rospy.Publisher('pose_utils_test_rot', PoseStamped)
+        self.ps = PoseStamped()
+        self.ps.header.frame_id = '/torso_lift_link'
+        self.ps.header.stamp = rospy.Time.now()
+        self.ps.pose.position.x = 5
+        self.ps.pose.position.y = 2
+        self.ps.pose.position.z = 3
+
+    def cb(self, ps):
+        self.ps.pose.orientation = Quaternion(*tft.random_quaternion())
+        print ps
+        rospy.sleep(0.5)
+        self.recd_pub.publish(ps)
+        
+        #trans_pose = pose_relative_trans(ps, 0.5, 0.5, 0.2)
+        #self.trans_pub.publish(trans_pose)
+        #rospy.loginfo("Pose Utils Test: Pose Translated: \n\r %s" %trans_pose)
+
+        ps_rot = pose_relative_rot(ps, 90, 30 , 45)
+        self.rot_pub.publish(ps_rot)
+        rospy.loginfo("Pose Utils Test: Pose Rotated: \n\r %s" %ps_rot)
+
+if __name__=='__main__':
+    rospy.init_node('pose_utils_test')
+    put = PoseUtilsTest()
+    while not rospy.is_shutdown():
+        put.cb(put.ps)
+        rospy.sleep(5)

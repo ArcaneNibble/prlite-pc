@@ -37,6 +37,7 @@ servos = ['right_shoulder_pan_joint', 'right_shoulder_tilt_joint', 'right_upper_
 to_side = [1.6157930965728755,0.35822709988129486, -0.35822709988129486, 0, -1.3294500161692546, 0, 0]
 forward = [0.5368932757599745,0.35822709988129486, -0.35822709988129486, 0, -1.3294500161692546, 0, 0]
 tucked = [1.6157930965728755, 0.9481697047772568, -0.9481697047772568, 0, -1.3396765547496274, 0,0]
+startIKpos = [ 0.04601942363656924, 0.35822709988129486, -0.35822709988129486, -1.5851134808151626,  0.02045307717010969, 1.4675082870772636, 0.5675728915176873]
 
 class tuck_arm:
     
@@ -95,6 +96,25 @@ class tuck_arm:
 
         point = JointTrajectoryPoint()
         point.positions = forward
+        point.velocities = [ 0.0 for servo in msg.joint_names ]
+        point.time_from_start = rospy.Duration(3.0)
+        msg.points.append(point)
+
+        # call action
+        msg.header.stamp = rospy.Time.now() + rospy.Duration(0.1)
+        goal = FollowJointTrajectoryGoal()
+        goal.trajectory = msg
+        self._client.send_goal(goal)
+
+    def IKpose(self):
+        rospy.loginfo('IKpose')
+        # prepare a joint trajectory
+        msg = JointTrajectory()
+        msg.joint_names = servos
+        msg.points = list()
+
+        point = JointTrajectoryPoint()
+        point.positions = startIKpos
         point.velocities = [ 0.0 for servo in msg.joint_names ]
         point.time_from_start = rospy.Duration(3.0)
         msg.points.append(point)

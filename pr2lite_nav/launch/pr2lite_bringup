@@ -1,2 +1,7 @@
-pr2lite_bringup_arm_nav
-roslaunch pr2lite_bringup_base
+#!/bin/bash
+export ROS_HOSTNAME=localhost
+export ROS_MASTER_URI=http://localhost:11311
+
+./pr2lite_bringup_arm_nav
+sleep 5
+roslaunch pr2lite_nav pr2lite_bringup_base.launch

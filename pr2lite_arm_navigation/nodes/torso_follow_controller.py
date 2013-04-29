@@ -48,14 +48,13 @@ class TorsoFollowTrajController:
         # float64 position
         # duration min_duration
         # float64 max_velocity
-        time = rospy.Time.now()
-        endtime = time + goal.min_duration
-        self.active = 1
+        # time = rospy.Time.now()
         # get current position
+        self.active = 1
         while self.current_pos == -1:
-          rospy.sleep(0.05)
-        cur_pos = self.current_pos
-        endtime = rospy.Time.now() + goal.min_duration
+          rospy.sleep(.05)
+        endtime = rospy.Time.now() + rospy.Duration(6.0)
+        # endtime = rospy.Time.now() + goal.min_duration
         # if goal.position != 0:
         desired_pos_in_meters = goal.position
         # else:
@@ -70,18 +69,22 @@ class TorsoFollowTrajController:
         # torso should be dynamixel_type_raw with height in meters
         # self.torso_pub.publish(desired_position_in_meters)
         self.torso_pub.publish(goal.position)
-
-        rospy.loginfo(self.name + ": Done.")
-        self.server.set_succeeded()
+        while abs(self.current_pos - goal.position) > .006 and rospy.Time.now() < endtime:
+          rospy.sleep(.05)
+        self.active = -1
+        if abs(self.current_pos - goal.position) < .006:
+          self.server.set_succeeded()
+        else:
+          self.server.set_aborted()
   
     # we could have one controller shared among the arms, head, and torso to reduce 
     # the overhead of the callback. For now, only process joint states to get current_pos 
     # once we receive a torso trajectory message.
     def getJointState(self, msg):
       if self.active == 1:
-        for joint_state_name in msg.name:
+        for index, joint_state_name in enumerate(msg.name):
           if joint_state_name == "torso_lift_joint":
-            self.current_pos = msg.position
+            self.current_pos = msg.position[index]
       else:
         self.current_pos = -1
 
