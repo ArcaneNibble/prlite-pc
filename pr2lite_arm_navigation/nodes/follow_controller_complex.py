@@ -221,7 +221,7 @@ FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
                # self.speed_services[j] = velocity
                self.speed_services[j](velocity)
             self.position_pub[j].publish(desired)
-            rospy.loginfo('Trajectory ' + str(j) + ' ' + self.joints[j] + str(desired) + ' ' +  + str(fudge_value[j]) + ' ' + str(velocity))
+            rospy.loginfo('Trajectory ' + str(j) + ' ' + self.joints[j] + ' ' + str(desired) + ' ' + str(fudge_value[j]) + ' ' + str(velocity))
         return      
 
 if __name__ == '__main__':

@@ -39,6 +39,7 @@ import tf
 from std_msgs.msg import Float64
 from pr2_controllers_msgs.msg import *
 from geometry_msgs.msg import PointStamped
+from pr2lite_arm_navigation.srv import ReturnJointStates
 
 import math
 
@@ -73,7 +74,9 @@ class PointHeadNode():
         self.head_pan_pub = rospy.Publisher(self.head_pan_controller_topic, Float64)
        
         # Initialize publisher for the tilt servo
-        self.head_tilt_frame = 'head_tilt_link'
+        # self.head_tilt_frame = 'head_tilt_link'
+        # self.head_tilt_frame = 'kinect_depth_optical_frame'
+        self.head_tilt_frame = 'kinect_link'
         self.head_tilt_pub = rospy.Publisher(self.head_tilt_controller_topic, Float64)
 
         # Initialize tf listener
@@ -89,6 +92,26 @@ class PointHeadNode():
         #rospy.Subscriber('/head_traj_controller/point_head_action/goal', PointHeadActionGoal, self.update_target_point)
         self.server = actionlib.SimpleActionServer('/head_traj_controller/point_head_action', PointHeadAction, execute_cb=self.update_target_point, auto_start=False)
         self.server.start()
+
+
+    # http://www.ros.org/wiki/pr2_controllers/Tutorials/Getting%20the%20current%20joint%20angles
+    def get_head_states(self):
+      joint_names = ['head_pan_joint', 'head_tilt_joint']
+      rospy.wait_for_service("return_joint_states")
+      try:
+        s = rospy.ServiceProxy("return_joint_states", ReturnJointStates)
+        resp = s(joint_names)
+      except rospy.ServiceException, e:
+        print "error when calling return_joint_states: %s"%e
+        sys.exit(1)
+      for (ind, joint_name) in enumerate(joint_names):
+        if joint_name == "head_pan_joint":
+          head_pan_pos = resp.position[ind]
+        elif joint_name == "head_tilt_joint":
+          head_tilt_pos = resp.position[ind]
+        elif(not resp.found[ind]):
+          print "joint %s not found!"%joint_name
+      return (head_pan_pos, head_tilt_pos)
 
     def update_target_point(self, msg):
         self.target_point = msg
@@ -130,14 +153,27 @@ class PointHeadNode():
 
         # Transform target point to pan reference frame & retrieve the pan angle
         pan_target = self.tf.transformPoint(pan_ref_frame, target)
+
         pan_angle = math.atan2(pan_target.point.y, pan_target.point.x)
+        # pan_angle = math.atan2(pan_target.point.x, pan_target.point.y)
 
         # Transform target point to tilt reference frame & retrieve the tilt angle
         tilt_target = self.tf.transformPoint(tilt_ref_frame, target)
-        tilt_angle = math.atan2(tilt_target.point.z,
-                math.sqrt(math.pow(tilt_target.point.x, 2) + math.pow(tilt_target.point.y, 2)))
-        rospy.loginfo("pan "+str(pan_angle) + " tilt " + str(tilt_angle))
-        return [pan_angle, -tilt_angle]
+        #\
+        # \
+        #  \
+        #___\
+        # tan = opp/adj  ; cos = adj/hyp ; sin = opp / hyp
+        # tilt_angle = 1.5708 - math.atan2(tilt_target.point.z,
+        # tilt_angle = math.atan2(tilt_target.point.z,
+        #       math.sqrt(math.pow(tilt_target.point.x, 2) + math.pow(tilt_target.point.y, 2)))
+        tilt_angle = math.atan2( math.sqrt(math.pow(tilt_target.point.x, 2) + math.pow(tilt_target.point.y, 2)), tilt_target.point.z)
+        (cur_head_pan_pos, cur_head_tilt_pos) = self.get_head_states()
+        final_pan_angle = 1.5708 + pan_angle + cur_head_pan_pos
+        final_tilt_angle = tilt_angle + cur_head_tilt_pos
+        rospy.loginfo("x " + str(tilt_target.point.x) + " y " + str(tilt_target.point.y) + " z " + str(tilt_target.point.z) + " pan "+str(pan_angle) + " tilt " + str(tilt_angle) +  " cur_pan "+str(cur_head_pan_pos) + " cur_tilt " + str(cur_head_tilt_pos) + " final pan "+str(final_pan_angle) + " final_tilt " + str(final_tilt_angle))
+        #return [pan_angle, -tilt_angle]
+        return [final_pan_angle, final_tilt_angle]
 
 
 if __name__ == '__main__':

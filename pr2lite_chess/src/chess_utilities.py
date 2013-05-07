@@ -88,7 +88,7 @@ class BoardState:
         Helper function to generate ChessPiece messages.
         """
         p = ChessPiece()
-        p.header.frame_id = "chess_board_raw"
+        p.header.frame_id = "chess_board"
         if copy != None:
             p.pose = copy.pose
         p.type = val
@@ -629,7 +629,7 @@ class BoardUpdater(threading.Thread):
                                   self.rotation,
                                   rospy.Time.now(),
                                   "chess_board",
-                                  "base_footprint" )    # was odom
+                                  "base_link" )    # was odom
 
             rospy.sleep(0.1)        
 

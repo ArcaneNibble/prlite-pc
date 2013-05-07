@@ -32,10 +32,16 @@ from diagnostic_msgs.msg import DiagnosticArray
 
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from control_msgs.msg import *
+from std_msgs.msg import Float64
+
 
 class HeadEngine:   # a crazy name, but matches our convention
     
     def __init__(self, client=None):
+        self.head_pan_pub = rospy.Publisher('/head_pan_controller/command', Float64)
+        self.head_tilt_pub = rospy.Publisher('/head_tilt_controller/command', Float64)
+        rospy.sleep(2)
+      
         self.joints = ["head_pan_joint", "head_tilt_joint"] 
         self.last = [None, None] 
         self.temps = [0.0, 0.0]
@@ -58,7 +64,6 @@ class HeadEngine:   # a crazy name, but matches our convention
 
         # rospy.Subscriber('joint_states', JointState, self.stateCb)
         # rospy.Subscriber('diagnostics', DiagnosticArray, self.diagnosticCb)
-
         # setup home positions
         # while self.last[0] == None:
             # pass
@@ -103,13 +108,16 @@ class HeadEngine:   # a crazy name, but matches our convention
           print "Failed"
 
     def look_at_board(self):
+        self.head_pan_pub.publish(0.0)
+        self.head_tilt_pub.publish(1.17)
+        rospy.sleep(2)
+        return
         g = PointHeadGoal()
         g.target.header.frame_id = 'base_link'
-        g.target.point.x = 0.1
+        g.target.point.x = 0.30
         g.target.point.y = 0.0
         g.target.point.z = 0.0
         g.min_duration = rospy.Duration(1.0)
-
         self._client.send_goal(g)
         self._client.wait_for_result()
 
@@ -123,7 +131,7 @@ class HeadEngine:   # a crazy name, but matches our convention
         g = PointHeadGoal()
         g.target.header.frame_id = 'head_tilt_link'
         # g.target.point.x = (self.iter-2)*0.05
-        g.target.point.x = 1.0
+        g.target.point.x = 0.1
         # g.target.point.y = 0.1
         g.target.point.y = 0.0
         g.target.point.z = 0.0

@@ -33,61 +33,37 @@ class TorsoFollowTrajController:
         # action server for FollowController
         self.active = 0
         self.name = "torso_controller/position_joint_action"
-        #self.server = actionlib.SimpleActionServer(self.name, FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
         self.server = actionlib.SimpleActionServer(self.name, SingleJointPositionAction, execute_cb=self.actionCb, auto_start=False)
-        # /joint_states
-        rospy.Subscriber('joint_states', JointState, self.getJointState)
-        # self.torso_pub = rospy.Publisher('torso_lift_joint/command', Float64)
         self.torso_pub = rospy.Publisher('torso_lift_controller/command', Float64)
-        self.current_pos = -1
+        self.set_torso_pos = rospy.Publisher('net_485net_set_torso_pos', Float64)
+        self.current_pos = 0.0
+        self.velocity = 0.0508
         rospy.loginfo("Started TorsoFollowTrajController")
         self.server.start()
 
     def actionCb(self, goal):
-        rospy.loginfo(self.name + ": Action goal recieved.")
-        # float64 position
-        # duration min_duration
-        # float64 max_velocity
-        # time = rospy.Time.now()
-        # get current position
+        rospy.loginfo(self.name + ": Action goal recieved %f" % goal.position)
+        time = rospy.Time.now()
         self.active = 1
-        while self.current_pos == -1:
-          rospy.sleep(.05)
-        endtime = rospy.Time.now() + rospy.Duration(6.0)
-        # endtime = rospy.Time.now() + goal.min_duration
-        # if goal.position != 0:
         desired_pos_in_meters = goal.position
-        # else:
-          # pr2lite does not support variable torso lift velocity.  
-          # Convert to position-based.
-          #desired_pos_in_meters = cur_pos + (goal.min_duration * goal.max_velocity)
-          # desired_pos_in_meters = goal.min_duration.to_sec() * goal.max_velocity
-          # desired_pos_in_meters = desired_pos_in_meters + cur_pos
-        # torso should be linact_type_raw with height from 0 to 1000. 
-        # new_pos = int(1000 * desired_pos_in_meters / 3.28084) 
 
-        # torso should be dynamixel_type_raw with height in meters
-        # self.torso_pub.publish(desired_position_in_meters)
+        starttime = rospy.Time.now() 
+        endtime = rospy.Time.now() + rospy.Duration(abs((desired_pos_in_meters - self.current_pos) / self.velocity))
+
         self.torso_pub.publish(goal.position)
-        while abs(self.current_pos - goal.position) > .006 and rospy.Time.now() < endtime:
+        while rospy.Time.now() < endtime:
+          if self.current_pos > goal.position:
+            est_pos = self.current_pos - self.velocity * (rospy.Time.now().to_sec() - starttime.to_sec())
+          else:
+            est_pos = self.current_pos + self.velocity * (rospy.Time.now().to_sec() - starttime.to_sec())
+          self.set_torso_pos.publish(est_pos)
+          print "torso %f" % est_pos
           rospy.sleep(.05)
-        self.active = -1
-        if abs(self.current_pos - goal.position) < .006:
-          self.server.set_succeeded()
-        else:
-          self.server.set_aborted()
+        self.current_pos = goal.position
+        print "torso %f" % self.current_pos
+        self.set_torso_pos.publish(self.current_pos)
+        self.server.set_succeeded()
   
-    # we could have one controller shared among the arms, head, and torso to reduce 
-    # the overhead of the callback. For now, only process joint states to get current_pos 
-    # once we receive a torso trajectory message.
-    def getJointState(self, msg):
-      if self.active == 1:
-        for index, joint_state_name in enumerate(msg.name):
-          if joint_state_name == "torso_lift_joint":
-            self.current_pos = msg.position[index]
-      else:
-        self.current_pos = -1
-
 if __name__ == '__main__':
   rospy.init_node("TorsoFollowTrajController")
   server = TorsoFollowTrajController()

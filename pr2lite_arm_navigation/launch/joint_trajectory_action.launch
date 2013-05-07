@@ -1,0 +1,4 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+   <node pkg="pr2lite_arm_navigation" type="joint_trajectory_action.py" name="joint_trajectory_action" />
+</launch>

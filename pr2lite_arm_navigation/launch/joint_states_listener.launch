@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="pr2lite_arm_navigation" type="joint_states_listener.py" name="joint_states_listener" />
+</launch>

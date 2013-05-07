@@ -4,6 +4,7 @@
     <!-- include file="$(find pr2lite_arm_markers)/launch/pr2lite_arm_markers.launch" -->
     <!-- include file="$(find pr2lite_arm_navigation)/launch/arbotix_linact.launch"/>
     <node pkg="pr2lite_arm_navigation" type="fake_linact_pos.py" name="fake_linact_pos" />
+    <node pkg="pr2lite_arm_navigation" type="fake_linact_pos.py" name="fake_linact_pos" />
     -->
     <node pkg="pr2lite_arm_navigation" type="fake_pub.py" name="fake_pub" />
 
@@ -21,4 +22,5 @@
       <param name="publish_frequency" value="5.0" />
    </node>
 -->
+    <node pkg="pr2lite_arm_navigation" type="joint_states_listener.py" name="joint_states_listener" />
 </launch>

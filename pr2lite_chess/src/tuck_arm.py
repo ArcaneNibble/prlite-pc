@@ -152,7 +152,7 @@ class tuck_arm:
         msg.header.stamp = rospy.Time.now() + rospy.Duration(0.1)
         goal = FollowJointTrajectoryGoal()
         goal.trajectory = msg
-        self._client.send_goal(goal)
+        self._left_client.send_goal(goal)
         
     def left_untuck(self):
         rospy.loginfo('left_tuck_arm untuck')
@@ -177,7 +177,7 @@ class tuck_arm:
         msg.header.stamp = rospy.Time.now() + rospy.Duration(0.1)
         goal = FollowJointTrajectoryGoal()
         goal.trajectory = msg
-        self._client.send_goal(goal)
+        self._left_client.send_goal(goal)
     
 if __name__=="__main__":
     rospy.init_node("tuck_arm")

@@ -1,0 +1,4 @@
+<launch>
+    <param name="use_robot_data" value="true"/>
+    <node pkg="rviz" type="rviz" name="rviz_planning_components" args="-d $(find pr2lite_block_manipulation)/demo/block_manipulation_rviz.vcg" />
+</launch>

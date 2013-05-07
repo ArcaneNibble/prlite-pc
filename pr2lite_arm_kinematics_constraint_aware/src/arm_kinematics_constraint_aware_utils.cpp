@@ -245,6 +245,8 @@ namespace arm_kinematics_constraint_aware
       int index = -1;
       for(unsigned int j=0; j < joint_names.size(); j++)
       {
+        // ARD
+        ROS_INFO_STREAM("seed name " << joint_names[j] << " " << chain_info.joint_names[i]);
         if(chain_info.joint_names[i] == joint_names[j])
         {
           index = j;

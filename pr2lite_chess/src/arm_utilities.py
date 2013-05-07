@@ -18,8 +18,9 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 """
 
-import roslib; roslib.load_manifest('pr2lite_chess')
-roslib.load_manifest('pr2_controllers_msgs')
+import roslib; 
+roslib.load_manifest('pr2lite_chess')
+#roslib.load_manifest('pr2_controllers_msgs')
 import rospy, actionlib
 # from math import sqrt fabs
 from math import sqrt
@@ -29,6 +30,7 @@ import pexpect
 import actionlib
 from pr2_controllers_msgs.msg import (Pr2GripperCommandGoal, Pr2GripperCommand,
                                       Pr2GripperCommandAction)
+from turtlebot_block_manipulation.msg import *
 import tf
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from pr2lite_arm_utilities import PR2Arm_Planning 
@@ -63,8 +65,7 @@ class ArmPlanner:
             #ARD: uncomment next line
             rospy.loginfo('ArmPlanner pr2lite_move_right_arm')
             arm = "right"
-            self.move_arm_client = actionlib.SimpleActionClient('move_right_arm'
-, MoveArmAction)
+            self.move_arm_client = actionlib.SimpleActionClient('pr2lite_move_right_arm', MoveArmAction)
             if arm is "right":
               service = "r_gripper_controller/gripper_action"
             else:
@@ -76,6 +77,11 @@ class ArmPlanner:
             self.tuck_server = tuck_arm()
             self.torso_client = actionlib.SimpleActionClient('torso_controller/position_joint_action', SingleJointPositionAction)
             self.torso_client.wait_for_server()
+
+            self.block_client = actionlib.SimpleActionClient('interactive_manipulation', InteractiveBlockManipulationAction)
+            rospy.loginfo('ArmPlanner wait for interactive manip')
+            self.block_client.wait_for_server()
+            # self.block_client.block_size = 0.03 
         else:
             self.move_arm_client = client
      
@@ -103,6 +109,7 @@ class ArmPlanner:
 
         # is this a capture?
         if to != None:
+            print "execute Capture"
             off_board = ChessPiece()
             off_board.header.frame_id = fr.header.frame_id
             off_board.pose.position.x = -2 * SQUARE_SIZE
@@ -112,10 +119,15 @@ class ArmPlanner:
        
         to = ChessPiece()
         to.header.frame_id = fr.header.frame_id
-        print "Execute "
-        print to.header.frame_id
-        print fr.header.frame_id
         to.pose = self.getPose(col_t, rank_t, board, fr.pose.position.z)
+
+        print "Execute FR"
+        print fr
+        print "Execute TO"
+        print to
+        # fr.pose = self.getPose(col_f, rank_f, board, fr.pose.position.z)
+        # print "Execute FR2"
+        print fr
 
         # self.addTransit(goal, fr.pose, to.pose)
         self.addTransit(goal, fr, to)
@@ -135,6 +147,9 @@ class ArmPlanner:
         self.tuck_server.untuck()
         rospy.sleep(5.0)
         self.move_torso(0)
+
+    def picknplaceCB(self, success, result):
+        rospy.loginfo('Pick and Place Callback')
 
     def addTransit(self, goal, fr, to):
         """ Move a piece from 'fr' to 'to' """
@@ -158,7 +173,18 @@ class ArmPlanner:
         pose.header.frame_id = "base_link"
         pose.pose.position.x = fr_tfpose.pose.position.x
         pose.pose.position.y = fr_tfpose.pose.position.y
-        pose.pose.position.z = above_board
+        pose.pose.position.z = fr_tfpose.pose.position.z + above_board
+
+        block_goal = InteractiveBlockManipulationGoal()
+        block_goal.block_size = 0.03 
+        block_goal.frame = "chess_board_raw"
+        self.block_client.block_size = 0.03 
+        self.block_client.frame = "chess_board_raw"
+        self.block_client.pickup_pose = fr
+        self.block_client.place_pose = to
+        self.block_client.send_goal(block_goal, self.picknplaceCB)
+        rospy.loginfo('Block goal')
+
 
         # pose.pose.position.z = 0.15
         pose.pose.orientation.x = q[0]
@@ -190,8 +216,9 @@ class ArmPlanner:
         rospy.sleep(5)
         rospy.sleep(50)
 
-        print "lower torso to piece"
+        # following looks wrong
         lower_to_piece = fr.pose.position.z + 0.03 + above_board
+        print "lower torso to piece ", lower_to_piece
         self.move_torso(lower_to_piece)     # raise torso for easier planning
 
         # close gripper
@@ -208,7 +235,7 @@ class ArmPlanner:
         pose.header.frame_id = to_tfpose.header.frame_id
         pose.pose.position.x = to_tfpose.pose.position.x
         pose.pose.position.y = to_tfpose.pose.position.y
-        pose.pose.position.z = above_board
+        pose.pose.position.z = to_tfpose.pose.position.z + above_board
         q = quaternion_from_euler(0.0, 1.57, 0.0)
         pose.pose.orientation.x = q[0]
         pose.pose.orientation.y = q[1]
