@@ -1,9 +1,0 @@
-<launch>
-
-  <include file="$(find rbx1_vision)/launch/uvc_cam.launch" />
-  
-  <include file="$(find pi_teleop)/launch/pi_drivers_no_servos.launch" />
-    
-  <include file="$(find pi_teleop)/launch/pi_rosbridge.launch" />
-  
-</launch>

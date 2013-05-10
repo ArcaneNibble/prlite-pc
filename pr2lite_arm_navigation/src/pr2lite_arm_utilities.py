@@ -93,7 +93,7 @@ class PR2Arm():
         
 
         if self.arm == "right":
-          # PR2: self.arm[0]+ '_arm_controller/joint_trajectory_action',
+          # PR2: self.arm[0]+ 'arm_controller/joint_trajectory_action',
           arm_controller = "/arm_controllerR/follow_joint_trajectory"
         else:
           arm_controller = "/arm_controller/follow_joint_trajectory"
@@ -102,11 +102,9 @@ class PR2Arm():
                                 FollowJointTrajectoryAction)
         rospy.loginfo("Waiting for " + arm_controller)
         if self.arm_traj_client.wait_for_server(rospy.Duration(5)):
-            rospy.loginfo("Found "+self.arm[0]+
-                            "_arm_controller/joint_trajectory_action server")
+            rospy.loginfo("Found " + arm_controller)
         else:
-            rospy.logwarn("Cannot find " + self.arm[0] + 
-                            " _arm_controller/joint_trajectory_action server")
+            rospy.logwarn("Cannot find " + arm_controller)
 
         # same for both pr2 and pr2lite
         self.torso_client = actionlib.SimpleActionClient(
@@ -380,26 +378,31 @@ class PR2Arm():
         ik_goal = self.ik_pose_proxy(req)
         print "IK goal"
         print req
-        seed = ik_goal.solution.joint_state.position
-        for name in ik_goal.solution.joint_state.name:
-          rospy.loginfo("seed %s " % name)
+        seed = list(ik_goal.solution.joint_state.position)
+        for i, name in enumerate(ik_goal.solution.joint_state.name):
+           rospy.loginfo("traj joints %s" % name)
+           if name == 'left_upper_arm_hinge_joint' or name == 'right_upper_arm_hinge_joint':
+             hinge_index = i
+           elif name == 'left_shoulder_tilt_joint' or name == 'right_shoulder_tilt_joint':
+             shoulder_tilt_index = i
 
         ik_points = [[0]*7 for i in range(len(ik_fracs))]
         for i, p in enumerate(steps):
-            if i == 0:
-              continue
             request = self.form_ik_request(p)
             request.ik_request.ik_seed_state.joint_state.position = seed
             request.ik_request.ik_seed_state.joint_state.name = ik_goal.solution.joint_state.name
             ik_goal = self.ik_pose_proxy(request)
             if len(ik_goal.solution.joint_state.position) == 0:
-              for j in range(len(ik_fracs) - i):
-                ik_points[i + j] = ik_points[i-1]
               print "stopping stepwise planning from step %d" % i
+              if (i > 0):
+                ik_points = np.array(ik_points)[:,i-1]
+              else:
+                ik_points = None
               break
             ik_points[i] = ik_goal.solution.joint_state.position
             print ik_points[i]
-            seed = ik_goal.solution.joint_state.position # seed the next ik w/previous points results
+            seed = list(ik_goal.solution.joint_state.position) # seed the next ik w/previous points results
+            seed[hinge_index] = seed[shoulder_tilt_index]
         rospy.loginfo("linear interp")
         ik_points = np.array(ik_points)
         # Linearly interpolate angles 10 times between ik-defined points (non-linear in cartesian space, but this is reduced from dense ik sampling along linear path.  Used to maintain large number of trajectory points without running IK on every one.    

@@ -410,7 +410,7 @@ class ChessBoardLocator
         // publish transform
         tf::Transform transform = tfFromEigen(best_transform.inverse());
         br_.sendTransform(tf::StampedTransform(transform, ros::Time::now(), msg->header.frame_id, "chess_board_raw"));
-        ROS_INFO("published %d", msgs_++);
+        ROS_DEBUG("published %d", msgs_++);
 
         if(output_image_){
             bridge_->image = cdst;

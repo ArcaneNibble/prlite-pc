@@ -125,8 +125,9 @@ class ArmPlanner:
         print fr
         print "Execute TO"
         print to
-        # fr.pose = self.getPose(col_f, rank_f, board, fr.pose.position.z)
-        # print "Execute FR2"
+        fr.pose = self.getPose(col_f, rank_f, board, fr.pose.position.z)
+        fr.header.stamp = rospy.Time.now()
+        print "Execute FR2"
         print fr
 
         # self.addTransit(goal, fr.pose, to.pose)
@@ -143,7 +144,7 @@ class ArmPlanner:
         self.torso_client.wait_for_result()
 
     def begin_game_pos(self):
-        self.tuck_server.left_tuck()
+        # self.tuck_server.left_tuck()
         self.tuck_server.untuck()
         rospy.sleep(5.0)
         self.move_torso(0)
@@ -162,7 +163,6 @@ class ArmPlanner:
         self.tuck_server.IKpose()
         rospy.sleep(3.0)
 
-        q = quaternion_from_euler(0.0, 1.57, 0.0, 'sxyz')
         pose = SimplePoseConstraint()
         pose.link_name = "right_wrist_roll_link"
 
@@ -173,7 +173,7 @@ class ArmPlanner:
         pose.header.frame_id = "base_link"
         pose.pose.position.x = fr_tfpose.pose.position.x
         pose.pose.position.y = fr_tfpose.pose.position.y
-        pose.pose.position.z = fr_tfpose.pose.position.z + above_board
+        pose.pose.position.z = fr_tfpose.pose.position.z + above_board + start_torso_pos
 
         block_goal = InteractiveBlockManipulationGoal()
         block_goal.block_size = 0.03 
@@ -186,11 +186,22 @@ class ArmPlanner:
         rospy.loginfo('Block goal')
 
 
+        # q = quaternion_from_euler(0.0, 1.57, 0.0, 'sxyz')
         # pose.pose.position.z = 0.15
+        q = quaternion_from_euler(1.57, 0.0, 0.0, 'sxyz')
+
         pose.pose.orientation.x = q[0]
         pose.pose.orientation.y = q[1]
         pose.pose.orientation.z = q[2]
         pose.pose.orientation.w = q[3]
+        print "quat from euler"
+        print pose.pose.orientation
+
+        pose.pose.orientation.x = 0.359098912478
+        pose.pose.orientation.y = 0.625686613067
+        pose.pose.orientation.z = -0.330601968027
+        pose.pose.orientation.w = 0.608495334429
+
         pose.absolute_position_tolerance.x = 0.05;
         pose.absolute_position_tolerance.y = 0.05;
         pose.absolute_position_tolerance.z = 0.05;
@@ -224,7 +235,7 @@ class ArmPlanner:
         # close gripper
         print "close gripper"
         grippergoal = Pr2GripperCommandGoal()
-        grippergoal.command.position = 0.0
+        grippergoal.command.position = 0.01
         grippergoal.command.max_effort = 50 # close slowly
         self.gripper.send_goal(grippergoal)
         self.gripper.wait_for_result()
@@ -235,12 +246,17 @@ class ArmPlanner:
         pose.header.frame_id = to_tfpose.header.frame_id
         pose.pose.position.x = to_tfpose.pose.position.x
         pose.pose.position.y = to_tfpose.pose.position.y
-        pose.pose.position.z = to_tfpose.pose.position.z + above_board
+        pose.pose.position.z = to_tfpose.pose.position.z + above_board + start_torso_pos
         q = quaternion_from_euler(0.0, 1.57, 0.0)
         pose.pose.orientation.x = q[0]
         pose.pose.orientation.y = q[1]
         pose.pose.orientation.z = q[2]
         pose.pose.orientation.w = q[3]
+
+        pose.pose.orientation.x = 0.359098912478
+        pose.pose.orientation.y = 0.625686613067
+        pose.pose.orientation.z = -0.330601968027
+        pose.pose.orientation.w = 0.608495334429
         traj = self.pr2_arm.build_trajectory(pose, None)
         goal = self.pr2_arm.build_follow_trajectory(traj)
         self.pr2_arm.follow_trajectory(goal)

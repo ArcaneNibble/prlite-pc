@@ -2,7 +2,7 @@
 
   <!-- node name="arm_controller" pkg="pr2lite_arm_navigation" type="follow_controller.py" output="screen" -->
   <!-- node name="arm_controller" pkg="pr2lite_arm_navigation" type="follow_controller_simple.py" output="screen"-->
-  <node name="arm_controller" pkg="pr2lite_arm_navigation" type="follow_controller_complex.py" output="screen" >
+  <node name="arm_controller" pkg="pr2lite_arm_navigation" type="follow_controller_simple.py" output="screen" >
       <rosparam file="$(find pr2lite_arm_navigation)/config/pr2lite_arm.yaml" command="load" />
       <param name="my_arm_controller" value="arm_controller"/>
   </node>

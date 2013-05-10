@@ -53,6 +53,7 @@ class tuck_arm:
             self._left_client.wait_for_server()
 
     def tuck(self):
+        return
         rospy.loginfo('tuck_arm tuck')
         # prepare a joint trajectory
         msg = JointTrajectory()
@@ -88,11 +89,11 @@ class tuck_arm:
         msg.joint_names = servos
         msg.points = list()
         
-        point = JointTrajectoryPoint()
-        point.positions = to_side
-        point.velocities = [ 0.0 for servo in msg.joint_names ]
-        point.time_from_start = rospy.Duration(3.0)
-        msg.points.append(point)
+        # point = JointTrajectoryPoint()
+        # point.positions = to_side
+        # point.velocities = [ 0.0 for servo in msg.joint_names ]
+        # point.time_from_start = rospy.Duration(3.0)
+        # msg.points.append(point)
 
         point = JointTrajectoryPoint()
         point.positions = forward

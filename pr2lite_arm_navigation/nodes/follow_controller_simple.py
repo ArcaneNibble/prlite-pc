@@ -90,7 +90,9 @@ class FollowController:
         self.torque_services = list()
         self.speed_services = list()
         self.last_speed = list()
-        self.max_speed = 0.01
+        self.max_speed = 0.5
+        self.max_speed_shoulder_pan = .2
+
            
         for c in self.controllers:
           if c != 'left_upper_arm_hinge_controller' and c != 'right_upper_arm_hinge_controller':
@@ -164,7 +166,11 @@ class FollowController:
             endsecs = endtime.to_sec()
             nowsecs = rospy.Time.now().to_sec()
             velocity = abs((desired-prev_desired[i])/ (endsecs-nowsecs))
-            if velocity > self.max_speed:
+
+            if self.joints[i] == 'left_shoulder_tilt_joint' or self.joints[i] == 'right_shoulder_tilt_joint':
+              if velocity > self.max_speed_shoulder_pan:
+                velocity = self.max_speed_shoulder_pan
+            elif velocity > self.max_speed:
               velocity = self.max_speed
             if self.joints[i] != 'left_upper_arm_hinge_joint' and self.joints[i] != 'right_upper_arm_hinge_joint':
               if self.joints[i] != 'left_shoulder_tilt_joint' and self.joints[i] != 'right_shoulder_tilt_joint':

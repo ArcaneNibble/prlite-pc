@@ -77,7 +77,6 @@ class FollowController:
         self.current_pos = list()
         # traj = goal.trajectory
         self.trajectory_goal = list()
-        self.execute_goal = list()
         self.execute_joints = list()
         for joint in self.joints:
             #self.device.servos[joint].controller = self
@@ -88,9 +87,7 @@ class FollowController:
 
         # action server for FollowController
         name = rospy.get_param('~controllers/'+name +'/action_name','follow_joint_trajectory')
-        self.server = actionlib.SimpleActionServer(name,
-
-FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
+        self.server = actionlib.SimpleActionServer(name, FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
         rospy.loginfo("Started FollowController ("+name+"). Joints: " + str (self.joints) + " Controllers: " + str(self.controllers))
 
         self.fudge_value = [rospy.get_param('~fudge_factor/' + joint + '/value', 0.0) for joint in self.joints]
@@ -104,7 +101,8 @@ FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
         self.position_pub = list()
         self.torque_services = list()
         self.speed_services = list()
-        self.max_speed = 0.01
+        self.max_speed = 0.4
+        self.max_speed_shoulder_pan = .15
           
         for c in self.controllers:
           if c != 'left_upper_arm_hinge_controller' and c != 'right_upper_arm_hinge_controller':
@@ -112,6 +110,7 @@ FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
             self.position_pub.append(c_srv)
             rospy.loginfo("Real pos pub " + c)
             if c != 'left_shoulder_tilt_controller' and c != 'right_shoulder_tilt_controller':
+            # c != 'left_upper_arm_hinge_joint' and c != 'right_upper_arm_hinge_joint':
               speed_service = c + '/set_speed'
               rospy.wait_for_service(speed_service)
               srv = rospy.ServiceProxy(speed_service, SetSpeed)
@@ -157,15 +156,19 @@ FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
             rospy.logerr(msg)
             self.server.set_aborted(text=msg)
             return
-
-        if len(execute_traj) == 0:
-          self.execute_goal = goal
+        if len(self.trajectory_goal) == 0:
+          # full set of joints to execute for the trajectory being added
           self.execute_joints = self.joints
-          rospy.loginfo('new goal')
+          self.execute_positions = list(goal.trajectory.points[0].positions)
+          # eligible trajectory for getJointState to exec
+          self.trajectory_goal.append(goal)
+          rospy.loginfo('follow_controller: new goal')
         else:
-          self.execute_goal.append(msg)
-          rospy.loginfo('appending goal')
+          # add to end of list
+          self.trajectory_goal.append(goal)
+          rospy.loginfo('follow_controller: appending goal')
         self.server.set_succeeded()
+
  
 
     def getJointState(self, msg):
@@ -178,12 +181,13 @@ FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
               self.current_pos[i] = msg.position[j]
               # remove trajectories already completed
               for k in range(len(self.execute_joints)):
-                if execute_joint == joint_state_name:
-                  desired = self.trajectory_goal[0].points[0].positions[k] + self.fudge_value[i]
-                  if abs(desired - msg.position[j]) < .01:
+                if self.execute_joints[k] == joint_state_name:
+                  desired = self.execute_positions[k] + self.fudge_value[i]
+                  if abs(desired - msg.position[j]) < .01 or joint == 'left_upper_arm_hinge_joint' or joint == 'right_upper_arm_hinge_joint':
                     # close enough to consider the goal met
-                    del self.trajectory_goal[0].points[0].position[k]
+                    del self.execute_positions[k]
                     del self.execute_joints[k]
+                    break
                   rospy.loginfo(joint + ' des:' + str(desired) + ' pos:' + str (msg.position[j]))
             j += 1
           i += 1
@@ -192,36 +196,40 @@ FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
         # if trajectory points are empty, then done
         if len(self.trajectory_goal) == 0:
           return
-        if len(self.trajectory_goal[0].points[0]) == 0:
+        if len(self.trajectory_goal[0].trajectory.points) == 0:
           # if no more joints in current point, try next point.
-          del self.trajectory_goal[0].points[0]
+          del self.trajectory_goal[0].trajectory.points[0]
           # if no more points, try new goal.
-          if len(self.trajectory_goal[0].points) == 0:
+          if len(self.trajectory_goal[0].trajectory.points) == 0:
             del self.trajectory_goal[0]
             if len(self.trajectory_goal) == 0:
               return
           self.execute_joints = self.joints
+          self.execute_positions = list(goal.trajectory.points[0].positions)
 
         # phase 3: execute goal positions
+        start = rospy.Time.now()
+        nowsecs = rospy.Time.now().to_sec()
         for i in range(len(self.execute_joints)):
           for j in range(len(self.joints)):
             if self.joints[j] == self.execute_joints[i]:
               match = j
               break
-          start = self.trajectory_goal[0].header.stamp
-          desired = self.trajectory_goal[0].point[0].positions[i] + self.fudge_value[j]
-          endtime = start + self.trajectory_goal[0].point[0].time_from_start
+          desired = self.execute_positions[i] + self.fudge_value[j]
+          endtime = start + self.trajectory_goal[0].trajectory.points[0].time_from_start
           endsecs = endtime.to_sec()
-          nowsecs = rospy.Time.now().to_sec()
           velocity = abs((desired-msg.position[j])/ (endsecs-nowsecs))
-          if velocity > self.max_speed:
+
+          if self.joints[i] == 'left_shoulder_pan_joint' or self.joints[i] == 'right_shoulder_pan_joint':
+            if velocity > self.max_speed_shoulder_pan:
+              velocity = self.max_speed_shoulder_pan
+          elif velocity > self.max_speed:
             velocity = self.max_speed
           if self.joints[j] != 'left_upper_arm_hinge_joint' and self.joints[j] != 'right_upper_arm_hinge_joint':
             if self.joints[j] != 'left_shoulder_tilt_joint' and self.joints[j] != 'right_shoulder_tilt_joint':
-               # self.speed_services[j] = velocity
                self.speed_services[j](velocity)
             self.position_pub[j].publish(desired)
-            rospy.loginfo('Trajectory ' + str(j) + ' ' + self.joints[j] + ' ' + str(desired) + ' ' + str(fudge_value[j]) + ' ' + str(velocity))
+            rospy.loginfo('Trajectory ' + str(j) + ' ' + self.joints[j] + ' ' + str(desired) + ' ' + str(self.fudge_value[j]) + ' ' + str(velocity))
         return      
 
 if __name__ == '__main__':
