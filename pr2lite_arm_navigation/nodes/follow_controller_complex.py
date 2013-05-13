@@ -204,15 +204,15 @@ class FollowController:
             del self.trajectory_goal[0]
             if len(self.trajectory_goal) == 0:
               return
-          self.execute_joints = self.joints
+          self.execute_joints = list(goal.trajectory.joint_names)
           self.execute_positions = list(goal.trajectory.points[0].positions)
 
         # phase 3: execute goal positions
         start = rospy.Time.now()
         nowsecs = rospy.Time.now().to_sec()
-        for i in range(len(self.execute_joints)):
-          for j in range(len(self.joints)):
-            if self.joints[j] == self.execute_joints[i]:
+        for i, exec_joint in enumerate(self.execute_joints):
+          for j,jnt in range(len(self.joints)):
+            if jnt == exec_joint:
               match = j
               break
           desired = self.execute_positions[i] + self.fudge_value[j]
@@ -220,17 +220,17 @@ class FollowController:
           endsecs = endtime.to_sec()
           velocity = abs((desired-msg.position[j])/ (endsecs-nowsecs))
 
-          if self.joints[i] == 'left_shoulder_pan_joint' or self.joints[i] == 'right_shoulder_pan_joint':
+          if  exec_joint == 'left_shoulder_pan_joint' or exec_joint == 'right_shoulder_pan_joint':
             if velocity > self.max_speed_shoulder_pan:
               velocity = self.max_speed_shoulder_pan
           elif velocity > self.max_speed:
             velocity = self.max_speed
-          if self.joints[j] != 'left_upper_arm_hinge_joint' and self.joints[j] != 'right_upper_arm_hinge_joint':
-            if self.joints[j] != 'left_shoulder_tilt_joint' and self.joints[j] != 'right_shoulder_tilt_joint':
+          if exec_joint != 'left_upper_arm_hinge_joint' and exec_joint != 'right_upper_arm_hinge_joint':
+            if exec_joint != 'left_shoulder_tilt_joint' and exec_joint != 'right_shoulder_tilt_joint':
                self.speed_services[j](velocity)
             self.position_pub[j].publish(desired)
-            rospy.loginfo('Trajectory ' + str(j) + ' ' + self.joints[j] + ' ' + str(desired) + ' ' + str(self.fudge_value[j]) + ' ' + str(velocity))
-        return      
+            rospy.loginfo('Trajectory ' + str(j) + ' ' + exec_joint + ' ' + str(desired) + ' ' + str(self.fudge_value[j]) + ' ' + str(velocity))
+        return
 
 if __name__ == '__main__':
   rospy.loginfo("FollowController init_node " )

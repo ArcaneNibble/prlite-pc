@@ -18,3 +18,4 @@ pkill -f move_arm
 pkill -f linact_s
 pkill -f python
 pkill -f base_controller
+pkill -f gnuchess

@@ -11,7 +11,7 @@ from geometry_msgs.msg  import PoseStamped, Quaternion, Point
 from arm_navigation_msgs.msg import (MoveArmAction, MoveArmGoal, 
             PositionConstraint, OrientationConstraint)
 from kinematics_msgs.srv import (GetKinematicSolverInfo, GetPositionFK,
-            GetPositionFKRequest, GetPositionIK, GetPositionIKRequest)
+            GetPositionFKRequest, GetPositionIK, GetPositionIKRequest, GetConstraintAwarePositionIK, GetConstraintAwarePositionIKRequest )
 from pr2_controllers_msgs.msg import (JointTrajectoryAction,
             JointTrajectoryControllerState, SingleJointPositionAction,
             SingleJointPositionGoal, Pr2GripperCommandAction,
@@ -142,6 +142,7 @@ class PR2Arm():
             rospy.wait_for_service("/pr2lite_"+self.arm+
                                     "_arm_kinematics/get_fk_solver_info")
             rospy.wait_for_service("/pr2lite_"+self.arm+"_arm_kinematics/get_ik")
+            rospy.wait_for_service("/pr2lite_"+self.arm+"_arm_kinematics/get_constraint_aware_ik")
             rospy.wait_for_service("/pr2lite_"+self.arm+
                                     "_arm_kinematics/get_ik_solver_info")
             self.fk_info_proxy = rospy.ServiceProxy(
@@ -157,8 +158,11 @@ class PR2Arm():
                                 "_arm_kinematics/get_ik_solver_info",
                                 GetKinematicSolverInfo)
             self.ik_info = self.ik_info_proxy()
+            self.ik_constraint_aware_pose_proxy = rospy.ServiceProxy(
+		"/pr2lite_"+self.arm+"_arm_kinematics/get_constraint_aware_ik",
+                                GetConstraintAwarePositionIK, True)    
             self.ik_pose_proxy = rospy.ServiceProxy(
-                                "/pr2lite_"+self.arm+"_arm_kinematics/get_ik",
+		"/pr2lite_"+self.arm+"_arm_kinematics/get_ik",
                                 GetPositionIK, True)    
             rospy.loginfo("Found FK/IK Solver services")
         except:
@@ -322,7 +326,7 @@ class PR2Arm():
         self.dist = self.calc_dist(cp, newpose)
         return newpose
 
-    def build_trajectory(self, finish, start=None, ik_space=0.005,
+    def build_trajectory(self, finish, start=None, ik_space=0.1,
                         duration=None, tot_points=None):
         if start == None: # if given one pose, use current position as start, else, assume (start, finish)
             start = self.curr_pose()
@@ -343,7 +347,9 @@ class PR2Arm():
            tot_points = 1500*dist
         if duration is None:
             duration = dist*120
-        ik_fracs = np.linspace(0, 1, ik_steps)   #A list of fractional positions along course to evaluate ik
+       
+        ik_fracs = np.linspace(0, 1, ik_steps) #A list of fractional positions along course to evaluate ik
+        tot_points = ik_steps  # ARD
         ang_fracs = np.linspace(0,1, tot_points)  
 
         x_gap = finish.pose.position.x - start.pose.position.x
@@ -374,11 +380,12 @@ class PR2Arm():
         rospy.loginfo("frameid %s %s" % (start.header.frame_id, finish.header.frame_id))
        
         #Find initial ik for seeding
-        req = self.form_ik_request(steps[0])
-        ik_goal = self.ik_pose_proxy(req)
+        # req = self.form_ik_request(steps[0])
+        # ik_goal = self.ik_pose_proxy(req)
+        req = self.form_constraint_aware_ik_request(steps[0])
+        ik_goal = self.ik_constraint_aware_pose_proxy(req)
         print "IK goal"
         print req
-        seed = list(ik_goal.solution.joint_state.position)
         for i, name in enumerate(ik_goal.solution.joint_state.name):
            rospy.loginfo("traj joints %s" % name)
            if name == 'left_upper_arm_hinge_joint' or name == 'right_upper_arm_hinge_joint':
@@ -386,24 +393,37 @@ class PR2Arm():
            elif name == 'left_shoulder_tilt_joint' or name == 'right_shoulder_tilt_joint':
              shoulder_tilt_index = i
 
-        ik_points = [[0]*7 for i in range(len(ik_fracs))]
+        if len(ik_goal.solution.joint_state.position) == 0:
+          print "stopping stepwise planning from start"
+          seed = None
+        #ik_points = list([[0]*7 for i in range(len(ik_fracs))])
+        ik_points = list()
+        ik_fracs2 = list()
         for i, p in enumerate(steps):
-            request = self.form_ik_request(p)
-            request.ik_request.ik_seed_state.joint_state.position = seed
-            request.ik_request.ik_seed_state.joint_state.name = ik_goal.solution.joint_state.name
-            ik_goal = self.ik_pose_proxy(request)
-            if len(ik_goal.solution.joint_state.position) == 0:
-              print "stopping stepwise planning from step %d" % i
-              if (i > 0):
-                ik_points = np.array(ik_points)[:,i-1]
-              else:
-                ik_points = None
-              break
-            ik_points[i] = ik_goal.solution.joint_state.position
-            print ik_points[i]
-            seed = list(ik_goal.solution.joint_state.position) # seed the next ik w/previous points results
-            seed[hinge_index] = seed[shoulder_tilt_index]
+            #if (i == 0):
+            #  continue
+            #request = self.form_ik_request(p)
+            request = self.form_constraint_aware_ik_request(p)
+            if seed != None:
+              request.ik_request.ik_seed_state.joint_state.position = seed
+              request.ik_request.ik_seed_state.joint_state.name = ik_goal.solution.joint_state.name
+            ik_goal = self.ik_constraint_aware_pose_proxy(request)
+            print "IK goal %d" %(i)
+            print request
+            if len(ik_goal.solution.joint_state.position) != 0:
+              seed = list(ik_goal.solution.joint_state.position) # seed the next ik w/previous points results
+              seed[hinge_index] = -1*seed[shoulder_tilt_index]
+              ik_points.append(ik_goal.solution.joint_state.position)
+              ik_fracs2.append(ik_fracs[i])
+              print "IK solution for %d" % i
+            else:
+              print "No solution for %d" % i
+
         rospy.loginfo("linear interp")
+        ik_fracs = ik_fracs2
+        if len(ik_points) == 0:
+          return None
+
         ik_points = np.array(ik_points)
         # Linearly interpolate angles 10 times between ik-defined points (non-linear in cartesian space, but this is reduced from dense ik sampling along linear path.  Used to maintain large number of trajectory points without running IK on every one.    
         angle_points = np.zeros((7, tot_points))
@@ -439,7 +459,7 @@ class PR2Arm():
 
     def follow_trajectory(self, traj_goal):
         self.arm_traj_client.send_goal(traj_goal)
-        self.arm_traj_client.wait_for_result(rospy.Duration(20))
+        self.arm_traj_client.wait_for_result(rospy.Duration(200))
 
     def move_torso(self, pos):
         rospy.loginfo("Moving Torso to reach arm goal")
@@ -558,6 +578,19 @@ class PR2Arm():
         rospy.loginfo("Reached as far as possible")
         self.log_out.publish(data="Cannot reach farther in this direction.")    
         return (False, ik_goal, duration)
+
+    def form_constraint_aware_ik_request(self, ps):
+        #print "forming IK request for :%s" %ps
+        req = GetConstraintAwarePositionIKRequest()
+        req.timeout = rospy.Duration(5)
+        req.ik_request.pose_stamped = ps
+        req.ik_request.ik_link_name = \
+                    self.ik_info.kinematic_solver_info.link_names[-1]
+        req.ik_request.ik_seed_state.joint_state.name = \
+                    self.ik_info.kinematic_solver_info.joint_names
+        req.ik_request.ik_seed_state.joint_state.position = \
+                    self.joint_state_pos
+        return req
 
     def form_ik_request(self, ps):
         #print "forming IK request for :%s" %ps

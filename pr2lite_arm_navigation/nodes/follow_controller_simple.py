@@ -160,8 +160,12 @@ class FollowController:
         prev_desired = self.current_pos
         rospy.loginfo('init pos ' + str(prev_desired))
         for point in traj.points:
-          for i in range(len(self.joints)):
-            desired = point.positions[i] + fudge_value[i]
+          for j in range(len(traj.joint_names)):
+            for k in range(len(self.joints)):
+              if self.joints[k] == traj.joint_names[j]:
+                i = k
+                break
+            desired = point.positions[j] + fudge_value[i]
             endtime = start + point.time_from_start
             endsecs = endtime.to_sec()
             nowsecs = rospy.Time.now().to_sec()

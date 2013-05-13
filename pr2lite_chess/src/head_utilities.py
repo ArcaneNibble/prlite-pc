@@ -114,7 +114,7 @@ class HeadEngine:   # a crazy name, but matches our convention
         return
         g = PointHeadGoal()
         g.target.header.frame_id = 'base_link'
-        g.target.point.x = 0.30
+        g.target.point.x = 0.34
         g.target.point.y = 0.0
         g.target.point.z = 0.0
         g.min_duration = rospy.Duration(1.0)

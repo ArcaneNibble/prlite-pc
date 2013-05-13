@@ -6,8 +6,11 @@
   <url>http://ros.org/wiki/chess_player</url>
   <depend package="rospy"/>
   <depend package="chess_msgs"/>
+<!--
   <depend package="simple_arm_server"/>
+-->
   <depend package="pr2lite_arm_navigation"/>
+  <depend package="pr2lite_arm_kinematics_constraint_aware"/>
   <depend package="turtlebot_block_manipulation"/>
   <depend package="diagnostic_msgs"/>
 

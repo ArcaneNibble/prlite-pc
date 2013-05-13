@@ -107,28 +107,29 @@ class ArmPlanner:
         goal = MoveArmGoal()
         goal.planner_service_name = "ompl_planning/plan_kinematic_path"
 
-        # is this a capture?
-        if to != None:
-            print "execute Capture"
-            off_board = ChessPiece()
-            off_board.header.frame_id = fr.header.frame_id
-            off_board.pose.position.x = -2 * SQUARE_SIZE
-            off_board.pose.position.y = SQUARE_SIZE
-            off_board.pose.position.z = fr.pose.position.z
-            self.addTransit(goal, to.pose, off_board.pose)
-       
+        fr.pose = self.getPose(col_f, rank_f, board, fr.pose.position.z)
+        fr.header.stamp = rospy.Time.now()
+        is_capture = to
         to = ChessPiece()
         to.header.frame_id = fr.header.frame_id
+        #to.header.stamp = rospy.Time.now()
         to.pose = self.getPose(col_t, rank_t, board, fr.pose.position.z)
-
         print "Execute FR"
         print fr
         print "Execute TO"
         print to
-        fr.pose = self.getPose(col_f, rank_f, board, fr.pose.position.z)
-        fr.header.stamp = rospy.Time.now()
-        print "Execute FR2"
-        print fr
+
+        # is this a capture?
+        if is_capture != None:
+            print "execute Capture"
+            off_board = ChessPiece()
+            off_board.header.frame_id = fr.header.frame_id
+            off_board.header.stamp = rospy.Time.now()
+            # ARD: fudge factor?
+            off_board.pose.position.x = SQUARE_SIZE
+            off_board.pose.position.y = 5.5 * SQUARE_SIZE
+            off_board.pose.position.z = fr.pose.position.z
+            self.addTransit(goal, to.pose, off_board.pose)
 
         # self.addTransit(goal, fr.pose, to.pose)
         self.addTransit(goal, fr, to)
@@ -158,7 +159,8 @@ class ArmPlanner:
         rospy.loginfo('ArmPlanner addTransit')
 
         start_torso_pos = .30     # raise torso for easier planning
-        above_board = .15     # raise torso for easier planning
+        above_board = .05     # raise torso for easier planning
+        above_piece = .1      # raise torso for easier planning
         self.move_torso(start_torso_pos)
         self.tuck_server.IKpose()
         rospy.sleep(3.0)
@@ -173,17 +175,17 @@ class ArmPlanner:
         pose.header.frame_id = "base_link"
         pose.pose.position.x = fr_tfpose.pose.position.x
         pose.pose.position.y = fr_tfpose.pose.position.y
-        pose.pose.position.z = fr_tfpose.pose.position.z + above_board + start_torso_pos
+        pose.pose.position.z = fr_tfpose.pose.position.z + above_piece + start_torso_pos
 
-        block_goal = InteractiveBlockManipulationGoal()
-        block_goal.block_size = 0.03 
-        block_goal.frame = "chess_board_raw"
-        self.block_client.block_size = 0.03 
-        self.block_client.frame = "chess_board_raw"
-        self.block_client.pickup_pose = fr
-        self.block_client.place_pose = to
-        self.block_client.send_goal(block_goal, self.picknplaceCB)
-        rospy.loginfo('Block goal')
+        # block_goal = InteractiveBlockManipulationGoal()
+        # block_goal.block_size = 0.03 
+        # block_goal.frame = "chess_board_raw"
+        # self.block_client.block_size = 0.03 
+        # self.block_client.frame = "chess_board_raw"
+        # self.block_client.pickup_pose = fr
+        # self.block_client.place_pose = to
+        # self.block_client.send_goal(block_goal, self.picknplaceCB)
+        # rospy.loginfo('Block goal')
 
 
         # q = quaternion_from_euler(0.0, 1.57, 0.0, 'sxyz')
@@ -211,9 +213,10 @@ class ArmPlanner:
 
         # hover over piece
         traj = self.pr2_arm.build_trajectory(pose, None)
-        goal = self.pr2_arm.build_follow_trajectory(traj)
-        print "move to FROM pos"
-        self.pr2_arm.follow_trajectory(goal)
+        if traj != None:
+          goal = self.pr2_arm.build_follow_trajectory(traj)
+          print "move to FROM pos"
+          self.pr2_arm.follow_trajectory(goal)
         # self.move_arm_client.send_goal(goal)
         # finished_within_time = self.move_arm_client.wait_for_result(rospy.Duration(200.0))
         # print self.move_arm_client.get_result()
@@ -225,28 +228,31 @@ class ArmPlanner:
         self.gripper.send_goal(grippergoal)
         self.gripper.wait_for_result()
         rospy.sleep(5)
-        rospy.sleep(50)
 
-        # following looks wrong
-        lower_to_piece = fr.pose.position.z + 0.03 + above_board
+        # lower_to_piece = fr.pose.position.z + 0.03 + above_board 
+        lower_to_piece = 0.03 + above_board 
         print "lower torso to piece ", lower_to_piece
         self.move_torso(lower_to_piece)     # raise torso for easier planning
 
         # close gripper
         print "close gripper"
         grippergoal = Pr2GripperCommandGoal()
-        grippergoal.command.position = 0.01
+        grippergoal.command.position = 0.03
         grippergoal.command.max_effort = 50 # close slowly
         self.gripper.send_goal(grippergoal)
         self.gripper.wait_for_result()
         print self.move_arm_client.get_result()
 
+        rospy.sleep(2)
+        self.move_torso(start_torso_pos)
+
         print "move to TO pos"
+        #to.header.stamp = rospy.Time.now()
         to_tfpose = self.listener.transformPose("base_link", to)
         pose.header.frame_id = to_tfpose.header.frame_id
         pose.pose.position.x = to_tfpose.pose.position.x
         pose.pose.position.y = to_tfpose.pose.position.y
-        pose.pose.position.z = to_tfpose.pose.position.z + above_board + start_torso_pos
+        pose.pose.position.z = fr_tfpose.pose.position.z + above_piece + start_torso_pos
         q = quaternion_from_euler(0.0, 1.57, 0.0)
         pose.pose.orientation.x = q[0]
         pose.pose.orientation.y = q[1]
@@ -258,8 +264,9 @@ class ArmPlanner:
         pose.pose.orientation.z = -0.330601968027
         pose.pose.orientation.w = 0.608495334429
         traj = self.pr2_arm.build_trajectory(pose, None)
-        goal = self.pr2_arm.build_follow_trajectory(traj)
-        self.pr2_arm.follow_trajectory(goal)
+        if traj != None:
+          goal = self.pr2_arm.build_follow_trajectory(traj)
+          self.pr2_arm.follow_trajectory(goal)
         # self.move_arm_client.send_goal(goal)
 
         print "lower torso"
@@ -272,25 +279,37 @@ class ArmPlanner:
         self.gripper.send_goal(grippergoal)
         self.gripper.wait_for_result()
         # print self.move_arm_client.get_result()
-        # rospy.sleep(5)
+        rospy.sleep(2)
 
         self.move_torso(start_torso_pos)
+        self.tuck_server.IKpose()
+        rospy.sleep(3)
         self.tuck_server.untuck()
+        rospy.sleep(3)
+        self.move_torso(0)
 
     def getPose(self, col, rank, board, z=0):
+        #x_fudge = 0.6
+        #y_fudge = -0.2
+        x_fudge = 0 * SQUARE_SIZE
+        y_fudge = 0
         """ Find the reach required to get to a position """
         rospy.loginfo('ArmPlanner getPose')
         p = Pose()
         if board.side == board.WHITE:
             # p.position.x = (col * SQUARE_SIZE) + SQUARE_SIZE/2
-            p.position.x = (abs(col-4.5) * SQUARE_SIZE)
+            # p.position.x = (abs(col-4.5) * SQUARE_SIZE)
+            p.position.x = ((col-4.5) * SQUARE_SIZE)
             p.position.y = ((rank-1) * SQUARE_SIZE) + SQUARE_SIZE/2
             p.position.z = z
         else:
             # p.position.x = ((7-col) * SQUARE_SIZE) + SQUARE_SIZE/2
-            p.position.x = (abs(4.5-col) * SQUARE_SIZE)
+            # p.position.x = (abs(4.5-col) * SQUARE_SIZE)
+            p.position.x = ((4.5-col) * SQUARE_SIZE)
             p.position.y = ((8-rank) * SQUARE_SIZE) + SQUARE_SIZE/2
             p.position.z = z
+        p.position.x += x_fudge
+        p.position.y += y_fudge
         return p
 
     def getReach(self, col, rank, board):
