@@ -362,8 +362,10 @@ class BoardUpdater(threading.Thread):
         #print message.pieces
 
         # iterate through ways board could be inproperly localized
-        for x_off in [0,-1,1]:
-            for y_off in [0,-1,1]:
+        # for x_off in [0,-1,1]:
+        #     for y_off in [0,-1,1]:
+        for x_off in [0]:
+            for y_off in [0]:
                 piece_gone  = list()    # locations moved from
                 piece_new   = list()    # locations moved to
                 piece_color = list()    # locations that have changed color
@@ -421,7 +423,7 @@ class BoardUpdater(threading.Thread):
                 # ARD
                 # ARD
 
-                if len(piece_new) + len(piece_color) <= 8:
+                if len(piece_new) + len(piece_color) <= 6:
                   for entry in piece_gone:
                     (col, rank, piece) = entry
                     offset = int(int(rank)-1)*8+self.getColIdx(col)
@@ -439,7 +441,7 @@ class BoardUpdater(threading.Thread):
                     self.prob_piece[offset] = piece
                   self.prob_cnt = self.prob_cnt + 1
                   rospy.loginfo("self.prob_cnt %d num_new %d num_col %d" % (self.prob_cnt, len(piece_new),len(piece_color)))
-  		  if self.prob_cnt >= 10 and len(piece_new) + len(piece_color) > 2:
+  		  if self.prob_cnt >= 20 and len(piece_new) + len(piece_color) > 2:
                     piece_gone  = list()    # locations moved from
                     piece_new   = list()    # locations moved to
                     piece_color = list()    # locations that have changed color

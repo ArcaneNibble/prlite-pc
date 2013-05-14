@@ -159,7 +159,8 @@ class ArmPlanner:
         rospy.loginfo('ArmPlanner addTransit')
 
         start_torso_pos = .30     # raise torso for easier planning
-        above_board = .05     # raise torso for easier planning
+        # above_board = .15     # raise torso for easier planning
+        above_board = .09     # raise torso for easier planning
         above_piece = .1      # raise torso for easier planning
         self.move_torso(start_torso_pos)
         self.tuck_server.IKpose()
@@ -190,26 +191,42 @@ class ArmPlanner:
 
         # q = quaternion_from_euler(0.0, 1.57, 0.0, 'sxyz')
         # pose.pose.position.z = 0.15
-        q = quaternion_from_euler(1.57, 0.0, 0.0, 'sxyz')
+        # q = quaternion_from_euler(1.57, 0.0, 0.0, 'sxyz')
+        # pose.pose.orientation.x = q[0]
+        # pose.pose.orientation.y = q[1]
+        # pose.pose.orientation.z = q[2]
+        # pose.pose.orientation.w = q[3]
+        # print "quat from euler"
+        # print pose.pose
 
-        pose.pose.orientation.x = q[0]
-        pose.pose.orientation.y = q[1]
-        pose.pose.orientation.z = q[2]
-        pose.pose.orientation.w = q[3]
-        print "quat from euler"
-        print pose.pose.orientation
+        # pose.pose.orientation.x = 0.359098912478
+        # pose.pose.orientation.y = 0.625686613067
+        # pose.pose.orientation.z = -0.330601968027
+        # pose.pose.orientation.w = 0.608495334429
 
-        pose.pose.orientation.x = 0.359098912478
-        pose.pose.orientation.y = 0.625686613067
-        pose.pose.orientation.z = -0.330601968027
-        pose.pose.orientation.w = 0.608495334429
 
-        pose.absolute_position_tolerance.x = 0.05;
-        pose.absolute_position_tolerance.y = 0.05;
-        pose.absolute_position_tolerance.z = 0.05;
-        pose.absolute_roll_tolerance = 0.06;
-        pose.absolute_pitch_tolerance = 0.06;
-        pose.absolute_yaw_tolerance = 0.06;
+        # straight down, no roll
+        pose.pose.orientation.x = -0.5
+        pose.pose.orientation.y = 0.5
+        pose.pose.orientation.z = 0.5
+        pose.pose.orientation.w = 0.5
+
+        # one fifth of inch = .005; 
+        pose.absolute_position_tolerance.x = 0.005
+        pose.absolute_position_tolerance.y = 0.005
+        pose.absolute_position_tolerance.z = 0.005
+        pose.absolute_roll_tolerance = 0.1
+        pose.absolute_pitch_tolerance = 0.1
+        # any wrist rotation
+        pose.absolute_yaw_tolerance = 3.14159265359
+
+        # pose.absolute_position_tolerance.x = 0.05;
+        # pose.absolute_position_tolerance.y = 0.05;
+        # pose.absolute_position_tolerance.z = 0.05;
+        # pose.absolute_roll_tolerance = 0.06;
+        # pose.absolute_pitch_tolerance = 0.06;
+        # pose.absolute_yaw_tolerance = 0.06;
+        print pose
 
         # hover over piece
         traj = self.pr2_arm.build_trajectory(pose, None)
@@ -237,7 +254,7 @@ class ArmPlanner:
         # close gripper
         print "close gripper"
         grippergoal = Pr2GripperCommandGoal()
-        grippergoal.command.position = 0.03
+        grippergoal.command.position = 0.04
         grippergoal.command.max_effort = 50 # close slowly
         self.gripper.send_goal(grippergoal)
         self.gripper.wait_for_result()
@@ -291,23 +308,26 @@ class ArmPlanner:
     def getPose(self, col, rank, board, z=0):
         #x_fudge = 0.6
         #y_fudge = -0.2
-        x_fudge = 0 * SQUARE_SIZE
-        y_fudge = 0
+        x_fudge = 5 * SQUARE_SIZE
+        y_fudge = 4 * SQUARE_SIZE
         """ Find the reach required to get to a position """
         rospy.loginfo('ArmPlanner getPose')
         p = Pose()
         if board.side == board.WHITE:
             # p.position.x = (col * SQUARE_SIZE) + SQUARE_SIZE/2
-            # p.position.x = (abs(col-4.5) * SQUARE_SIZE)
-            p.position.x = ((col-4.5) * SQUARE_SIZE)
+            #p.position.x = ((col-4.5) * SQUARE_SIZE)
+            # p.position.y = -1*(((rank-1) * SQUARE_SIZE) + SQUARE_SIZE/2)
+
+            p.position.x = (col * SQUARE_SIZE) + SQUARE_SIZE/2
             p.position.y = ((rank-1) * SQUARE_SIZE) + SQUARE_SIZE/2
             p.position.z = z
         else:
-            # p.position.x = ((7-col) * SQUARE_SIZE) + SQUARE_SIZE/2
-            # p.position.x = (abs(4.5-col) * SQUARE_SIZE)
-            p.position.x = ((4.5-col) * SQUARE_SIZE)
+            p.position.x = ((7-col) * SQUARE_SIZE) + SQUARE_SIZE/2
             p.position.y = ((8-rank) * SQUARE_SIZE) + SQUARE_SIZE/2
             p.position.z = z
+            #p.position.x = ((4.5-col) * SQUARE_SIZE)
+            #p.position.y = ((8-rank) * SQUARE_SIZE) + SQUARE_SIZE/2
+            #p.position.z = z
         p.position.x += x_fudge
         p.position.y += y_fudge
         return p
