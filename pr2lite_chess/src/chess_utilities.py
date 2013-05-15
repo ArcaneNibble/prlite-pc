@@ -441,7 +441,7 @@ class BoardUpdater(threading.Thread):
                     self.prob_piece[offset] = piece
                   self.prob_cnt = self.prob_cnt + 1
                   rospy.loginfo("self.prob_cnt %d num_new %d num_col %d" % (self.prob_cnt, len(piece_new),len(piece_color)))
-  		  if self.prob_cnt >= 20 and len(piece_new) + len(piece_color) > 2:
+  		  if self.prob_cnt >= 40 and len(piece_new) + len(piece_color) > 2:
                     piece_gone  = list()    # locations moved from
                     piece_new   = list()    # locations moved to
                     piece_color = list()    # locations that have changed color
@@ -452,16 +452,16 @@ class BoardUpdater(threading.Thread):
                     for i in range(0, 7):
                       for j in range(0, 7):
                         piece = self.prob_piece[i*8 + j]
-                        if self.prob_piece_gone[i*8 + j] / self.prob_cnt > .75:
+                        if self.prob_piece_gone[i*8 + j] / self.prob_cnt >= .5:
                           piece_gone.append([i, j, piece]) 
                           temp_board.setPiece(i,j,None)
-                        if self.prob_piece_new[i*8 + j] / self.prob_cnt > .75:
+                        if self.prob_piece_new[i*8 + j] / self.prob_cnt > .1:
                           piece_new.append([i, j, piece]) 
                           temp_board.setPiece(i,j,piece)
-                        if self.prob_piece_color[i*8 + j] / self.prob_cnt > .75:
+                        if self.prob_piece_color[i*8 + j] / self.prob_cnt > .1:
                           piece_color.append([i, j, piece]) 
                           temp_board.setPiece(i,j,piece)
-                        rospy.loginfo("gone %d ; new %d ; color %d out of %d" % (self.prob_piece_gone[i*8 + j], self.prob_piece_new[i*8 + j], self.prob_piece_color[i*8 + j], self.prob_cnt))
+                        rospy.loginfo("%d %d gone %d ; new %d ; color %d out of %d" % (i, j, self.prob_piece_gone[i*8 + j], self.prob_piece_new[i*8 + j], self.prob_piece_color[i*8 + j], self.prob_cnt))
                         self.prob_piece_gone[i*8 + j] = 0
                         self.prob_piece_new[i*8 + j] = 0
                         self.prob_piece_color[i*8 + j] = 0

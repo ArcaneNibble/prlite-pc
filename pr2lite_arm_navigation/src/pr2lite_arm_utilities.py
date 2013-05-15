@@ -326,7 +326,7 @@ class PR2Arm():
         self.dist = self.calc_dist(cp, newpose)
         return newpose
 
-    def build_trajectory(self, finish, start=None, ik_space=0.1,
+    def build_trajectory(self, finish, start=None, ik_space=0.05,
                         duration=None, tot_points=None):
         if start == None: # if given one pose, use current position as start, else, assume (start, finish)
             start = self.curr_pose()
@@ -352,6 +352,7 @@ class PR2Arm():
         tot_points = ik_steps  # ARD
         ang_fracs = np.linspace(0,1, tot_points)  
 
+        seed = None
         x_gap = finish.pose.position.x - start.pose.position.x
         y_gap = finish.pose.position.y - start.pose.position.y
         z_gap = finish.pose.position.z - start.pose.position.z
@@ -369,7 +370,9 @@ class PR2Arm():
             steps[i].header.frame_id = start.header.frame_id
             steps[i].pose.position.x = start.pose.position.x + x_gap*frac
             steps[i].pose.position.y = start.pose.position.y + y_gap*frac
-            steps[i].pose.position.z = start.pose.position.z + z_gap*frac
+            # steps[i].pose.position.z = start.pose.position.z + z_gap*frac 
+            # ARD: Chess hack for torso height.  Really should fix time on tf?
+            steps[i].pose.position.z = start.pose.position.z + z_gap*frac - .3
             new_q = transformations.quaternion_slerp(qs,qf,frac)
             steps[i].pose.orientation.x = new_q[0]
             steps[i].pose.orientation.y = new_q[1]
@@ -380,12 +383,13 @@ class PR2Arm():
         rospy.loginfo("frameid %s %s" % (start.header.frame_id, finish.header.frame_id))
        
         #Find initial ik for seeding
-        # req = self.form_ik_request(steps[0])
-        # ik_goal = self.ik_pose_proxy(req)
         req = self.form_constraint_aware_ik_request(steps[0])
         ik_goal = self.ik_constraint_aware_pose_proxy(req)
         print "IK goal"
         print req
+        # print req.pose_stamped.pose.position
+        # print req.ik_seed_state.name
+        # print req.ik_seed_state.position
         for i, name in enumerate(ik_goal.solution.joint_state.name):
            rospy.loginfo("traj joints %s" % name)
            if name == 'left_upper_arm_hinge_joint' or name == 'right_upper_arm_hinge_joint':
@@ -394,7 +398,7 @@ class PR2Arm():
              shoulder_tilt_index = i
 
         if len(ik_goal.solution.joint_state.position) == 0:
-          print "stopping stepwise planning from start"
+          print "initial seeding failed"
           seed = None
         #ik_points = list([[0]*7 for i in range(len(ik_fracs))])
         ik_points = list()
@@ -410,6 +414,9 @@ class PR2Arm():
             ik_goal = self.ik_constraint_aware_pose_proxy(request)
             print "IK goal %d" %(i)
             print request
+            # print request.pose_stamped.pose.position
+            # print request.ik_seed_state.name
+            # print request.ik_seed_state.position
             if len(ik_goal.solution.joint_state.position) != 0:
               seed = list(ik_goal.solution.joint_state.position) # seed the next ik w/previous points results
               seed[hinge_index] = -1*seed[shoulder_tilt_index]

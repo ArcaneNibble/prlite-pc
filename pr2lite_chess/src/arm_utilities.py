@@ -108,7 +108,8 @@ class ArmPlanner:
         goal.planner_service_name = "ompl_planning/plan_kinematic_path"
 
         fr.pose = self.getPose(col_f, rank_f, board, fr.pose.position.z)
-        fr.header.stamp = rospy.Time.now()
+        # ARD
+        # fr.header.stamp = rospy.Time.now()
         is_capture = to
         to = ChessPiece()
         to.header.frame_id = fr.header.frame_id
@@ -159,24 +160,26 @@ class ArmPlanner:
         rospy.loginfo('ArmPlanner addTransit')
 
         start_torso_pos = .30     # raise torso for easier planning
-        # above_board = .15     # raise torso for easier planning
-        above_board = .09     # raise torso for easier planning
-        above_piece = .1      # raise torso for easier planning
+        above_board = .13     # lower torso to piece
+        # above_board = .09     # raise torso for easier planning
+        above_piece = .15      # gripper z for easier planning
+        # above_piece = .15      # raise torso for easier planning
         self.move_torso(start_torso_pos)
         self.tuck_server.IKpose()
-        rospy.sleep(3.0)
+        rospy.sleep(6.0)
 
         pose = SimplePoseConstraint()
         pose.link_name = "right_wrist_roll_link"
 
-        # fr.header.frame_id = "chess_board_raw"
         self.listener.mutex.acquire()
         fr_tfpose = self.listener.transformPose("base_link", fr)
         self.listener.mutex.release()
         pose.header.frame_id = "base_link"
         pose.pose.position.x = fr_tfpose.pose.position.x
         pose.pose.position.y = fr_tfpose.pose.position.y
-        pose.pose.position.z = fr_tfpose.pose.position.z + above_piece + start_torso_pos
+        position_z = fr_tfpose.pose.position.z + above_piece + start_torso_pos
+        # position_z = fr_tfpose.pose.position.z + above_piece 
+        pose.pose.position.z = position_z
 
         # block_goal = InteractiveBlockManipulationGoal()
         # block_goal.block_size = 0.03 
@@ -187,23 +190,6 @@ class ArmPlanner:
         # self.block_client.place_pose = to
         # self.block_client.send_goal(block_goal, self.picknplaceCB)
         # rospy.loginfo('Block goal')
-
-
-        # q = quaternion_from_euler(0.0, 1.57, 0.0, 'sxyz')
-        # pose.pose.position.z = 0.15
-        # q = quaternion_from_euler(1.57, 0.0, 0.0, 'sxyz')
-        # pose.pose.orientation.x = q[0]
-        # pose.pose.orientation.y = q[1]
-        # pose.pose.orientation.z = q[2]
-        # pose.pose.orientation.w = q[3]
-        # print "quat from euler"
-        # print pose.pose
-
-        # pose.pose.orientation.x = 0.359098912478
-        # pose.pose.orientation.y = 0.625686613067
-        # pose.pose.orientation.z = -0.330601968027
-        # pose.pose.orientation.w = 0.608495334429
-
 
         # straight down, no roll
         pose.pose.orientation.x = -0.5
@@ -219,13 +205,6 @@ class ArmPlanner:
         pose.absolute_pitch_tolerance = 0.1
         # any wrist rotation
         pose.absolute_yaw_tolerance = 3.14159265359
-
-        # pose.absolute_position_tolerance.x = 0.05;
-        # pose.absolute_position_tolerance.y = 0.05;
-        # pose.absolute_position_tolerance.z = 0.05;
-        # pose.absolute_roll_tolerance = 0.06;
-        # pose.absolute_pitch_tolerance = 0.06;
-        # pose.absolute_yaw_tolerance = 0.06;
         print pose
 
         # hover over piece
@@ -262,24 +241,33 @@ class ArmPlanner:
 
         rospy.sleep(2)
         self.move_torso(start_torso_pos)
+        rospy.sleep(6)
 
         print "move to TO pos"
-        #to.header.stamp = rospy.Time.now()
+        self.listener.mutex.acquire()
         to_tfpose = self.listener.transformPose("base_link", to)
+        self.listener.mutex.release()
+
         pose.header.frame_id = to_tfpose.header.frame_id
         pose.pose.position.x = to_tfpose.pose.position.x
         pose.pose.position.y = to_tfpose.pose.position.y
-        pose.pose.position.z = fr_tfpose.pose.position.z + above_piece + start_torso_pos
-        q = quaternion_from_euler(0.0, 1.57, 0.0)
-        pose.pose.orientation.x = q[0]
-        pose.pose.orientation.y = q[1]
-        pose.pose.orientation.z = q[2]
-        pose.pose.orientation.w = q[3]
+        pose.pose.position.z = position_z
 
-        pose.pose.orientation.x = 0.359098912478
-        pose.pose.orientation.y = 0.625686613067
-        pose.pose.orientation.z = -0.330601968027
-        pose.pose.orientation.w = 0.608495334429
+        # straight down, no roll
+        pose.pose.orientation.x = -0.5
+        pose.pose.orientation.y = 0.5
+        pose.pose.orientation.z = 0.5
+        pose.pose.orientation.w = 0.5
+
+        # one fifth of inch = .005;
+        pose.absolute_position_tolerance.x = 0.005
+        pose.absolute_position_tolerance.y = 0.005
+        pose.absolute_position_tolerance.z = 0.005
+        pose.absolute_roll_tolerance = 0.1
+        pose.absolute_pitch_tolerance = 0.1
+        # any wrist rotation
+        pose.absolute_yaw_tolerance = 3.14159265359
+
         traj = self.pr2_arm.build_trajectory(pose, None)
         if traj != None:
           goal = self.pr2_arm.build_follow_trajectory(traj)
@@ -306,10 +294,10 @@ class ArmPlanner:
         self.move_torso(0)
 
     def getPose(self, col, rank, board, z=0):
-        #x_fudge = 0.6
-        #y_fudge = -0.2
-        x_fudge = 5 * SQUARE_SIZE
-        y_fudge = 4 * SQUARE_SIZE
+        #x_fudge = 5 * SQUARE_SIZE
+        #y_fudge = 4 * SQUARE_SIZE
+        x_fudge = 0 * SQUARE_SIZE
+        y_fudge = 0 * SQUARE_SIZE
         """ Find the reach required to get to a position """
         rospy.loginfo('ArmPlanner getPose')
         p = Pose()
@@ -318,12 +306,16 @@ class ArmPlanner:
             #p.position.x = ((col-4.5) * SQUARE_SIZE)
             # p.position.y = -1*(((rank-1) * SQUARE_SIZE) + SQUARE_SIZE/2)
 
-            p.position.x = (col * SQUARE_SIZE) + SQUARE_SIZE/2
-            p.position.y = ((rank-1) * SQUARE_SIZE) + SQUARE_SIZE/2
+            #p.position.x = (col * SQUARE_SIZE) + SQUARE_SIZE/2
+            #p.position.y = ((rank-1) * SQUARE_SIZE) + SQUARE_SIZE/2
+            p.position.x = ((rank-1) * SQUARE_SIZE) + SQUARE_SIZE/2
+            p.position.y = (col * SQUARE_SIZE) + SQUARE_SIZE/2
             p.position.z = z
         else:
-            p.position.x = ((7-col) * SQUARE_SIZE) + SQUARE_SIZE/2
-            p.position.y = ((8-rank) * SQUARE_SIZE) + SQUARE_SIZE/2
+            #p.position.x = ((7-col) * SQUARE_SIZE) + SQUARE_SIZE/2
+            #p.position.y = ((8-rank) * SQUARE_SIZE) + SQUARE_SIZE/2
+            p.position.x = ((8-rank) * SQUARE_SIZE) + SQUARE_SIZE/2
+            p.position.y = ((7-col) * SQUARE_SIZE) + SQUARE_SIZE/2
             p.position.z = z
             #p.position.x = ((4.5-col) * SQUARE_SIZE)
             #p.position.y = ((8-rank) * SQUARE_SIZE) + SQUARE_SIZE/2
