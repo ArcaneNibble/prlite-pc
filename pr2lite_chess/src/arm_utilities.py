@@ -119,7 +119,7 @@ class ArmPlanner:
         print fr
         print "Execute TO"
         print to
-        return to.pose
+        # return to.pose
 
         # is this a capture?
         if is_capture != None:
@@ -173,6 +173,7 @@ class ArmPlanner:
         pose.link_name = "right_wrist_roll_link"
 
         self.listener.mutex.acquire()
+        # fr.header.stamp = rospy.Time.now()
         fr_tfpose = self.listener.transformPose("base_link", fr)
         self.listener.mutex.release()
         pose.header.frame_id = "base_link"
