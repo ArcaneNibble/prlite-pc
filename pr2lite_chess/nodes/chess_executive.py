@@ -228,8 +228,12 @@ class ChessExecutive:
     def getMove(self):
         move = self.engine.nextMoveGNU(self.board.last_move, self.board)
         # check length of move
-        if move == None:
-	    rospy.loginfo("exec: Move None")
+        while move == None and not rospy.is_shutdown():
+            # update board state    
+            self.board.revert()
+            rospy.loginfo("exec: Bad move, triggering again...")
+            self.updateBoardState()
+            move = self.getMove()
         if move != None:
 	    rospy.loginfo("exec: Move " + move)
             if move in castling_extras.keys():

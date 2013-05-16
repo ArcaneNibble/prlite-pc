@@ -326,7 +326,7 @@ class PR2Arm():
         self.dist = self.calc_dist(cp, newpose)
         return newpose
 
-    def build_trajectory(self, finish, start=None, ik_space=0.05,
+    def build_trajectory(self, finish, start=None, ik_space=0.10,
                         duration=None, tot_points=None):
         if start == None: # if given one pose, use current position as start, else, assume (start, finish)
             start = self.curr_pose()
@@ -404,8 +404,8 @@ class PR2Arm():
         ik_points = list()
         ik_fracs2 = list()
         for i, p in enumerate(steps):
-            #if (i == 0):
-            #  continue
+            if (i == 0):
+              continue
             #request = self.form_ik_request(p)
             request = self.form_constraint_aware_ik_request(p)
             if seed != None:
@@ -467,6 +467,30 @@ class PR2Arm():
     def follow_trajectory(self, traj_goal):
         self.arm_traj_client.send_goal(traj_goal)
         self.arm_traj_client.wait_for_result(rospy.Duration(200))
+
+    def move_to_tolerance(self, pose):
+        attempt = 0
+        prevdist = 0
+        while True:
+          attempt += 1
+          print "Attempt %d" % attempt
+          traj = self.build_trajectory(pose, None)
+          if traj != None:
+            goal = self.build_follow_trajectory(traj)
+            self.follow_trajectory(goal)
+          curpos = self.curr_pose()
+          x_gap = pose.pose.position.x - curpos.pose.position.x
+          y_gap = pose.pose.position.y - curpos.pose.position.y
+          z_gap = pose.pose.position.z - curpos.pose.position.z
+          dist = self.calc_dist(curpose, pose)     #Total distance to travel
+          print "Arm dist ", dist, " gaps: x ", x_gap, " y ", y_gap, " z ", z_gap
+          if abs(x_gap) <= pose.absolute_position_tolerance.x and abs(y_gap) <= pose.absolute_position_tolerance.y and abs(z_gap) <= pose.absolute_position_tolerance.z:
+            return
+          if abs(dist - prevdist) < .001: # .04 inches
+            return
+          prevdist = dist
+
+
 
     def move_torso(self, pos):
         rospy.loginfo("Moving Torso to reach arm goal")

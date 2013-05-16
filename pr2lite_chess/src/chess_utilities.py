@@ -432,16 +432,16 @@ class BoardUpdater(threading.Thread):
                   for entry in piece_new:
                     (col, rank, piece) = entry
                     offset = int(int(rank)-1)*8+self.getColIdx(col)
-                    self.prob_piece_new[offset] = self.prob_piece_gone[offset] + 1 
+                    self.prob_piece_new[offset] = self.prob_piece_new[offset] + 1 
                     self.prob_piece[offset] = piece
                   for entry in piece_color:
                     (col, rank, piece) = entry
                     offset = int(int(rank)-1)*8+self.getColIdx(col)
-                    self.prob_piece_color[offset] = self.prob_piece_gone[offset] + 1 
+                    self.prob_piece_color[offset] = self.prob_piece_color[offset] + 1 
                     self.prob_piece[offset] = piece
                   self.prob_cnt = self.prob_cnt + 1
                   rospy.loginfo("self.prob_cnt %d num_new %d num_col %d" % (self.prob_cnt, len(piece_new),len(piece_color)))
-  		  if self.prob_cnt >= 40 and len(piece_new) + len(piece_color) > 2:
+  		  if self.prob_cnt >= 10  and len(piece_new) + len(piece_color) > 2:
                     piece_gone  = list()    # locations moved from
                     piece_new   = list()    # locations moved to
                     piece_color = list()    # locations that have changed color
@@ -449,26 +449,30 @@ class BoardUpdater(threading.Thread):
                         for rank in [1,2,3,4,5,6,7,8]:
                             temp_board.setPiece(col,rank, self.board.getPiece(col,rank))
                     temp_board.printBoard()
-                    for i in range(0, 7):
-                      for j in range(0, 7):
+                    i = 0
+                    for rank in [1,2,3,4,5,6,7,8]:
+                      j = 0
+                      for col in 'abcdefgh':
                         piece = self.prob_piece[i*8 + j]
                         if self.prob_piece_gone[i*8 + j] / self.prob_cnt >= .5:
-                          piece_gone.append([i, j, piece]) 
-                          temp_board.setPiece(i,j,None)
-                        if self.prob_piece_new[i*8 + j] / self.prob_cnt > .1:
-                          piece_new.append([i, j, piece]) 
-                          temp_board.setPiece(i,j,piece)
-                        if self.prob_piece_color[i*8 + j] / self.prob_cnt > .1:
-                          piece_color.append([i, j, piece]) 
-                          temp_board.setPiece(i,j,piece)
-                        rospy.loginfo("%d %d gone %d ; new %d ; color %d out of %d" % (i, j, self.prob_piece_gone[i*8 + j], self.prob_piece_new[i*8 + j], self.prob_piece_color[i*8 + j], self.prob_cnt))
+                          piece_gone.append([col, rank, piece]) 
+                          # temp_board.setPiece(col, rank, None)
+                        if self.prob_piece_new[i*8 + j] / self.prob_cnt >= .5:
+                          piece_new.append([col, rank, piece]) 
+                          # temp_board.setPiece(col, rank, piece)
+                        if self.prob_piece_color[i*8 + j] / self.prob_cnt >= .5:
+                          piece_color.append([col, rank, piece]) 
+                          # temp_board.setPiece(col, rank, piece)
+                        rospy.loginfo("%s %d gone %d ; new %d ; color %d out of %d" % (col, rank, self.prob_piece_gone[i*8 + j], self.prob_piece_new[i*8 + j], self.prob_piece_color[i*8 + j], self.prob_cnt))
                         self.prob_piece_gone[i*8 + j] = 0
                         self.prob_piece_new[i*8 + j] = 0
                         self.prob_piece_color[i*8 + j] = 0
                         self.prob_piece[i*8 + j]  = None
+                        j += 1
+                      i += 1
                     self.prob_cnt = 0
-                    rospy.loginfo("gone %d ; new %d ; color %d" % (len(piece_gone), len(piece_new), len(piece_color)))
-                    temp_board.printBoard()
+                    rospy.loginfo("prob_cnt gone %d ; new %d ; color %d" % (len(piece_gone), len(piece_new), len(piece_color)))
+                    # temp_board.printBoard()
 
                 # ARD
                 # ARD

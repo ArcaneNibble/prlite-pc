@@ -119,6 +119,7 @@ class ArmPlanner:
         print fr
         print "Execute TO"
         print to
+        return to.pose
 
         # is this a capture?
         if is_capture != None:
@@ -149,7 +150,7 @@ class ArmPlanner:
         # self.tuck_server.left_tuck()
         self.tuck_server.untuck()
         rospy.sleep(5.0)
-        self.move_torso(0)
+        self.move_torso(0.1)
 
     def picknplaceCB(self, success, result):
         rospy.loginfo('Pick and Place Callback')
@@ -198,9 +199,9 @@ class ArmPlanner:
         pose.pose.orientation.w = 0.5
 
         # one fifth of inch = .005; 
-        pose.absolute_position_tolerance.x = 0.005
-        pose.absolute_position_tolerance.y = 0.005
-        pose.absolute_position_tolerance.z = 0.005
+        pose.absolute_position_tolerance.x = 0.007
+        pose.absolute_position_tolerance.y = 0.007
+        pose.absolute_position_tolerance.z = 0.0127
         pose.absolute_roll_tolerance = 0.1
         pose.absolute_pitch_tolerance = 0.1
         # any wrist rotation
@@ -208,14 +209,7 @@ class ArmPlanner:
         print pose
 
         # hover over piece
-        traj = self.pr2_arm.build_trajectory(pose, None)
-        if traj != None:
-          goal = self.pr2_arm.build_follow_trajectory(traj)
-          print "move to FROM pos"
-          self.pr2_arm.follow_trajectory(goal)
-        # self.move_arm_client.send_goal(goal)
-        # finished_within_time = self.move_arm_client.wait_for_result(rospy.Duration(200.0))
-        # print self.move_arm_client.get_result()
+        self.pr2_arm.move_to_tolerance(pose)
 
         print "open gripper"
         grippergoal = Pr2GripperCommandGoal()
@@ -260,20 +254,15 @@ class ArmPlanner:
         pose.pose.orientation.w = 0.5
 
         # one fifth of inch = .005;
-        pose.absolute_position_tolerance.x = 0.005
-        pose.absolute_position_tolerance.y = 0.005
-        pose.absolute_position_tolerance.z = 0.005
+        pose.absolute_position_tolerance.x = 0.007
+        pose.absolute_position_tolerance.y = 0.007
+        pose.absolute_position_tolerance.z = 0.0127
         pose.absolute_roll_tolerance = 0.1
         pose.absolute_pitch_tolerance = 0.1
         # any wrist rotation
         pose.absolute_yaw_tolerance = 3.14159265359
 
-        traj = self.pr2_arm.build_trajectory(pose, None)
-        if traj != None:
-          goal = self.pr2_arm.build_follow_trajectory(traj)
-          self.pr2_arm.follow_trajectory(goal)
-        # self.move_arm_client.send_goal(goal)
-
+        self.pr2_arm.move_to_tolerance(pose)
         print "lower torso"
         self.move_torso(lower_to_piece)     # raise torso for easier planning
        
@@ -305,21 +294,16 @@ class ArmPlanner:
             # p.position.x = (col * SQUARE_SIZE) + SQUARE_SIZE/2
             #p.position.x = ((col-4.5) * SQUARE_SIZE)
             # p.position.y = -1*(((rank-1) * SQUARE_SIZE) + SQUARE_SIZE/2)
-
-            #p.position.x = (col * SQUARE_SIZE) + SQUARE_SIZE/2
-            #p.position.y = ((rank-1) * SQUARE_SIZE) + SQUARE_SIZE/2
-            p.position.x = ((rank-1) * SQUARE_SIZE) + SQUARE_SIZE/2
-            p.position.y = (col * SQUARE_SIZE) + SQUARE_SIZE/2
+            p.position.x = (col * SQUARE_SIZE) + SQUARE_SIZE/2
+            p.position.y = ((rank-1) * SQUARE_SIZE) + SQUARE_SIZE/2
             p.position.z = z
         else:
+            p.position.x = ((7-col) * SQUARE_SIZE) + SQUARE_SIZE/2
+            p.position.y = ((8-rank) * SQUARE_SIZE) + SQUARE_SIZE/2
+            p.position.z = z
             #p.position.x = ((7-col) * SQUARE_SIZE) + SQUARE_SIZE/2
             #p.position.y = ((8-rank) * SQUARE_SIZE) + SQUARE_SIZE/2
-            p.position.x = ((8-rank) * SQUARE_SIZE) + SQUARE_SIZE/2
-            p.position.y = ((7-col) * SQUARE_SIZE) + SQUARE_SIZE/2
-            p.position.z = z
             #p.position.x = ((4.5-col) * SQUARE_SIZE)
-            #p.position.y = ((8-rank) * SQUARE_SIZE) + SQUARE_SIZE/2
-            #p.position.z = z
         p.position.x += x_fudge
         p.position.y += y_fudge
         return p
