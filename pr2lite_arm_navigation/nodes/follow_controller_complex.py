@@ -46,7 +46,7 @@ from diagnostic_msgs.msg import *
 from std_msgs.msg import Float64
 import rospy, time
 from dynamixel_controllers.srv import TorqueEnable, SetSpeed
-
+from collections import deque
 
 class FollowController:
     """ A controller for joint chains, exposing a FollowJointTrajectory action.  """
@@ -75,17 +75,21 @@ class FollowController:
         self.controllers = list()
         self.fudge_factor = list()
         self.current_pos = list()
+        self.current_pos_cnt = list()
         self.last_speed = list()
 
         # traj = goal.trajectory
-        self.trajectory_goal = list()
+        self.trajectory_goal = deque()
+        self.cur_point = 0
+
         self.execute_joints = list()
         for joint in self.joints:
             #self.device.servos[joint].controller = self
             # Remove "_joint" from the end of the joint name to get the controller names.
             servo_nm = joint.split("_joint")[0]
             self.controllers.append(servo_nm + "_controller")
-            self.current_pos.append(0)
+            self.current_pos.append(-10)
+            self.current_pos_cnt.append(0)
 
         # action server for FollowController
         name = rospy.get_param('~controllers/'+name +'/action_name','follow_joint_trajectory')
@@ -164,18 +168,20 @@ class FollowController:
             return
         if len(self.trajectory_goal) == 0:
           # full set of joints to execute for the trajectory being added
-          self.execute_joints = list(goal.trajectory.joint_names)
-          self.execute_positions = list(goal.trajectory.points[0].positions)
+          self.cur_point = 0
           # eligible trajectory for getJointState to exec
           self.trajectory_goal.append(goal)
+          self.execute_positions = list(goal.trajectory.points[self.cur_point].positions)
+          self.execute_joints = list(goal.trajectory.joint_names)
           rospy.loginfo('follow_controller: new goal')
         else:
           # add to end of list
+          rospy.loginfo( self.trajectory_goal)
+          rospy.loginfo( self.execute_joints)
+          rospy.loginfo( self.execute_positions)
           self.trajectory_goal.append(goal)
           rospy.loginfo('follow_controller: appending goal')
         self.server.set_succeeded()
-
- 
 
     def getJointState(self, msg):
         # phase 1: clean up joints that met their goal
@@ -184,17 +190,31 @@ class FollowController:
           j = 0
           for joint_state_name in msg.name:
             if joint == joint_state_name:
+              tolerance = .01
+              if self.current_pos[i] == msg.position[j]:
+                tolerance = .01 * self.current_pos_cnt[i]
+                self.current_pos_cnt[i] += 1
+              else:
+                self.current_pos_cnt[i] = 0
               self.current_pos[i] = msg.position[j]
               # remove trajectories already completed
               for k in range(len(self.execute_joints)):
                 if self.execute_joints[k] == joint_state_name:
-                  desired = self.execute_positions[k] + self.fudge_value[i]
-                  if abs(self.execute_positions[k] - msg.position[j]) < .01 or joint == 'left_upper_arm_hinge_joint' or joint == 'right_upper_arm_hinge_joint':
+                  # desired = self.execute_positions[k] + self.fudge_value[i]
+                  # IndexError: list index out of range
+                  rospy.loginfo("desired index k %d" % k)
+                  desired = self.execute_positions[k] 
+                  if abs(self.execute_positions[k] - msg.position[j]) < tolerance or joint == 'left_upper_arm_hinge_joint' or joint == 'right_upper_arm_hinge_joint' or joint == 'left_shoulder_tilt_joint' or joint == 'right_shoulder_tilt_joint':
                     # close enough to consider the goal met
+                    if self.current_pos_cnt[i] > 0:
+                      rospy.loginfo('Stall Warning: ' + joint + ' cur_pos:' + str (msg.position[j]) + " desired_pos " + str(self.execute_positions[k]))
                     del self.execute_positions[k]
                     del self.execute_joints[k]
-                    break
-                  rospy.loginfo(joint + ' des:' + str(desired) + ' pos:' + str (msg.position[j]))
+                    rospy.loginfo("del index k %d" % k)
+                    # del changes indexing, so return and process rest in nxt cb
+                    return
+                    # break
+                  rospy.loginfo(joint + ' desired_pos:' + str(desired) + ' cur_pos:' + str (msg.position[j]))
             j += 1
           i += 1
 
@@ -202,16 +222,20 @@ class FollowController:
         # if trajectory points are empty, then done
         if len(self.trajectory_goal) == 0:
           return
-        if len(self.trajectory_goal[0].trajectory.points) == 0:
+        if len(self.execute_positions) == 0:
           # if no more joints in current point, try next point.
-          del self.trajectory_goal[0].trajectory.points[0]
+          # IndexError: list assignment index out of range
+          rospy.loginfo("del index cur_point %d" % self.cur_point)
+          del self.trajectory_goal[0].trajectory.points[self.cur_point]
+          self.cur_point = 0
           # if no more points, try new goal.
           if len(self.trajectory_goal[0].trajectory.points) == 0:
-            del self.trajectory_goal[0]
+            self.trajectory_goal.popleft()
+            self.cur_point = 0
             if len(self.trajectory_goal) == 0:
               return
           self.execute_joints = list(self.trajectory_goal[0].trajectory.joint_names)
-          self.execute_positions = list(self.trajectory_goal[0].trajectory.points[0].positions)
+          self.execute_positions = list(self.trajectory_goal[0].trajectory.points[self.cur_point].positions)
 
         # phase 3: execute goal positions
         start = rospy.Time.now()
@@ -222,7 +246,8 @@ class FollowController:
               match = j
               break
           desired = self.execute_positions[i] + self.fudge_value[match]
-          endtime = start + self.trajectory_goal[0].trajectory.points[0].time_from_start
+          #desired = self.execute_positions[i] 
+          endtime = start + self.trajectory_goal[0].trajectory.points[self.cur_point].time_from_start
           endsecs = endtime.to_sec()
           velocity = abs((desired-msg.position[match])/ (endsecs-nowsecs))
 

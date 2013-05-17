@@ -46,6 +46,7 @@ from diagnostic_msgs.msg import *
 from std_msgs.msg import Float64
 import rospy, time
 from dynamixel_controllers.srv import TorqueEnable, SetSpeed
+from collections import deque
 
 
 class FollowController:
@@ -76,7 +77,8 @@ class FollowController:
         self.fudge_factor = list()
         self.current_pos = list()
         # traj = goal.trajectory
-        self.trajectory_goal = list()
+        self.trajectory_goal = queue()
+        self.cur_point = 0
         self.execute_joints = list()
         for joint in self.joints:
             #self.device.servos[joint].controller = self
@@ -180,10 +182,10 @@ class FollowController:
               # remove trajectories already completed
               for k in range(len(self.execute_joints)):
                 if execute_joint == joint_state_name:
-                  desired = self.trajectory_goal[0].points[0].positions[k] + self.fudge_value[i]
+                  desired = self.trajectory_goal[0].points[self.cur_point].positions[k] + self.fudge_value[i]
                   if abs(desired - msg.position[j]) < .01 or self.joints[j] == 'left_upper_arm_hinge_joint' or self.joints[j] == 'right_upper_arm_hinge_joint':
                     # close enough to consider the goal met
-                    del self.trajectory_goal[0].points[0].position[k]
+                    del self.trajectory_goal[0].points[self.cur_point].position[k]
                     del self.execute_joints[k]
                   rospy.loginfo(joint + ' des:' + str(desired) + ' pos:' + str (msg.position[j]))
             j += 1
@@ -193,12 +195,14 @@ class FollowController:
         # if trajectory points are empty, then done
         if len(self.trajectory_goal) == 0:
           return
-        if len(self.trajectory_goal[0].points[0]) == 0:
+        if len(self.trajectory_goal[0].points[self.cur_point]) == 0:
           # if no more joints in current point, try next point.
-          del self.trajectory_goal[0].points[0]
+          del self.trajectory_goal[0].points[self.cur_point]
+          self.cur_point += 1
           # if no more points, try new goal.
           if len(self.trajectory_goal[0].points) == 0:
-            del self.trajectory_goal[0]
+            self.trajectory_goal.popleft()
+            self.cur_point = 0
             if len(self.trajectory_goal) == 0:
               return
           self.execute_joints = self.joints

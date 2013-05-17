@@ -34,7 +34,7 @@ from turtlebot_block_manipulation.msg import *
 import tf
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from pr2lite_arm_utilities import PR2Arm_Planning 
-
+from relax_all_servos import dyno_torque
 
 from chess_msgs.msg import *
 from geometry_msgs.msg import Pose, PoseStamped
@@ -45,8 +45,6 @@ from arm_navigation_msgs.srv import *
 from sensor_msgs.msg import JointState
 from pr2_controllers_msgs.msg import *
 import roslib
-
-
 from chess_utilities import SQUARE_SIZE, castling_extras
 from tuck_arm import *
 
@@ -75,6 +73,7 @@ class ArmPlanner:
             self.gripper.wait_for_server()
             # rospy.init_node('single_joint_position', anonymous=True)
             self.tuck_server = tuck_arm()
+            self.torque = dyno_torque()
             self.torso_client = actionlib.SimpleActionClient('torso_controller/position_joint_action', SingleJointPositionAction)
             self.torso_client.wait_for_server()
 
@@ -161,19 +160,23 @@ class ArmPlanner:
         rospy.loginfo('ArmPlanner addTransit')
 
         start_torso_pos = .30     # raise torso for easier planning
-        above_board = .13     # lower torso to piece
+        above_board = .11     # lower torso to piece
         # above_board = .09     # raise torso for easier planning
         above_piece = .15      # gripper z for easier planning
         # above_piece = .15      # raise torso for easier planning
         self.move_torso(start_torso_pos)
+        self.torque.set_torque(1024)
         self.tuck_server.IKpose()
         rospy.sleep(6.0)
 
         pose = SimplePoseConstraint()
         pose.link_name = "right_wrist_roll_link"
 
+
+        now = rospy.Time.now() 
+        self.listener.waitForTransform("chess_board", "base_link", now, rospy.Duration(1.0))
+        fr.header.stamp = now
         self.listener.mutex.acquire()
-        # fr.header.stamp = rospy.Time.now()
         fr_tfpose = self.listener.transformPose("base_link", fr)
         self.listener.mutex.release()
         pose.header.frame_id = "base_link"
@@ -210,6 +213,7 @@ class ArmPlanner:
         print pose
 
         # hover over piece
+        self.torque.set_torque(1023)
         self.pr2_arm.move_to_tolerance(pose)
 
         print "open gripper"
@@ -221,7 +225,7 @@ class ArmPlanner:
         rospy.sleep(5)
 
         # lower_to_piece = fr.pose.position.z + 0.03 + above_board 
-        lower_to_piece = 0.03 + above_board 
+        lower_to_piece = above_board 
         print "lower torso to piece ", lower_to_piece
         self.move_torso(lower_to_piece)     # raise torso for easier planning
 
@@ -278,10 +282,11 @@ class ArmPlanner:
 
         self.move_torso(start_torso_pos)
         self.tuck_server.IKpose()
-        rospy.sleep(3)
+        rospy.sleep(4)
         self.tuck_server.untuck()
-        rospy.sleep(3)
+        rospy.sleep(10)
         self.move_torso(0)
+        self.torque.set_torque(256)
 
     def getPose(self, col, rank, board, z=0):
         #x_fudge = 5 * SQUARE_SIZE

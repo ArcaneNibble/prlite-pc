@@ -201,18 +201,20 @@ class PR2Arm():
     def curr_pose(self):
 
         # (trans,rot) = self.tf.lookupTransform("/torso_lift_link",
-        (trans,rot) = self.tf.lookupTransform("chess_board_raw",
-                                            # ARD "/"+
-                                            self.arm+"_wrist_roll_link",
-                                            rospy.Time(0))
-        print "chess_board_raw curr_pose "
-        print Point(*trans)
+        # (trans,rot) = self.tf.lookupTransform("chess_board_raw",
+        #                                     # ARD "/"+
+        #                                     self.arm+"_wrist_roll_link",
+        #                                     rospy.Time(0))
+        # print "chess_board_raw curr_pose "
+        # print Point(*trans)
         # ARD
+        now = rospy.Time.now()
+        self.tf.waitForTransform("base_link", self.arm+"_wrist_roll_link", now, rospy.Duration(1.0))
         # (trans,rot) = self.tf.lookupTransform("/torso_lift_link",
         (trans,rot) = self.tf.lookupTransform("base_link",
                                             # ARD "/"+
                                             self.arm+"_wrist_roll_link",
-                                            rospy.Time(0))
+                                            now)
         cp = PoseStamped()
         cp.header.stamp = rospy.Time.now()
         # cp.header.frame_id = '/torso_lift_link'
@@ -373,6 +375,7 @@ class PR2Arm():
             # steps[i].pose.position.z = start.pose.position.z + z_gap*frac 
             # ARD: Chess hack for torso height.  Really should fix time on tf?
             steps[i].pose.position.z = start.pose.position.z + z_gap*frac - .3
+            # steps[i].pose.position.z = start.pose.position.z + z_gap*frac
             new_q = transformations.quaternion_slerp(qs,qf,frac)
             steps[i].pose.orientation.x = new_q[0]
             steps[i].pose.orientation.y = new_q[1]
@@ -482,7 +485,7 @@ class PR2Arm():
           x_gap = pose.pose.position.x - curpos.pose.position.x
           y_gap = pose.pose.position.y - curpos.pose.position.y
           z_gap = pose.pose.position.z - curpos.pose.position.z
-          dist = self.calc_dist(curpose, pose)     #Total distance to travel
+          dist = self.calc_dist(curpos, pose)     #Total distance to travel
           print "Arm dist ", dist, " gaps: x ", x_gap, " y ", y_gap, " z ", z_gap
           if abs(x_gap) <= pose.absolute_position_tolerance.x and abs(y_gap) <= pose.absolute_position_tolerance.y and abs(z_gap) <= pose.absolute_position_tolerance.z:
             return

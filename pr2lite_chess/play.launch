@@ -18,6 +18,7 @@
   <param name="side" value="white" />
   <node pkg="pr2lite_chess" type="chess_executive.py" name="chess_executive" output="screen">
     <param name="side" value="white" />
+    <rosparam file="$(find pr2lite_arm_navigation)/config/pr2lite_arm.yaml" command="load" />
   </node>
 
 </launch>
