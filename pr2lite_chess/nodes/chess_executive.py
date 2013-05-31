@@ -158,7 +158,7 @@ class ChessExecutive:
             # do move
             # self.head.look_at_player()
             if self.board.last_move != "go":
-                self.speech.say("I see you have moved your " + self.board.getMoveText(self.board.last_move))
+                self.speech.say("I see you have Moved your " + self.board.getMoveText(self.board.last_move))
                 rospy.loginfo("I see you have moved your " + self.board.getMoveText(self.board.last_move))
             rospy.loginfo("exec: My move: %s", move)
             if move in castling_extras.keys():

@@ -53,10 +53,10 @@ class FollowController:
     def __init__(self):
 
         name = rospy.get_name()
-        rospy.loginfo("get_node name " + name )
+        rospy.logdebug("get_node name " + name )
         self.name = name
-        rospy.loginfo("FollowController " + name)
-        rospy.loginfo("init")
+        rospy.logdebug("FollowController " + name)
+        rospy.logdebug("init")
 
         # parameters: rates and joints
         self.rate = rospy.get_param('~controllers/'+ name +'/rate',50.0)
@@ -94,7 +94,7 @@ class FollowController:
         # action server for FollowController
         name = rospy.get_param('~controllers/'+name +'/action_name','follow_joint_trajectory')
         self.server = actionlib.SimpleActionServer(name, FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
-        rospy.loginfo("Started FollowController ("+name+"). Joints: " + str (self.joints) + " Controllers: " + str(self.controllers))
+        rospy.logdebug("Started FollowController ("+name+"). Joints: " + str (self.joints) + " Controllers: " + str(self.controllers))
 
         self.fudge_value = [rospy.get_param('~fudge_factor/' + joint + '/value', 0.0) for joint in self.joints]
 
@@ -114,22 +114,26 @@ class FollowController:
           if c != 'left_upper_arm_hinge_controller' and c != 'right_upper_arm_hinge_controller':
             c_srv = rospy.Publisher(c + '/command', Float64)
             self.position_pub.append(c_srv)
-            rospy.loginfo("Real pos pub " + c)
+            rospy.logdebug("Real pos pub " + c)
             if c != 'left_shoulder_tilt_controller' and c != 'right_shoulder_tilt_controller':
             # c != 'left_upper_arm_hinge_joint' and c != 'right_upper_arm_hinge_joint':
               speed_service = c + '/set_speed'
               rospy.wait_for_service(speed_service)
               srv = rospy.ServiceProxy(speed_service, SetSpeed)
               self.speed_services.append(srv)
-              srv(self.max_speed)
-              self.last_speed.append(self.max_speed)
-              rospy.loginfo("Real speed " + c)
+              if  c == 'left_shoulder_pan_controller' or c == 'right_shoulder_pan_controller':
+                velocity = self.max_speed_shoulder_pan
+              else:
+                velocity = self.max_speed
+              srv(velocity)
+              self.last_speed.append(velocity)
+              rospy.logdebug("Real speed " + c + " " + str(velocity))
             else:
               # add dummy service so positions align
               srv = self.speed_services[-1]
               self.speed_services.append(srv)
               self.last_speed.append(self.max_speed)
-              rospy.loginfo("Dummy speed " + c)
+              rospy.logdebug("Dummy speed " + c)
           else:
             # add dummy services so positions align
             c_srv = self.position_pub[-1]
@@ -137,14 +141,14 @@ class FollowController:
             srv = self.speed_services[-1]
             self.speed_services.append(srv)
             self.last_speed.append(self.max_speed)
-            rospy.loginfo("Dummy speed " + c)
-            rospy.loginfo("Dummy pos pub " + c)
-          rospy.loginfo("Starting " + c + "/command")
+            rospy.logdebug("Dummy speed " + c)
+            rospy.logdebug("Dummy pos pub " + c)
+          rospy.logdebug("Starting " + c + "/command")
           self.server.start()
 
 
     def actionCb(self, goal):
-        rospy.loginfo(self.name + ": Action goal recieved.")
+        rospy.logdebug(self.name + ": Action goal recieved.")
         traj = goal.trajectory
 
         if set(self.joints) != set(traj.joint_names):
@@ -176,9 +180,9 @@ class FollowController:
           rospy.loginfo('follow_controller: new goal')
         else:
           # add to end of list
-          rospy.loginfo( self.trajectory_goal)
-          rospy.loginfo( self.execute_joints)
-          rospy.loginfo( self.execute_positions)
+          rospy.logdebug( self.trajectory_goal)
+          rospy.logdebug( self.execute_joints)
+          rospy.logdebug( self.execute_positions)
           self.trajectory_goal.append(goal)
           rospy.loginfo('follow_controller: appending goal')
         self.server.set_succeeded()
@@ -192,7 +196,8 @@ class FollowController:
             if joint == joint_state_name:
               tolerance = .01
               if self.current_pos[i] == msg.position[j]:
-                tolerance = .01 * self.current_pos_cnt[i]
+                # give it a second to get started
+                tolerance = .01 * max(self.current_pos_cnt[i] - 4, 1)
                 self.current_pos_cnt[i] += 1
               else:
                 self.current_pos_cnt[i] = 0
@@ -202,19 +207,19 @@ class FollowController:
                 if self.execute_joints[k] == joint_state_name:
                   # desired = self.execute_positions[k] + self.fudge_value[i]
                   # IndexError: list index out of range
-                  rospy.loginfo("desired index k %d" % k)
+                  rospy.logdebug("desired index k %d" % k)
                   desired = self.execute_positions[k] 
                   if abs(self.execute_positions[k] - msg.position[j]) < tolerance or joint == 'left_upper_arm_hinge_joint' or joint == 'right_upper_arm_hinge_joint' or joint == 'left_shoulder_tilt_joint' or joint == 'right_shoulder_tilt_joint':
                     # close enough to consider the goal met
-                    if self.current_pos_cnt[i] > 0:
+                    if self.current_pos_cnt[i] - 5 > 0:
                       rospy.loginfo('Stall Warning: ' + joint + ' cur_pos:' + str (msg.position[j]) + " desired_pos " + str(self.execute_positions[k]))
                     del self.execute_positions[k]
                     del self.execute_joints[k]
-                    rospy.loginfo("del index k %d" % k)
+                    rospy.logdebug("del index k %d" % k)
                     # del changes indexing, so return and process rest in nxt cb
                     return
                     # break
-                  rospy.loginfo(joint + ' desired_pos:' + str(desired) + ' cur_pos:' + str (msg.position[j]))
+                  rospy.logdebug(joint + ' desired_pos:' + str(desired) + ' cur_pos:' + str (msg.position[j]))
             j += 1
           i += 1
 
@@ -225,7 +230,7 @@ class FollowController:
         if len(self.execute_positions) == 0:
           # if no more joints in current point, try next point.
           # IndexError: list assignment index out of range
-          rospy.loginfo("del index cur_point %d" % self.cur_point)
+          rospy.logdebug("del index cur_point %d" % self.cur_point)
           del self.trajectory_goal[0].trajectory.points[self.cur_point]
           self.cur_point = 0
           # if no more points, try new goal.
@@ -252,8 +257,7 @@ class FollowController:
           velocity = abs((desired-msg.position[match])/ (endsecs-nowsecs))
 
           if  exec_joint == 'left_shoulder_pan_joint' or exec_joint == 'right_shoulder_pan_joint':
-            if velocity > self.max_speed_shoulder_pan:
-              velocity = self.max_speed_shoulder_pan
+            velocity = self.max_speed_shoulder_pan
           elif velocity > self.max_speed:
             velocity = self.max_speed
           if exec_joint != 'left_upper_arm_hinge_joint' and exec_joint != 'right_upper_arm_hinge_joint':
@@ -263,13 +267,13 @@ class FollowController:
                    # self.speed_services[match](velocity)
                    self.last_speed[match] = velocity
             self.position_pub[match].publish(desired)
-            rospy.loginfo('Trajectory ' + str(match) + ' ' + exec_joint + ' ' + str(desired) + ' ' + str(self.fudge_value[match]) + ' ' + str(velocity))
+            rospy.logdebug('Trajectory ' + str(match) + ' ' + exec_joint + ' ' + str(desired) + ' ' + str(self.fudge_value[match]) + ' ' + str(velocity))
         return
 
 if __name__ == '__main__':
   rospy.loginfo("FollowController init_node " )
   rospy.init_node("follow_controller")
   server = FollowController()
-  rospy.loginfo("spin")
+  rospy.logdebug("spin")
   rospy.spin()
-  rospy.loginfo("post spin")
+  rospy.logdebug("post spin")

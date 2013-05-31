@@ -28,14 +28,14 @@ from control_msgs.msg import *
 
 
 left_servos = [ 'left_shoulder_pan_joint', 'left_shoulder_tilt_joint', 'left_upper_arm_hinge_joint', 'left_elbow_pan_joint', 'left_elbow_flex_joint', 'left_wrist_flex_joint', 'left_wrist_roll_joint']
-left_to_side = [-1.6157930965728755,0.35822709988129486, -0.35822709988129486, 0, -1.3294500161692546, -1.6669257895023968, -1.6669257895023968]
-left_forward = [-0.5368932757599745,0.35822709988129486, -0.35822709988129486,
-0, -1.3294500161692546, -1.6669257895023968, -1.6669257895023968]
+left_to_side = [-1.6157930965728755,0.35822709988129486, -0.35822709988129486, 0, -1.3294500161692546, 0, 0]
+left_forward = [-0.5368932757599745,0.35822709988129486, -0.35822709988129486, 0, -1.3294500161692546, 0, 0]
 left_tucked = [-1.6157930965728755, 0.9481697047772568, -0.9481697047772568, 0, -1.3396765547496274, 0,0]
+left_startIKpos = [ -0.04601942363656924, 0.35822709988129486, -0.35822709988129486, 1.5851134808151626,  0.02045307717010969, -1.4675082870772636, 0.5675728915176873]
 
 servos = ['right_shoulder_pan_joint', 'right_shoulder_tilt_joint', 'right_upper_arm_hinge_joint', 'right_elbow_pan_joint', 'right_elbow_flex_joint', 'right_wrist_flex_joint', 'right_wrist_roll_joint']
 to_side = [1.6157930965728755,0.35822709988129486, -0.35822709988129486, 0, -1.3294500161692546, 0, 0]
-forward = [0.5368932757599745,0.35822709988129486, -0.35822709988129486, 0, -1.3294500161692546, 0, 0]
+forward = [0.5368932757599745,0.35822709988129486, -0.35822709988129486, 0, -1.35, 0, 0]
 tucked = [1.6157930965728755, 0.9481697047772568, -0.9481697047772568, 0, -1.3396765547496274, 0,0]
 startIKpos = [ 0.04601942363656924, 0.35822709988129486, -0.35822709988129486, -1.5851134808151626,  0.02045307717010969, 1.4675082870772636, 0.5675728915176873]
 
@@ -126,6 +126,26 @@ class tuck_arm:
         goal.trajectory = msg
         self._client.send_goal(goal)
 
+    def left_IKpose(self):
+        rospy.loginfo('IKpose')
+        # prepare a joint trajectory
+        msg = JointTrajectory()
+        msg.joint_names = left_servos
+        msg.points = list()
+
+        point = JointTrajectoryPoint()
+        point.positions = left_startIKpos
+        point.velocities = [ 0.0 for servo in msg.joint_names ]
+        point.time_from_start = rospy.Duration(3.0)
+        msg.points.append(point)
+
+        # call action
+        msg.header.stamp = rospy.Time.now() + rospy.Duration(0.1)
+        goal = FollowJointTrajectoryGoal()
+        goal.trajectory = msg
+        self._client.send_goal(goal)
+
+
     def left_tuck(self):
         rospy.loginfo('left_tuck_arm tuck')
         # prepare a joint trajectory
@@ -162,14 +182,14 @@ class tuck_arm:
         msg.joint_names = left_servos
         msg.points = list()
         
-        point = JointTrajectoryPoint()
-        point.positions = left_to_side
-        point.velocities = [ 0.0 for servo in msg.joint_names ]
-        point.time_from_start = rospy.Duration(3.0)
-        msg.points.append(point)
+        #point = JointTrajectoryPoint()
+        #point.positions = left_to_side
+        #point.velocities = [ 0.0 for servo in msg.joint_names ]
+        #point.time_from_start = rospy.Duration(3.0)
+        #msg.points.append(point)
 
         point = JointTrajectoryPoint()
-        point.positions = left_tucked
+        point.positions = left_forward
         point.velocities = [ 0.0 for servo in msg.joint_names ]
         point.time_from_start = rospy.Duration(3.0)
         msg.points.append(point)

@@ -10,6 +10,6 @@ roslaunch pr2lite_dynamixel.launch &
 sleep 5
 roslaunch pr2lite_realrobot0.launch &
 sleep 5
-roslaunch pr2lite_realrobot1.launch &
+roslaunch pr2lite_realrobot1b.launch &
 sleep 5
 roslaunch pr2lite_realrobot2b.launch &

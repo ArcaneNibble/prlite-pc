@@ -221,9 +221,10 @@ pcl_ros::PieceExtraction::input_indices_callback (
     // set color
     color = color/clusters[c].indices.size();
     NODELET_DEBUG ("extract_pieces color %d\n", color);
+    //printf ("extract_pieces color %d\n", color);
     // if(color > 100){
     // if(color > 30){
-    if(color > 40){
+    if(color > 100){
         p.type = chess_msgs::ChessPiece::WHITE_UNKNOWN;   
     }else{
         p.type = chess_msgs::ChessPiece::BLACK_UNKNOWN;

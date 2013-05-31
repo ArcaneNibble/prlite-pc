@@ -56,7 +56,8 @@ class CalibrateLinear():
         dyn_client = dynamic_reconfigure.client.Client("calibrate_linear", timeout=60)
         
         # Publisher to control the robot's speed
-        self.cmd_vel = rospy.Publisher('/cmd_vel', Twist)
+        # self.cmd_vel = rospy.Publisher('/cmd_vel', Twist)
+        self.cmd_vel = rospy.Publisher('/base_controller/command', Twist)
  
         # The base frame is base_footprint for the TurtleBot but base_link for Pi Robot
         self.base_frame = rospy.get_param('~base_frame', '/base_link')

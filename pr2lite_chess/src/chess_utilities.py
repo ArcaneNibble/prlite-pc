@@ -423,7 +423,7 @@ class BoardUpdater(threading.Thread):
                 # ARD
                 # ARD
 
-                if len(piece_new) + len(piece_color) <= 6:
+                if len(piece_new) + len(piece_color) <= 7:
                   for entry in piece_gone:
                     (col, rank, piece) = entry
                     offset = int(int(rank)-1)*8+self.getColIdx(col)
@@ -454,14 +454,18 @@ class BoardUpdater(threading.Thread):
                       j = 0
                       for col in 'abcdefgh':
                         piece = self.prob_piece[i*8 + j]
-                        if self.prob_piece_gone[i*8 + j] / self.prob_cnt >= .5:
+                        if self.prob_piece_gone[i*8 + j] >= self.prob_cnt * .7:
+                          # rospy.loginfo("%s %d gone(in piece) %d ; new %d ; color %d out of %d" % (col, rank, self.prob_piece_gone[i*8 + j], self.prob_piece_new[i*8 + j], self.prob_piece_color[i*8 + j], self.prob_cnt))
                           piece_gone.append([col, rank, piece]) 
+                          rospy.loginfo("piece_gone gone %d ; new %d ; color %d" % (len(piece_gone), len(piece_new), len(piece_color)))
                           # temp_board.setPiece(col, rank, None)
-                        if self.prob_piece_new[i*8 + j] / self.prob_cnt >= .5:
+                        if self.prob_piece_new[i*8 + j] >= self.prob_cnt * .7:
                           piece_new.append([col, rank, piece]) 
+                          rospy.loginfo("piece_new gone %d ; new %d ; color %d" % (len(piece_gone), len(piece_new), len(piece_color)))
                           # temp_board.setPiece(col, rank, piece)
-                        if self.prob_piece_color[i*8 + j] / self.prob_cnt >= .5:
+                        if self.prob_piece_color[i*8 + j] >= self.prob_cnt * .7:
                           piece_color.append([col, rank, piece]) 
+                          rospy.loginfo("piece_color gone %d ; new %d ; color %d" % (len(piece_gone), len(piece_new), len(piece_color)))
                           # temp_board.setPiece(col, rank, piece)
                         rospy.loginfo("%s %d gone %d ; new %d ; color %d out of %d" % (col, rank, self.prob_piece_gone[i*8 + j], self.prob_piece_new[i*8 + j], self.prob_piece_color[i*8 + j], self.prob_cnt))
                         self.prob_piece_gone[i*8 + j] = 0

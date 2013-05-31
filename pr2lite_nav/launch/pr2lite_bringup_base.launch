@@ -1,6 +1,6 @@
 <launch>
 
-  <include file="$(find neato_node)/launch/bringup.launch" />
+  <include file="$(find pr2lite_nav)/launch/neato.launch" />
   <include file="$(find pr2lite_nav)/launch/imu.launch" />
   <node pkg="prlite_tf" type="tf_broadcaster" name="transform_configuration" output="screen">
     <!--<param name="transform_configuration_param" value="param_value" />-->
@@ -14,5 +14,6 @@
   </node>
   <include file="$(find pr2lite_nav)/launch/nav_amcl.launch" /> 
   <include file="$(find pr2lite_nav)/launch/gmapping.launch" />
+  <!--<include file="$(find pr2lite_nav)/launch/move_base.launch" /> -->
 
 </launch>

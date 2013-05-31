@@ -46,6 +46,7 @@ class LatestJointStates:
     #(found is 1 if found, 0 otherwise)
     def return_joint_state(self, joint_name):
 
+        #rospy.loginfo("joint_name %s" % (joint_name))
         #no messages yet
         if self.name == []:
             rospy.logerr("No robot_state messages received!\n")
@@ -57,11 +58,12 @@ class LatestJointStates:
             index = self.name.index(joint_name)
             position = self.position[index]
             velocity = self.velocity[index]
-            effort = self.effort[index]
+            #effort = self.effort[index]
+            effort = 0
 
         #unless it's not found
         else:
-            rospy.logerr("Joint %s not found!", (joint_name,))
+            rospy.logerr("Joint %s not found!"% (joint_name))
             self.lock.release()
             return (0, 0., 0., 0.)
         self.lock.release()

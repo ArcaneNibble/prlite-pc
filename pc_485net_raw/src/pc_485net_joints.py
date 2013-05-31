@@ -272,14 +272,16 @@ def base_handler(packet):
 def packet_dgram_handler(packet):
       LEFT_SHOULDER_LINACT = 15
       RIGHT_SHOULDER_LINACT = 14
-      TORSO_LINACT = 13
-      BASE_LINACT = 12
+      TORSO_LINACT = 12
+      BASE_LINACT = 13
       # 0,1,2,3 seq num for packet
       # 4, 5 (int) current position
       # 6 (eight bit boolean) arrived
       # Store if it arrived
       # cur_pos = struct.unpack("B", packet.data[4])
       m_arrived = struct.unpack("B", packet.data[4+2])
+      # print "packet source "
+      # print packet.source
       if packet.source == LEFT_SHOULDER_LINACT or packet.source == RIGHT_SHOULDER_LINACT:
         shoulder_handler(packet)
       elif packet.source == TORSO_LINACT:
@@ -558,12 +560,16 @@ def main():
     outgoing_pub = rospy.Publisher("net_485net_outgoing_packets", packet_485net_raw)
    
     rospy.Subscriber("net_485net_set_torso_pos", Float64, set_torso_pos)
+    # i = 0
     while not rospy.is_shutdown():
           bytes = ser.read(500)
           if len(bytes) > 0:
             packets = decode_blob(bytes)
             for p in packets:
-              # print "packets"
+              # i = i + 1
+              # if i == 20:
+                # print "packet"
+                # i = 0
               handler_incoming(p)
 
 

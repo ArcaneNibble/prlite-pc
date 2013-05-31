@@ -51,19 +51,20 @@ class NavSquare():
         angular_tolerance = rospy.get_param("~angular_tolerance", radians(2)) # degrees to radians
         
         # Publisher to control the robot's speed
-        self.cmd_vel = rospy.Publisher('/cmd_vel', Twist)
+        # self.cmd_vel = rospy.Publisher('/cmd_vel', Twist)
+        self.cmd_vel = rospy.Publisher('/base_controller/command', Twist)
          
         # The base frame is base_footprint for the TurtleBot but base_link for Pi Robot
         self.base_frame = rospy.get_param('~base_frame', '/base_link')
 
         # The odom frame is usually just /odom
-        self.odom_frame = rospy.get_param('~odom_frame', '/odom')
+        self.odom_frame = rospy.get_param('~odom_frame', '/odom_combined')
 
         # Initialize the tf listener
         self.tf_listener = tf.TransformListener()
         
         # Set the odom frame
-        self.odom_frame = '/odom'
+        self.odom_frame = '/odom_combined'
         
         # Find out if the robot uses /base_link or /base_footprint
         try:
@@ -99,6 +100,7 @@ class NavSquare():
             
             # Enter the loop to move along a side
             while distance < goal_distance and not rospy.is_shutdown():
+                print "dist %f  goal %f"%(distance, goal_distance)
                 # Publish the Twist message and sleep 1 cycle         
                 self.cmd_vel.publish(move_cmd)
                 

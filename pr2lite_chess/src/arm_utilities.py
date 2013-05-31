@@ -50,28 +50,28 @@ from tuck_arm import *
 
 GRIPPER_OPEN = 0.05
 GRIPPER_CLOSE = 0.0075
+ARM = 'left'
+#ARM_MODE = "none"
+ARM_MODE = "left"
 
 class ArmPlanner:
     """ Connection to the arm server. """
    
     def __init__(self, client=None, listener=None):
-        rospy.loginfo('ArmPlanner Init')
+        rospy.logdebug('ArmPlanner Init')
         print "ArmPlanner Init"
         if client==None:
             self.listener = listener
-            self.pr2_arm = PR2Arm_Planning('right', self.listener)
+            self.pr2_arm = PR2Arm_Planning(ARM, self.listener)
             #ARD: uncomment next line
             rospy.loginfo('ArmPlanner pr2lite_move_right_arm')
-            arm = "right"
-            self.move_arm_client = actionlib.SimpleActionClient('pr2lite_move_right_arm', MoveArmAction)
-            if arm is "right":
-              service = "r_gripper_controller/gripper_action"
-            else:
-              service = "l_gripper_controller/gripper_action"
+            self.move_arm_client = actionlib.SimpleActionClient('pr2lite_move_' + ARM + '_arm', MoveArmAction)
+            service = ARM[0] + "_gripper_controller/gripper_action"
             rospy.loginfo('Gripper wait_for_server')
             self.gripper = actionlib.SimpleActionClient(service, Pr2GripperCommandAction)
             self.gripper.wait_for_server()
             # rospy.init_node('single_joint_position', anonymous=True)
+            #self.tuck_server = tuck_arm()
             self.tuck_server = tuck_arm()
             self.torque = dyno_torque()
             self.torso_client = actionlib.SimpleActionClient('torso_controller/position_joint_action', SingleJointPositionAction)
@@ -114,6 +114,8 @@ class ArmPlanner:
         to.header.frame_id = fr.header.frame_id
         #to.header.stamp = rospy.Time.now()
         to.pose = self.getPose(col_t, rank_t, board, fr.pose.position.z)
+        if ARM_MODE == "none":
+          return to.pose
         print "Execute FR"
         print fr
         print "Execute TO"
@@ -137,7 +139,7 @@ class ArmPlanner:
         return to.pose
        
     def move_torso(self, position):
-        rospy.loginfo('move_torso %f' % position)
+        rospy.logdebug('move_torso %f' % position)
         if position < 0:
           position = 0
         goal = SingleJointPositionGoal()
@@ -147,7 +149,10 @@ class ArmPlanner:
 
     def begin_game_pos(self):
         # self.tuck_server.left_tuck()
-        self.tuck_server.untuck()
+        if ARM is 'right':
+            self.tuck_server.untuck()
+        else:
+            self.tuck_server.left_untuck()
         rospy.sleep(5.0)
         self.move_torso(0.1)
 
@@ -160,17 +165,20 @@ class ArmPlanner:
         rospy.loginfo('ArmPlanner addTransit')
 
         start_torso_pos = .30     # raise torso for easier planning
-        above_board = .11     # lower torso to piece
+        above_board = .10     # lower torso to piece
         # above_board = .09     # raise torso for easier planning
         above_piece = .15      # gripper z for easier planning
         # above_piece = .15      # raise torso for easier planning
         self.move_torso(start_torso_pos)
         self.torque.set_torque(1024)
-        self.tuck_server.IKpose()
+        if ARM is 'right':
+            self.tuck_server.IKpose()
+        else:
+            self.tuck_server.left_IKpose()
         rospy.sleep(6.0)
 
         pose = SimplePoseConstraint()
-        pose.link_name = "right_wrist_roll_link"
+        pose.link_name = ARM + "_wrist_roll_link"
 
 
         now = rospy.Time.now() 
@@ -281,11 +289,17 @@ class ArmPlanner:
         rospy.sleep(2)
 
         self.move_torso(start_torso_pos)
-        self.tuck_server.IKpose()
+        if ARM is 'left':
+            self.tuck_server.IKpose()
+        else:
+            self.tuck_server.left_IKpose()
         rospy.sleep(4)
-        self.tuck_server.untuck()
+        if ARM is 'right':
+            self.tuck_server.untuck()
+        else:
+            self.tuck_server.left_untuck()
         rospy.sleep(10)
-        self.move_torso(0)
+        self.move_torso(0.1)
         self.torque.set_torque(256)
 
     def getPose(self, col, rank, board, z=0):
@@ -294,7 +308,7 @@ class ArmPlanner:
         x_fudge = 0 * SQUARE_SIZE
         y_fudge = 0 * SQUARE_SIZE
         """ Find the reach required to get to a position """
-        rospy.loginfo('ArmPlanner getPose')
+        rospy.logdebug('ArmPlanner getPose')
         p = Pose()
         if board.side == board.WHITE:
             # p.position.x = (col * SQUARE_SIZE) + SQUARE_SIZE/2
@@ -315,15 +329,15 @@ class ArmPlanner:
         return p
 
     def getReach(self, col, rank, board):
-        rospy.loginfo('ArmPlanner getReach')
+        rospy.logdebug('ArmPlanner getReach')
         """ Find the reach required to get to a position """
         ps = PoseStamped()
         # ps.header.frame_id = "chess_board" # ARD
         ps.header.frame_id = "chess_board_raw"
         ps.pose = self.getPose(board.getColIdx(col), int(rank), board)
-        pose = self.listener.transformPose("right_arm_shelf_link", ps)
+        pose = self.listener.transformPose(ARM + "_arm_shelf_link", ps)
         # pose = self.listener.transformPose("right_shoulder_pan_link", ps)
-        print "get reach : chess_board_raw to right_shoulder_pan_link"
+        print "get reach : chess_board_raw to " + ARM + "_shoulder_pan_link"
         x = pose.pose.position.x
         y = pose.pose.position.y
         reach = sqrt( (x*x) + (y*y) )

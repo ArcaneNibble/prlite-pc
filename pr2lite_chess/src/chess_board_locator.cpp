@@ -128,7 +128,7 @@ class ChessBoardLocator
     ChessBoardLocator(ros::NodeHandle & n): nh_ (n),
         msgs_(0),   
         // ARD: 0 = blue square, 1 = green square
-        channel_(1),
+        channel_(0),
         // output_image_(false)
         output_image_(true)
     {
