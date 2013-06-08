@@ -65,7 +65,7 @@ class OutAndBack():
         self.tf_listener = tf.TransformListener()
         
         # Set the odom frame
-        self.odom_frame = '/odom'
+        self.odom_frame = '/odom_combined'
         
         # Find out if the robot uses /base_link or /base_footprint
         try:
@@ -112,6 +112,7 @@ class OutAndBack():
                 # Compute the Euclidean distance from the start
                 distance = sqrt(pow((position.x - x_start), 2) + 
                                 pow((position.y - y_start), 2))
+                rospy.loginfo("distance %f" % distance)
 
             # Stop the robot before the rotation
             move_cmd = Twist()

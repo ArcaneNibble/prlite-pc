@@ -164,9 +164,14 @@ def base_handler(packet):
       BR_CASTER_ROTATION_JOINT = 20
       INCHES_TO_METERS = 0.0254
 
-      cur_pos = struct.unpack("B", packet.data[4])
+      # cur_pos = struct.unpack("B", packet.data[4])
+      b = struct.unpack('B', packet.data[4])[0]
+      b2 = struct.unpack('B', packet.data[5])[0]
+      cur_pos = 256.0 * b2 + b
+      print "cur_pos ",cur_pos
       m_arrived = struct.unpack("B", packet.data[4+2])
-      length = (1000.0 - cur_pos[0]) * 4.0 / 1000.0 * INCHES_TO_METERS
+      #length = (1000.0 - cur_pos[0]) * 4.0 / 1000.0 * INCHES_TO_METERS
+      length = (cur_pos) * 4.0 / 1000.0 * INCHES_TO_METERS
       retracted_linact_side_angle = ONE_PI   # straight from linact rod to caster
       retracted_caster_angle = ONE_PI / 2.0 
 
@@ -187,7 +192,7 @@ def base_handler(packet):
       extended_side = math.sqrt( math.pow(PUSH_ROD_LEN,2.0) + math.pow(CASTER_LEN, 2.0) + 2 * PUSH_ROD_LEN * CASTER_LEN * math.cos(extended_caster_angle))
       extended_pushrod_angle = math.asin((math.sin(extended_caster_angle) * extended_side) / PUSH_ROD_LEN)
 
-      # jspr2msg.position[WHEEL_LINEAR_ACTUATOR_JOINT] = upper_arm_angle
+      jspr2msg.position[WHEEL_LINEAR_ACTUATOR_JOINT] = length
       if length <= 1 * INCHES_TO_METERS :
         inverse = 1
         jspr2msg.position[FL_ANCHOR_ROD_JOINT] = retracted_linact_side_angle*inverse
@@ -280,8 +285,8 @@ def packet_dgram_handler(packet):
       # Store if it arrived
       # cur_pos = struct.unpack("B", packet.data[4])
       m_arrived = struct.unpack("B", packet.data[4+2])
-      # print "packet source "
-      # print packet.source
+      # print "packet "
+      # print packet
       if packet.source == LEFT_SHOULDER_LINACT or packet.source == RIGHT_SHOULDER_LINACT:
         shoulder_handler(packet)
       elif packet.source == TORSO_LINACT:

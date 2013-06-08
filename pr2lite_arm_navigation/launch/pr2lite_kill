@@ -19,3 +19,9 @@ pkill -f linact_s
 pkill -f python
 pkill -f base_controller
 pkill -f gnuchess
+pkill -f amcl
+pkill -f slam_gmapping
+pkill -f robot_pose_ekf
+pkill -f map_server
+pkill -f tf_broadcaster
+pkill -f move_base

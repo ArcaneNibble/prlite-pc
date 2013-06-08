@@ -71,13 +71,15 @@ class OutAndBack():
             move_cmd.linear.x = linear_speed
             
             # Move forward for a time to go the desired distance
-            ticks = int(linear_duration * rate)
+            rospy.loginfo("move forward...")
+            ticks = int(linear_duration * rate)*10
             
             for t in range(ticks):
                 self.cmd_vel.publish(move_cmd)
                 r.sleep()
             
             # Stop the robot before the rotation
+            rospy.loginfo("Stopping the robot...")
             move_cmd = Twist()
             self.cmd_vel.publish(move_cmd)
             rospy.sleep(1)
@@ -88,13 +90,15 @@ class OutAndBack():
             move_cmd.angular.z = angular_speed
 
             # Rotate for a time to go 180 degrees
-            ticks = int(goal_angle * rate)
+            rospy.loginfo("rotate 180 degrees...")
+            ticks = int(goal_angle * rate)*10
             
             for t in range(ticks):           
                 self.cmd_vel.publish(move_cmd)
                 r.sleep()
                 
             # Stop the robot before the next leg
+            rospy.loginfo("Stopping the robot...")
             move_cmd = Twist()
             self.cmd_vel.publish(move_cmd)
             rospy.sleep(1)    

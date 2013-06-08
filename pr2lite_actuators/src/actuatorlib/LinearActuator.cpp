@@ -78,10 +78,10 @@ void LinearActuator::actuator_callback(const packets_485net::packet_485net_dgram
     if (m_id == 15 || m_id == 14) {
         publish_dyna_state(cur_pos);
     // else if (m_name == "torso_lift_joint")
-    } else if (m_id == 13) {
+    } else if (m_id == 12) {
         publish_torso_state(cur_pos);
     // else if (m_name == "wheel_linear_actuator_joint")
-    } else if (m_id == 12) {
+    } else if (m_id == 13) {
         publish_base_state(cur_pos);
     } else
         ROS_INFO("no actuator registered");
