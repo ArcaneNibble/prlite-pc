@@ -16,10 +16,14 @@ class LatestJointStates:
     def __init__(self):
         rospy.init_node('joint_states_listener')
         self.lock = threading.Lock()
-        self.name = []
-        self.position = []
-        self.velocity = []
-        self.effort = []
+        # self.name = []
+        # self.position = []
+        # self.velocity = []
+        # self.effort = []
+        self.name = list()
+        self.position = list()
+        self.velocity = list()
+        self.effort = list()
         self.thread = threading.Thread(target=self.joint_states_listener)
         self.thread.start()
 
@@ -28,17 +32,29 @@ class LatestJointStates:
 
     #thread function: listen for joint_states messages
     def joint_states_listener(self):
-        rospy.Subscriber('joint_states', JointState, self.joint_states_callback)
+        rospy.Subscriber('/joint_states', JointState, self.joint_states_callback)
         rospy.spin()
 
 
     #callback function: when a joint_states message arrives, save the values
     def joint_states_callback(self, msg):
         self.lock.acquire()
-        self.name = msg.name
-        self.position = msg.position
-        self.velocity = msg.velocity
-        self.effort = msg.effort
+        # self.name = msg.name
+        # self.position = msg.position
+        # self.velocity = msg.velocity
+        # self.effort = msg.effort
+        msg_name = list(msg.name)
+        for (i,joint_name) in enumerate(msg_name):
+          if joint_name in self.name:
+            index = self.name.index(joint_name)
+            self.position[index] = msg.position[i]
+            self.velocity[index] = msg.velocity[i]
+            self.effort[index] = 0
+          else:
+            self.name.append(msg.name[i])
+            self.position.append(msg.position[i])
+            self.velocity.append(msg.velocity[i])
+            self.effort.append(0)
         self.lock.release()
 
 

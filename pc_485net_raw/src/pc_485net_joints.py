@@ -129,7 +129,7 @@ def torso_handler(packet):
       # if jspr2msg.position[TORSO_LIFT_JOINT] - length > .006:
       #   print "linact: torso cur_pos %d" % cur_pos
 
-      # jspr2msg.position[TORSO_LIFT_JOINT] = length
+      jspr2msg.position[TORSO_LIFT_JOINT] = length
       if m_arrived:
         jspr2msg.velocity[TORSO_LIFT_JOINT] = FAST_LINACT_VEL*INCHES_TO_METERS
       else:
@@ -168,7 +168,7 @@ def base_handler(packet):
       b = struct.unpack('B', packet.data[4])[0]
       b2 = struct.unpack('B', packet.data[5])[0]
       cur_pos = 256.0 * b2 + b
-      print "cur_pos ",cur_pos
+      print "base cur_pos ",cur_pos
       m_arrived = struct.unpack("B", packet.data[4+2])
       #length = (1000.0 - cur_pos[0]) * 4.0 / 1000.0 * INCHES_TO_METERS
       length = (cur_pos) * 4.0 / 1000.0 * INCHES_TO_METERS
@@ -564,7 +564,7 @@ def main():
     bootloader_pub = rospy.Publisher("net_485net_incoming_bootloader", packet_485net_bootloader)
     outgoing_pub = rospy.Publisher("net_485net_outgoing_packets", packet_485net_raw)
    
-    rospy.Subscriber("net_485net_set_torso_pos", Float64, set_torso_pos)
+    # rospy.Subscriber("net_485net_set_torso_pos", Float64, set_torso_pos)
     # i = 0
     while not rospy.is_shutdown():
           bytes = ser.read(500)

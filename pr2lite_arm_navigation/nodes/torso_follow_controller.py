@@ -9,6 +9,10 @@ from control_msgs.msg import FollowJointTrajectoryAction
 from control_msgs.msg import FollowJointTrajectoryActionGoal
 from actionlib_msgs.msg import *
 from pr2_controllers_msgs.msg import *
+#from joint_states_listener.srv import ReturnJointStates
+from joint_states_listener import ReturnJointStates
+import time
+import sys
 import roslib
 roslib.load_manifest('rospy')
 roslib.load_manifest('actionlib')
@@ -43,26 +47,29 @@ class TorsoFollowTrajController:
 
     def actionCb(self, goal):
         rospy.loginfo(self.name + ": Action goal recieved %f" % goal.position)
-        time = rospy.Time.now()
-        self.active = 1
         desired_pos_in_meters = goal.position
 
-        starttime = rospy.Time.now() 
-        endtime = rospy.Time.now() + rospy.Duration(abs((desired_pos_in_meters - self.current_pos) / self.velocity))
-
         self.torso_pub.publish(goal.position)
-        while rospy.Time.now() < endtime:
-          if self.current_pos > goal.position:
-            est_pos = self.current_pos - self.velocity * (rospy.Time.now().to_sec() - starttime.to_sec())
-          else:
-            est_pos = self.current_pos + self.velocity * (rospy.Time.now().to_sec() - starttime.to_sec())
-          self.set_torso_pos.publish(est_pos)
-          print "torso %f" % est_pos
+        self.current_pos = torso_state()
+        while abs(self.current_pos[0] - desired_pos_in_meters) > .006:
           rospy.sleep(.05)
-        self.current_pos = goal.position
-        print "torso %f" % self.current_pos
-        self.set_torso_pos.publish(self.current_pos)
+          self.current_pos = torso_state()
         self.server.set_succeeded()
+
+def torso_state():
+    rospy.wait_for_service("return_joint_states")
+    joint_names = ["torso_lift_joint"]
+    try:
+        s = rospy.ServiceProxy("return_joint_states", ReturnJointStates)
+        resp = s(joint_names)
+    except rospy.ServiceException, e:
+        print "error when calling return_joint_states: %s"%e
+        sys.exit(1)
+    for (ind, joint_name) in enumerate(joint_names):
+        if(not resp.found[ind]):
+            print "joint %s not found!"%joint_name
+    # return (resp.position, resp.velocity, resp.effort)
+    return (resp.position)
   
 if __name__ == '__main__':
   rospy.init_node("TorsoFollowTrajController")
