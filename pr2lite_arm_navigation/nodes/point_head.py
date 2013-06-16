@@ -70,7 +70,8 @@ class PointHeadNode():
        
 
         # Initialize publisher for the pan servo
-        self.head_pan_frame = 'head_pan_link'
+        # self.head_pan_frame = 'head_pan_link'
+        self.head_pan_frame = 'kinect_link'
         self.head_pan_pub = rospy.Publisher(self.head_pan_controller_topic, Float64)
        
         # Initialize publisher for the tilt servo
@@ -144,6 +145,51 @@ class PointHeadNode():
 
     def transform_target_point(self, target):
         # Set the pan and tilt reference frames to the head_pan_frame and head_tilt_frame defined above
+        #pan_ref_frame = self.head_pan_frame
+        #tilt_ref_frame = self.head_tilt_frame
+       
+        # Wait for tf info (time-out in 5 seconds)
+#        self.tf.waitForTransform(pan_ref_frame, target.header.frame_id, rospy.Time(), rospy.Duration(5.0))
+#        self.tf.waitForTransform(tilt_ref_frame, target.header.frame_id, rospy.Time(), rospy.Duration(5.0))
+#
+#        # Transform target point to pan reference frame & retrieve the pan angle
+#        pan_target = self.tf.transformPoint(pan_ref_frame, target)
+#
+#        pan_angle = math.atan2(pan_target.point.y, pan_target.point.x)
+#        # pan_angle = math.atan2(pan_target.point.x, pan_target.point.y)
+#
+#        # Transform target point to tilt reference frame & retrieve the tilt angle
+#        tilt_target = self.tf.transformPoint(tilt_ref_frame, target)
+#        #\
+#        # \
+#        #  \
+#        #___\
+#        # tan = opp/adj  ; cos = adj/hyp ; sin = opp / hyp
+#        # tilt_angle = 1.5708 - math.atan2(tilt_target.point.z,
+#        # tilt_angle = math.atan2(tilt_target.point.z,
+#        #       math.sqrt(math.pow(tilt_target.point.x, 2) + math.pow(tilt_target.point.y, 2)))
+#        pan_ref_frame = self.head_pan_frame
+#        tilt_ref_frame = self.head_tilt_frame
+#       
+#        # Wait for tf info (time-out in 5 seconds)
+#        self.tf.waitForTransform(pan_ref_frame, target.header.frame_id, rospy.Time(), rospy.Duration(5.0))
+#        self.tf.waitForTransform(tilt_ref_frame, target.header.frame_id, rospy.Time(), rospy.Duration(5.0))
+#
+#        # Transform target point to pan reference frame & retrieve the pan angle
+#        tilt_angle = math.atan2( math.sqrt(math.pow(tilt_target.point.x, 2) + math.pow(tilt_target.point.y, 2)), tilt_target.point.z)
+#        (cur_head_pan_pos, cur_head_tilt_pos) = self.get_head_states()
+#        final_pan_angle = 1.5708 + pan_angle + cur_head_pan_pos
+#        final_tilt_angle = tilt_angle + cur_head_tilt_pos
+#        rospy.loginfo("x " + str(tilt_target.point.x) + " y " + str(tilt_target.point.y) + " z " + str(tilt_target.point.z) + " pan "+str(pan_angle) + " tilt " + str(tilt_angle) +  " cur_pan "+str(cur_head_pan_pos) + " cur_tilt " + str(cur_head_tilt_pos) + " final pan "+str(final_pan_angle) + " final_tilt " + str(final_tilt_angle))
+#        #return [pan_angle, -tilt_angle]
+
+
+        # from pr2_head_action.cpp
+        # tf_.transformPoint(pan_parent_, target_point, target_in_pan_);
+        # tf_.transformPoint(pan_link_, target_point, target_in_tilt);
+        # q_goal[0] = atan2(target_in_pan_.y(), target_in_pan_.x());
+        # q_goal[1] = atan2(-target_in_tilt.z(),
+        #                 sqrt(pow(target_in_tilt.x(),2) + pow(target_in_tilt.y(),2)));
         pan_ref_frame = self.head_pan_frame
         tilt_ref_frame = self.head_tilt_frame
        
@@ -151,29 +197,15 @@ class PointHeadNode():
         self.tf.waitForTransform(pan_ref_frame, target.header.frame_id, rospy.Time(), rospy.Duration(5.0))
         self.tf.waitForTransform(tilt_ref_frame, target.header.frame_id, rospy.Time(), rospy.Duration(5.0))
 
-        # Transform target point to pan reference frame & retrieve the pan angle
         pan_target = self.tf.transformPoint(pan_ref_frame, target)
-
-        pan_angle = math.atan2(pan_target.point.y, pan_target.point.x)
-        # pan_angle = math.atan2(pan_target.point.x, pan_target.point.y)
-
-        # Transform target point to tilt reference frame & retrieve the tilt angle
         tilt_target = self.tf.transformPoint(tilt_ref_frame, target)
-        #\
-        # \
-        #  \
-        #___\
-        # tan = opp/adj  ; cos = adj/hyp ; sin = opp / hyp
-        # tilt_angle = 1.5708 - math.atan2(tilt_target.point.z,
-        # tilt_angle = math.atan2(tilt_target.point.z,
-        #       math.sqrt(math.pow(tilt_target.point.x, 2) + math.pow(tilt_target.point.y, 2)))
-        tilt_angle = math.atan2( math.sqrt(math.pow(tilt_target.point.x, 2) + math.pow(tilt_target.point.y, 2)), tilt_target.point.z)
-        (cur_head_pan_pos, cur_head_tilt_pos) = self.get_head_states()
-        final_pan_angle = 1.5708 + pan_angle + cur_head_pan_pos
-        final_tilt_angle = tilt_angle + cur_head_tilt_pos
-        rospy.loginfo("x " + str(tilt_target.point.x) + " y " + str(tilt_target.point.y) + " z " + str(tilt_target.point.z) + " pan "+str(pan_angle) + " tilt " + str(tilt_angle) +  " cur_pan "+str(cur_head_pan_pos) + " cur_tilt " + str(cur_head_tilt_pos) + " final pan "+str(final_pan_angle) + " final_tilt " + str(final_tilt_angle))
-        #return [pan_angle, -tilt_angle]
-        return [final_pan_angle, final_tilt_angle]
+
+        # Transform target point to pan reference frame & retrieve the pan angle
+        pan_angle = math.atan2( pan_target.point.y, pan_target.point.x)
+        tilt_angle = -1 * math.atan2( tilt_target.point.z,
+                                math.sqrt(math.pow(tilt_target.point.x, 2) 
+                              + math.pow(tilt_target.point.y, 2)))
+        return [pan_angle, tilt_angle]
 
 
 if __name__ == '__main__':

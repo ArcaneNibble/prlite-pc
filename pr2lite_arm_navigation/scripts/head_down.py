@@ -15,9 +15,11 @@ client.wait_for_server()
 
 g = PointHeadGoal()
 g.target.header.frame_id = 'base_link'
-g.target.point.x = 0.4
+g.target.point.x = 0.6
 g.target.point.y = 0.0
 g.target.point.z = 0.0
+g.pointing_frame = "kinect_depth_optical_frame";
+# (pointing_axis defaults to X-axis)
 g.min_duration = rospy.Duration(1.0)
 
 client.send_goal(g)
