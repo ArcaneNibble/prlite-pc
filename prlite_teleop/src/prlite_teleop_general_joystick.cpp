@@ -267,7 +267,7 @@ public:
     n_local.param("torso_step", torso_step_, 0.05);
     n_local.param("min_torso", min_torso_, 0.0);
     n_local.param("max_torso", max_torso_, 0.3);
-    n_local.param("kinect_follow", kinect_follow_, 0);
+    // n_local.param("kinect_follow", kinect_follow_, 0);
 
     n_local.param("vx_scale", vx_scale_, 1.0);
     n_local.param("vy_scale", vy_scale_, 1.0);
@@ -351,7 +351,7 @@ public:
     set_walk_along_mode_ = false;
 
     joy_sub_ = n_.subscribe("joy", 10, &Pr2TeleopGeneralJoystick::joy_cb, this);
-    kinect_init();
+    // kinect_init();
   }
 
 
@@ -408,10 +408,13 @@ public:
        && buttonOkAndOn(RIGHT_ARM_LAYOUT_BUTTON, joy_msg) 
        && buttonOkAndOn(LEFT_ARM_LAYOUT_BUTTON, joy_msg)
        && buttonOkAndOn(HEAD_LAYOUT_BUTTON, joy_msg)) {
+/*
       layout = LAYOUT_KINECT;
       if (system("espeak --stdout \"mimic mode\" | aplay &"))
           ROS_INFO("espeak");
       ROS_INFO("Layout kinect");
+*/
+      ROS_INFO("Layout NA");
       // put torso up?  Currently optionally do by joystick
       // generaljoy.gc->sendTorsoCommand(0, 100);
     } else if(buttonOkAndOn(BODY_LAYOUT_BUTTON, joy_msg)) {
@@ -1344,7 +1347,7 @@ ROS_INFO("init done");
     pub_rate.sleep();
   }
   
-  kinect_shutdown();
+  // kinect_shutdown();
   ros::shutdown();
   spin_thread.join();
   return 0;

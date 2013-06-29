@@ -104,8 +104,10 @@ void odometryUpdate(void)
   geometry_msgs::TransformStamped odom_trans;
   odom_trans.header.stamp = current_time;
   // odom_trans.header.frame_id = "wheelodom";
-  odom_trans.header.frame_id = "odom";
-  odom_trans.child_frame_id = "base_link";
+  // odom_trans.header.frame_id = "odom";
+  // odom_trans.child_frame_id = "base_link";
+  odom_trans.header.frame_id = "odom_combined";
+  odom_trans.child_frame_id = "base_footprint";
 
   odom_trans.transform.translation.x = x;
   odom_trans.transform.translation.y = y;
@@ -157,6 +159,10 @@ void wheelStatusCallback(const packets_485net::packet_485net_dgram& ws)
 		return;
 	if(ws.dport != 7)
 		return;
+	if(ws.data.size() < 6) {
+                ROS_INFO("odom: bad size ");
+		return;
+        }
 		
   // update wheel velocity
   //int addr = ws.srcaddr / 2 - 1;
@@ -210,7 +216,8 @@ int main(int argc, char** argv)
   if (fake_localization)
     odom_sub = n.subscribe("cmd_vel", 50, cmdVelCallback);
   else
-    odom_sub = n.subscribe("net_485net_outgoing_dgram", 50, wheelStatusCallback);
+    // odom_sub = n.subscribe("net_485net_outgoing_dgram", 50, wheelStatusCallback);
+    odom_sub = n.subscribe("net_485net_incoming_dgram", 50, wheelStatusCallback);
 
   vl[0] = 0;
   vl[1] = 0;

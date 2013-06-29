@@ -42,7 +42,8 @@
 //---------------------------------------------------------------------------
 
 // #define SAMPLE_XML_PATH "/ros/stacks/ni/openni/lib/SamplesConfig.xml"
-#define SAMPLE_XML_PATH "/home/ros/ros/prlite/prlite_teleop/launch/SamplesConfig.xml"
+// #define SAMPLE_XML_PATH "/home/ros/ros/prlite/prlite_teleop/launch/SamplesConfig.xml"
+#define SAMPLE_XML_PATH "/opt/ros/electric/stacks/prlite/prlite_teleop/launch/SamplesConfig.xml"
 
 #define CHECK_RC(nRetVal, what)										\
 if (nRetVal != XN_STATUS_OK)									\

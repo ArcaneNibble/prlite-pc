@@ -358,7 +358,10 @@
   <joint name="head_side_joint" type="fixed">
     <parent link="head_pan_link"/>
     <child link="head_side_link"/>
+    <origin rpy="0 0 0" xyz="0.0 0.163703 0.0788035"/>
+<!-- ARD:
     <origin rpy="0 0 0" xyz="0.0 0.163703 0.0635"/>
+-->
   </joint>
   <link name="head_side_link">
     <inertial>
@@ -367,7 +370,10 @@
       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
     </inertial>
     <visual>
+<!-- ARD:
       <origin rpy="0 0 0" xyz="0.0 -0.003175 0.0"/>
+-->
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <geometry>
         <box size="0.1016 0.00635 0.127"/>
       </geometry>
@@ -402,7 +408,10 @@
   <joint name="kinect_side_joint" type="fixed">
     <parent link="head_tilt_link"/>
     <child link="kinect_base_link"/>
+<!--
     <origin rpy="0 0 0" xyz="-0.0 0.0 -0.054991"/>
+-->
+    <origin rpy="0 0 0" xyz="-0.0 0.0 -0.0396875"/>
   </joint>
   <link name="kinect_base_link">
     <inertial>
@@ -2232,9 +2241,15 @@ hokuyo side bar dimensions:
   <joint name="hokuyo_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0 0 0.06"/>
     <parent link="hokuyo_mount_link"/>
+<!--
     <child link="hokuyo_link"/>
+-->
+    <child link="neato_link"/>
   </joint>
+<!--
   <link name="hokuyo_link" type="laser">
+-->
+  <link name="neato_link" type="laser">
     <inertial>
       <mass value="0.001"/>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -2257,16 +2272,21 @@ hokuyo side bar dimensions:
   <gazebo reference="hokuyo_mount_link">
     <material value="Erratic/Black"/>
   </gazebo>
+<!--
   <gazebo reference="hokuyo_link">
+-->
+  <gazebo reference="neato_link">
     <material value="Erratic/Black"/>
   </gazebo>
+<!--
   <gazebo reference="hokuyo_link">
+-->
+  <gazebo reference="neato_link">
     <sensor:ray name="laser">
       <rayCount>683</rayCount>
       <rangeCount>683</rangeCount>
       <laserCount>1</laserCount>
       <origin>0.0 0.0 0.0</origin>
-      <displayRays>false</displayRays>
       <minAngle>-90</minAngle>
       <maxAngle> 90</maxAngle>
       <minRange>0.06</minRange>
@@ -2278,7 +2298,10 @@ hokuyo side bar dimensions:
         <alwaysOn>true</alwaysOn>
         <updateRate>10.0</updateRate>
         <topicName>hokuyo/scan</topicName>
+<!--
         <frameName>hokuyo_link</frameName>
+-->
+        <frameName>neato_link</frameName>
         <interface:laser name="gazebo_ros_hokuyo_laser_iface"/>
       </controller:gazebo_ros_laser>
     </sensor:ray>
