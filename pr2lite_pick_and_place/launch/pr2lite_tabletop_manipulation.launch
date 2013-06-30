@@ -1,6 +1,6 @@
 <launch>
 
-  <param name="ROBOT" value="$(env ROBOT)" />
+  <!--<param name="ROBOT" value="$(env ROBOT)" />-->
   <param name="robot_description" textfile="$(find pr2lite_urdf)/config/pr2lite_urdf.xml" />
 
   <!-- set stereo to true for narrow stereo, false for kinect -->
@@ -24,23 +24,23 @@
   <node pkg="household_objects_database" name="objects_database_node" type="objects_database_node" 
   	respawn="true" output="screen"/>    
 
-  <!-- manipulation prerequisites -->
-  <include file="$(find pr2_object_manipulation_launch)/launch/pr2_manipulation_prerequisites.launch">
+  <!-- manipulation prerequisites (ran separately for pr2 lite) -->
+  <!--<include file="$(find pr2_object_manipulation_launch)/launch/pr2_manipulation_prerequisites.launch">
     <arg name="stereo" value="$(arg stereo)"/>    
     <arg name="use_left_arm" value="$(arg use_left_arm)"/>    
     <arg name="use_right_arm" value="$(arg use_right_arm)"/>    
     <arg name="log_to_warehouse" value="$(arg log_to_warehouse)"/>
     <arg name="kinect_frame_prefix" value="$(arg kinect_frame_prefix)"/>
-  </include>
+  </include>-->
 
-  <!-- manipulation -->
-  <include file="$(find pr2_object_manipulation_launch)/launch/pr2_manipulation.launch">
+  <!-- manipulation (ran separately for pr2 lite) -->
+  <!--<include file="$(find pr2_object_manipulation_launch)/launch/pr2_manipulation.launch">
     <arg name="use_slip_controllers" value="$(arg use_slip_controllers)"/>
     <arg name="use_left_arm" value="$(arg use_left_arm)"/>
     <arg name="use_right_arm" value="$(arg use_right_arm)"/>
     <arg name="use_task_cartesian" value="$(arg use_task_cartesian)"/>
 
-  </include>
+  </include>-->
 
   <!-- tabletop collision map processing -->
   <node pkg="tabletop_collision_map_processing" name="tabletop_collision_map_processing" 
@@ -51,9 +51,12 @@
 
   <!-- tabletop segmentation and object recognition -->
   <include file="$(find tabletop_object_detector)/launch/tabletop_complete.launch">
-      <arg unless="$(arg stereo)" name="tabletop_segmentation_points_input" value="camera/depth/points"/>
-      <arg if="$(arg stereo)" name="tabletop_segmentation_points_input" value="narrow_stereo_textured/points2"/>
+      <arg name="tabletop_segmentation_points_input" value="kinect/depth/points"/>
       <arg name="flatten_table" value="$(arg flatten_table)"/>
   </include>
+  
+  <!-- this seems to be needed otherwise complains that "Service [/find_cluster_bounding_box] has not been advertised" -->
+  <node pkg="object_manipulator" name="cluster_bounding_box_finder_server"
+        type="cluster_bounding_box_finder_server.py" output="screen"/>
 
 </launch>

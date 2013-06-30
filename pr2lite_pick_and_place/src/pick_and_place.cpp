@@ -1,4 +1,5 @@
 // based on http://ros.org/wiki/pr2_tabletop_manipulation_apps/Tutorials/Writing%20a%20Simple%20Pick%20and%20Place%20Application
+// but this functionality and more is also encapsulated in pr2_pick_and_place_demos
 
 #include <ros/ros.h>
 
@@ -27,10 +28,10 @@ int main(int argc, char **argv)
   //create service and action clients
   ros::ServiceClient object_detection_srv;
   ros::ServiceClient collision_processing_srv;
-  actionlib::SimpleActionClient<object_manipulation_msgs::PickupAction> 
+  /*actionlib::SimpleActionClient<object_manipulation_msgs::PickupAction> 
     pickup_client(PICKUP_ACTION_NAME, true);
   actionlib::SimpleActionClient<object_manipulation_msgs::PlaceAction> 
-    place_client(PLACE_ACTION_NAME, true);
+    place_client(PLACE_ACTION_NAME, true);*/
 
   //wait for detection client
   while ( !ros::service::waitForService(OBJECT_DETECTION_SERVICE_NAME, 
@@ -55,7 +56,7 @@ int main(int argc, char **argv)
     <tabletop_collision_map_processing::TabletopCollisionMapProcessing>
     (COLLISION_PROCESSING_SERVICE_NAME, true);
 
-  //wait for pickup client
+  /*//wait for pickup client
   while(!pickup_client.waitForServer(ros::Duration(2.0)) && nh.ok())
   {
     ROS_INFO_STREAM("Waiting for action client " << PICKUP_ACTION_NAME);
@@ -67,7 +68,7 @@ int main(int argc, char **argv)
   {
     ROS_INFO_STREAM("Waiting for action client " << PLACE_ACTION_NAME);
   }
-  if (!nh.ok()) exit(0);    
+  if (!nh.ok()) exit(0);    */
 
 
 
@@ -76,7 +77,7 @@ int main(int argc, char **argv)
   tabletop_object_detector::TabletopDetection detection_call;
   //we want recognized database objects returned
   //set this to false if you are using the pipeline without the database
-  detection_call.request.return_clusters = true;
+  detection_call.request.return_clusters = false;
   //we want the individual object point clouds returned as well
   detection_call.request.return_models = true;
   detection_call.request.num_models = 1;
@@ -126,7 +127,7 @@ int main(int argc, char **argv)
   }
 
 
-
+/*
   //call object pickup
   ROS_INFO("Calling the pickup action");
   object_manipulation_msgs::PickupGoal pickup_goal;
@@ -233,7 +234,7 @@ int main(int argc, char **argv)
     ROS_ERROR("Place failed with error code %d", 
               place_result.manipulation_result.value);
     return -1;
-  }
+  }*/
 
   //success!
   ROS_INFO("Success! Object moved.");
