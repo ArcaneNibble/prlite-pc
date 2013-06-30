@@ -1,3 +1,5 @@
+// based on http://ros.org/wiki/pr2_tabletop_manipulation_apps/Tutorials/Writing%20a%20Simple%20Pick%20and%20Place%20Application
+
 #include <ros/ros.h>
 
 #include <actionlib/client/simple_action_client.h>
