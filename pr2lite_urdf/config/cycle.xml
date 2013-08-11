@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot name="low_cost_gripper">
+
+<link name="world" />
+<link name="gripper_link" />
+<joint name="gripper_joint" type="continuous">
+  <parent link="world"/>
+  <child  link="gripper_link"/>
+</joint>
+<transmission type="pr2_mechanism_model/SimpleTransmission" name="gripper_trans">
+  <actuator name="l_velo_gripper_motor"/>
+  <joint name="gripper_joint"/>
+  <mechanicalReduction> -28999.317 </mechanicalReduction> 
+  <!--  -28999.317 using 15 : 1  -->
+</transmission>
+
+</robot>
