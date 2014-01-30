@@ -1,0 +1,8 @@
+<library path="libpr2lite_moveit_constraint_sampler">
+
+  <class name="pr2lite_constraint_sampler/PR2liteConstraintSamplerAllocator" type="pr2lite_constraint_sampler::PR2liteConstraintSamplerAllocator" base_class_type="constraint_samplers::ConstraintSamplerAllocator">
+    <description>
+    </description>
+  </class>
+
+</library>

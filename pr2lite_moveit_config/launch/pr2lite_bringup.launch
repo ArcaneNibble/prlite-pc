@@ -1,0 +1,4 @@
+<launch>
+  <include file="$(find pr2lite_moveit_config)/launch/pr2lite_bringup_torso.launch" />
+  <include file="$(find pr2lite_nav)/launch/pr2lite_bringup_base.launch" />
+</launch>

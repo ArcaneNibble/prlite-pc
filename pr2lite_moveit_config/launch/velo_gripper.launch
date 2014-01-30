@@ -1,0 +1,24 @@
+<launch>
+  <node name="gripper_controller" pkg="pr2lite_moveit_config" type="parallel_gripper_controller.py">
+      <param name="side" value="left" />
+      <param name="pad_width" value="0.0381" />
+<!--
+      <param name="pad_width" value="0.0254"/>
+-->
+      <param name="finger_length" value="0.08255" />
+      <param name="center_left" value="0.18" />
+      <param name="center_right" value="0.18" />
+      <param name="invert_left" value="True" />
+  </node>
+
+  <node name="velo_gripper_controller" pkg="pr2lite_moveit_config" type="velo_gripper_controller.py">
+      <param name="side" value="right" />
+      <param name="pad_width" value="0.0381" />
+      <param name="finger_length" value="0.08255" />
+      <param name="center_left" value="0.18" />
+      <param name="center_right" value="0.18" />
+      <param name="invert_left" value="True" />
+  </node>
+
+</launch>
+

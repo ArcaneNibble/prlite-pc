@@ -1,0 +1,12 @@
+<launch>
+
+  <param name="port" type="str" value="/dev/ttyACM0" />
+<!--
+  <node pkg="tf" type="static_transform_publisher" name="laser_to_base"
+    args="-0.1016 0 0.0889 0 0 0 lidar_base_link base_link 50" />
+  <node pkg="tf" type="static_transform_publisher" name="laser_to_base"
+    args="-0.1016 0 0.0889 0 0 0 base_link lidar_base_link 100" />
+-->
+  <node name="neato" pkg="pr2lite_nav" type="neato.py" output="screen" />
+
+</launch>

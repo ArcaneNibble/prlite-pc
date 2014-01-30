@@ -1,0 +1,85 @@
+controller_list:
+  - name: fake_base_controller
+    joints:
+      - world_joint
+  - name: fake_left_arm_controller
+    joints:
+      - left_shoulder_pan_joint
+      - left_shoulder_tilt_joint
+      - left_elbow_pan_joint
+      - left_elbow_flex_joint
+      - left_wrist_flex_joint
+      - left_wrist_roll_joint
+  - name: fake_left_arm_and_torso_controller
+    joints:
+      - torso_lift_joint
+      - left_shoulder_pan_joint
+      - left_shoulder_tilt_joint
+      - left_elbow_pan_joint
+      - left_elbow_flex_joint
+      - left_wrist_flex_joint
+      - left_wrist_roll_joint
+  - name: fake_right_arm_controller
+    joints:
+      - right_shoulder_pan_joint
+      - right_shoulder_tilt_joint
+      - right_elbow_pan_joint
+      - right_elbow_flex_joint
+      - right_wrist_flex_joint
+      - right_wrist_roll_joint
+  - name: fake_right_arm_and_torso_controller
+    joints:
+      - torso_lift_joint
+      - right_shoulder_pan_joint
+      - right_shoulder_tilt_joint
+      - right_elbow_pan_joint
+      - right_elbow_flex_joint
+      - right_wrist_flex_joint
+      - right_wrist_roll_joint
+  - name: fake_arms_controller
+    joints:
+      - left_shoulder_pan_joint
+      - left_shoulder_tilt_joint
+      - left_elbow_pan_joint
+      - left_elbow_flex_joint
+      - left_wrist_flex_joint
+      - left_wrist_roll_joint
+      - right_shoulder_pan_joint
+      - right_shoulder_tilt_joint
+      - right_elbow_pan_joint
+      - right_elbow_flex_joint
+      - right_wrist_flex_joint
+      - right_wrist_roll_joint
+  - name: fake_head_controller
+    joints:
+      - head_pan_joint
+      - head_tilt_joint
+  - name: fake_torso_controller
+    joints:
+      - torso_lift_joint
+  - name: fake_whole_body_controller
+    joints:
+      - world_joint
+      - torso_lift_joint
+      - left_shoulder_pan_joint
+      - left_shoulder_tilt_joint
+      - left_elbow_pan_joint
+      - left_elbow_flex_joint
+      - left_wrist_flex_joint
+      - left_wrist_roll_joint
+      - right_shoulder_pan_joint
+      - right_shoulder_tilt_joint
+      - right_elbow_pan_joint
+      - right_elbow_flex_joint
+      - right_wrist_flex_joint
+      - right_wrist_roll_joint
+  - name: fake_velo_gripper_controller
+    joints:
+      - r_gripper_l_finger_joint
+      - r_gripper_motor_slider_joint
+      - r_gripper_motor_screw_joint
+      - r_gripper_joint
+  - name: fake_left_gripper_controller
+    joints:
+      - left_gripper_left_joint
+      - left_gripper_right_joint

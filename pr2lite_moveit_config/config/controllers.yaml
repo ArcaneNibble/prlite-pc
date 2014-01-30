@@ -1,0 +1,22 @@
+controller_list:
+  - name: /arm_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - torso_lift_joint 
+      - left_shoulder_pan_joint 
+      - left_shoulder_tilt_joint 
+      - left_elbow_pan_joint
+      - left_elbow_flex_joint
+      - left_wrist_flex_joint
+      - left_wrist_roll_joint
+  - name: gripper_controller
+    type: GripperCommand
+    action_ns: gripper_action
+    default: true
+    joints:
+      - left_gripper_left_joint
+      - left_gripper_right_joint
+
+

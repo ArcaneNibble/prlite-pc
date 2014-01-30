@@ -1,0 +1,5 @@
+<launch>
+  <!-- Start the point_head node -->
+  <node name="point_head_node" pkg="pr2lite_moveit_config" type="point_head.py" output="screen" />
+  
+</launch>

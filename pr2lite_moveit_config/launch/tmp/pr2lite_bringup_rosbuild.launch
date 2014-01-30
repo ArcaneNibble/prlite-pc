@@ -1,0 +1,13 @@
+<launch>
+  <include file="$(find pr2lite_arm_navigation)/launch/pr2lite_dynamixel.launch" />
+  <include file="$(find pr2lite_arm_navigation)/launch/pr2lite_realrobot0.launch" />
+  <include file="$(find pr2lite_arm_navigation)/launch/pr2lite_realrobot1.launch" />
+    
+<!--
+  <include file="$(find pr2lite_arm_navigation)/launch/pr2lite_realrobot2b.launch" />
+  <include file="$(find pr2lite_arm_navigation)/launch/move_groups.launch" />
+-->
+  <include file="$(find pr2lite_arm_navigation)/launch/pr2lite_gripper.launch" />
+  <include file="$(find pr2lite_arm_navigation)/launch/point_head.launch" />
+  <include file="$(find pr2lite_arm_navigation)/launch/torso_follow_controller.launch" />
+</launch>

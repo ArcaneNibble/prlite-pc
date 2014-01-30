@@ -1,0 +1,10 @@
+<launch>
+
+  <!-- pr2lite is an awesome mobile manipulator. 
+       This launch file brings him to life. -->
+  <node pkg="pr2lite_moveit_config" name="pc_485net_joints" type="pc_485net_joints.py" output="screen" />
+  <node pkg="pr2lite_moveit_config" name="id_server" type="id_server.py" output= "screen" >
+    <param name="~uc_config_file" value="$(find pr2lite_moveit_config)/config/uc.txt" /> 
+  </node>
+
+</launch>

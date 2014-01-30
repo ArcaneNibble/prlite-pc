@@ -1,0 +1,8 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: pr2lite_urdf
+    relative_path: config/pr2lite_urdf.xml
+  SRDF:
+    relative_path: config/pr2lite.srdf
+  CONFIG:
+    generated_timestamp: 1385696142

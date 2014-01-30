@@ -1,0 +1,38 @@
+<launch>
+
+<!--
+	<param name="robot_pose_ekf/freq" value="30.0"/>
+	<param name="robot_pose_ekf/sensor_timeout" value="1.0"/>
+	<param name="robot_pose_ekf/odom_used" value="true"/>
+	<param name="robot_pose_ekf/imu_used" value="true"/>
+	<param name="robot_pose_ekf/vo_used" value="true"/>
+
+	<node name="robot_pos_ekf" pkg="robot_pose_ekf" type="robot_pose_ekf" args="robot_pose_ekf" output="screen">
+          <remap from="imu_data" to="imu/data"/>
+        </node>
+-->
+	
+  	<param name="freq" value="30.0"/>
+  	<param name="sensor_timeout" value="1.0"/>
+  	<param name="odom_used" value="true"/>
+  	<param name="imu_used" value="true"/>
+  	<param name="vo_used" value="false"/>
+  	
+  	<node name="robot_pos_ekf_no_vo" pkg="robot_pose_ekf" type="robot_pose_ekf" args="robot_pose_ekf_no_vo" output="screen">
+          <remap from="imu_data" to="imu/data"/>
+        </node>
+
+<!--	
+  	<param name="robot_pose_ekf_no_vo/freq" value="30.0"/>
+  	<param name="robot_pose_ekf_no_vo/sensor_timeout" value="1.0"/>
+  	<param name="robot_pose_ekf_no_vo/odom_used" value="true"/>
+  	<param name="robot_pose_ekf_no_vo/imu_used" value="true"/>
+  	<param name="robot_pose_ekf_no_vo/vo_used" value="false"/>
+  	
+  	<node name="robot_pos_ekf_no_vo" pkg="robot_pose_ekf" type="robot_pose_ekf" args="robot_pose_ekf_no_vo" output="screen">
+          <remap from="imu_data" to="imu/data"/>
+	<remap from="wheelodom" to="odom"/>
+        </node>
+-->  	
+</launch>
+

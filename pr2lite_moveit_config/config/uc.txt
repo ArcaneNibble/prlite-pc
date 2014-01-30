@@ -1,0 +1,24 @@
+#address list
+#AA|type name|location description
+08|wheel-cnt|front left
+09|wheel-cnt|back left
+0A|wheel-cnt|front right
+0B|wheel-cnt|back right
+
+0C|lin-act|front up down
+0D|lin-act|wheel rotate
+0E|lin-act|right arm
+0F|lin-act|left arm
+
+C1|multicast|left wheels
+C2|multicast|right wheels
+C3|multicast|front wheels
+C4|multicast|back wheels
+C5|multicast|all wheels
+
+=
+
+#firmware list
+#type name|firmware file|lib file
+wheel-cnt|firmware/wheel-cnt.bin|firmware/485lib-normal.bin
+lin-act|firmware/linear-actuator.bin|firmware/485lib-normal.bin

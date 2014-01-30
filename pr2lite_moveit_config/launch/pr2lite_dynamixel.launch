@@ -1,0 +1,57 @@
+<launch>
+    <!-- Start the Dynamixel motor manager to control all SmartArm servos -->
+    <node name="smartarm_motor_manager" pkg="dynamixel_controllers" type="controller_manager.py" required="true" output="screen">
+        <rosparam>
+            namespace: smartarm_motor_manager
+            diagnostics_rate: 10
+            serial_ports:
+                smart_arm:
+                    port_name: "/dev/magellan_arm"
+                    baud_rate: 1000000
+                    min_motor_id: 1
+                    max_motor_id: 30
+                    update_rate: 20
+        </rosparam>
+    </node>
+
+    <!-- Load joint controller configuration from YAML file to parameter server -->
+    <rosparam file="$(find pr2lite_moveit_config)/config/pr2lite_smart_arm.yaml" command="load"/>
+
+    <!-- Start all SmartArm joint controllers -->
+<!--
+shoulder_pan_controllerL
+shoulder_pan_controllerR
+-->
+    <node name="smartarm_controller_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
+          args="--manager=smartarm_motor_manager
+                --port=smart_arm
+                --type=simple
+                head_pan_controller 
+                head_tilt_controller
+                left_elbow_flex_controller
+                left_elbow_pan_controller
+                left_gripper_left_controller
+                left_gripper_right_controller
+                left_shoulder_pan_controller
+                left_wrist_flex_controller
+                left_wrist_roll_controller
+                lidar_tilt_controller
+                right_elbow_flex_controller
+                right_elbow_pan_controller
+                right_gripper_left_controller
+                right_gripper_right_controller
+                right_shoulder_pan_controller
+                right_wrist_flex_controller 
+                right_wrist_roll_controller"
+          output="screen"/>
+        
+<!--
+                left_shoulder_tilt_controller
+                right_shoulder_tilt_controller
+-->
+   <!-- Start the arm trajectory controller -->
+   <!-- arm_controller removed from above elbow_tilt_controllerL -->
+
+<!--
+-->
+</launch>
