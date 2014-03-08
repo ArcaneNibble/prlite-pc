@@ -115,7 +115,8 @@ class FollowController:
           
         for c in self.controllers:
           if c == 'torso_lift_controller':
-            c_srv = rospy.Publisher('torso_controller/position_joint_action', Float64)
+            # c_srv = rospy.Publisher('torso_lift_controller/position_joint_action', Float64)
+            c_srv = rospy.Publisher('torso_lift_controller/command', Float64)
             self.position_pub.append(c_srv)
             rospy.loginfo("Real pos pub:" + c)
             # add dummy service so positions align
@@ -127,7 +128,7 @@ class FollowController:
             c_srv = rospy.Publisher(c + '/command', Float64)
             self.position_pub.append(c_srv)
             rospy.loginfo("Real pos pub " + c)
-            if c != 'left_shoulder_tilt_controller' and c != 'right_shoulder_tilt_controller':
+            if c != 'left_shoulder_tilt_controller' and c != 'right_shoulder_tilt_controller' and c != 'torso_lift_controller':
             # c != 'left_upper_arm_hinge_joint' and c != 'right_upper_arm_hinge_joint':
               speed_service = c + '/set_speed'
               rospy.wait_for_service(speed_service)

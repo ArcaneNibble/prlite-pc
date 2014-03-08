@@ -186,8 +186,11 @@ class FollowController:
               for k in range(len(self.execute_joints)):
                 if execute_joint == joint_state_name:
                   desired = self.trajectory_goal[0].points[self.cur_point].positions[k] + self.fudge_value[i]
-                  if abs(desired - msg.position[j]) < .01 or self.joints[j] == 'left_upper_arm_hinge_joint' or self.joints[j] == 'right_upper_arm_hinge_joint' or (self.joints = "torso_lift_joint" and abs(desired - msg.position[j]) > .006):
-                    # close enough to consider the goal met
+                  if abs(desired - msg.position[j]) < .01 or self.joints[j] == 'left_upper_arm_hinge_joint' or self.joints[j] == 'right_upper_arm_hinge_joint' or (self.joints = "torso_lift_joint" and abs(desired - msg.position[j]) > .010):
+                    # close enough to consider the goal met sp that linear
+                    # actuators can get their next command in the trajectory.
+                    # the goal is to enable smooth arm movement while ensuring
+                    # sufficient accuracy
                     del self.trajectory_goal[0].points[self.cur_point].position[k]
                     del self.execute_joints[k]
                   rospy.loginfo(joint + ' des:' + str(desired) + ' pos:' + str (msg.position[j]))

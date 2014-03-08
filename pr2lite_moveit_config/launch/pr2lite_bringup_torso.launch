@@ -6,7 +6,9 @@
   <node pkg="pr2lite_moveit_config" name="id_server" type="id_server.py" output="screen" >
     <param name="~uc_config_file" value="$(find pr2lite_moveit_config)/config/uc.txt" /> 
   </node>
+<!--
   <node pkg="prlite_base" name="base_controller" type="base_controller" output="screen" />
+-->
 
   <param name="/use_sim_time" value="false"/>
   <!-- send pr2lite urdf to param server -->
@@ -41,10 +43,10 @@
 
   <node pkg="pr2lite_moveit_config" type="joint_states_listener.py" name="joint_states_listener" />
 
-<!--
   <include file="$(find pr2lite_moveit_config)/launch/move_group.launch">
     <arg name="allow_trajectory_execution" value="true"/>
   </include>
+<!--
 
   <include file="$(find pr2lite_moveit_config)/launch/moveit_rviz.launch"/>
 -->

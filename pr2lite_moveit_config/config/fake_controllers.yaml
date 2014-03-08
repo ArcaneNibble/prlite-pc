@@ -76,7 +76,7 @@ controller_list:
   - name: fake_velo_gripper_controller
     joints:
       - r_gripper_l_finger_joint
-      - r_gripper_motor_slider_joint
+      - velo_gripper_joint
       - r_gripper_motor_screw_joint
       - r_gripper_joint
   - name: fake_left_gripper_controller

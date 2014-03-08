@@ -34,8 +34,8 @@
 
 import roslib; roslib.load_manifest('pr2lite_moveit_config')
 import actionlib
-import rospy
-import tf
+import rospy, time
+import tf2_ros
 from std_msgs.msg import Float64
 from pr2_controllers_msgs.msg import *
 from geometry_msgs.msg import PointStamped
@@ -46,7 +46,7 @@ import math
 class PointHeadNode():
     def __init__(self):
         # Initialize new node
-        rospy.init_node('point_head_node', anonymous=True)
+        # rospy.init_node('point_head_node', anonymous=True)
        
 
         # servo_namespace = rospy.get_namespace()
@@ -63,34 +63,29 @@ class PointHeadNode():
         rospy.set_param(self.head_tilt_speed_param, 50)
        
         # Initialize the target point
-        # self.target_point = PointStamped() 
-        # self.last_target_point = PointStamped()
         self.target_point = PointHeadGoal()
         self.last_target_point = PointHeadGoal()
        
 
+        self.base_frame = 'base_link'
         # Initialize publisher for the pan servo
-        # self.head_pan_frame = 'head_pan_link'
-        self.head_pan_frame = 'kinect_link'
+        self.head_pan_frame = 'head_pan_link'
+        # self.head_pan_frame = 'kinect_depth_optical_frame'
+        # self.head_pan_frame = 'kinect_link'
         self.head_pan_pub = rospy.Publisher(self.head_pan_controller_topic, Float64)
        
         # Initialize publisher for the tilt servo
-        # self.head_tilt_frame = 'head_tilt_link'
-        # self.head_tilt_frame = 'kinect_depth_optical_frame'
-        self.head_tilt_frame = 'kinect_link'
+        self.head_tilt_frame = 'head_pan_link'
         self.head_tilt_pub = rospy.Publisher(self.head_tilt_controller_topic, Float64)
 
         # Initialize tf listener
-        self.tf = tf.TransformListener()
+        self.buf = tf2_ros.Buffer()
+        self.tf = tf2_ros.TransformListener(self.buf)
        
-        # Make sure we can see at least the pan and tilt frames
-        self.tf.waitForTransform(self.head_pan_frame, self.head_tilt_frame, rospy.Time(), rospy.Duration(5.0))
-           
         # Reset the head position to neutral
         rospy.sleep(1)
         self.reset_head_position()
         # Subscribe to the target_point topic
-        #rospy.Subscriber('/head_traj_controller/point_head_action/goal', PointHeadActionGoal, self.update_target_point)
         self.server = actionlib.SimpleActionServer('/head_traj_controller/point_head_action', PointHeadAction, execute_cb=self.update_target_point, auto_start=False)
         self.server.start()
 
@@ -121,15 +116,8 @@ class PointHeadNode():
             rospy.loginfo("continue");
             self.server.set_succeeded()
             return
-        try:
-            rospy.loginfo("transtargpnt");
-            target_angles = self.transform_target_point(self.target_point.target)
-        except (tf.Exception, tf.ConnectivityException, tf.LookupException):
-            rospy.logerr("tf Failure")
-            rospy.loginfo("tf failure");
-            self.server.set_aborted("tf Failure")
-            return
-
+        rospy.loginfo("transtargpnt");
+        target_angles = self.transform_target_point(self.target_point.target)
         rospy.loginfo("publishing");
         self.head_pan_pub.publish(target_angles[0])
         self.head_tilt_pub.publish(target_angles[1])
@@ -144,74 +132,59 @@ class PointHeadNode():
         rospy.sleep(1)
 
     def transform_target_point(self, target):
-        # Set the pan and tilt reference frames to the head_pan_frame and head_tilt_frame defined above
-        #pan_ref_frame = self.head_pan_frame
-        #tilt_ref_frame = self.head_tilt_frame
-       
-        # Wait for tf info (time-out in 5 seconds)
-#        self.tf.waitForTransform(pan_ref_frame, target.header.frame_id, rospy.Time(), rospy.Duration(5.0))
-#        self.tf.waitForTransform(tilt_ref_frame, target.header.frame_id, rospy.Time(), rospy.Duration(5.0))
-#
-#        # Transform target point to pan reference frame & retrieve the pan angle
-#        pan_target = self.tf.transformPoint(pan_ref_frame, target)
-#
-#        pan_angle = math.atan2(pan_target.point.y, pan_target.point.x)
-#        # pan_angle = math.atan2(pan_target.point.x, pan_target.point.y)
-#
-#        # Transform target point to tilt reference frame & retrieve the tilt angle
-#        tilt_target = self.tf.transformPoint(tilt_ref_frame, target)
-#        #\
-#        # \
-#        #  \
-#        #___\
-#        # tan = opp/adj  ; cos = adj/hyp ; sin = opp / hyp
-#        # tilt_angle = 1.5708 - math.atan2(tilt_target.point.z,
-#        # tilt_angle = math.atan2(tilt_target.point.z,
-#        #       math.sqrt(math.pow(tilt_target.point.x, 2) + math.pow(tilt_target.point.y, 2)))
-#        pan_ref_frame = self.head_pan_frame
-#        tilt_ref_frame = self.head_tilt_frame
-#       
-#        # Wait for tf info (time-out in 5 seconds)
-#        self.tf.waitForTransform(pan_ref_frame, target.header.frame_id, rospy.Time(), rospy.Duration(5.0))
-#        self.tf.waitForTransform(tilt_ref_frame, target.header.frame_id, rospy.Time(), rospy.Duration(5.0))
-#
-#        # Transform target point to pan reference frame & retrieve the pan angle
-#        tilt_angle = math.atan2( math.sqrt(math.pow(tilt_target.point.x, 2) + math.pow(tilt_target.point.y, 2)), tilt_target.point.z)
-#        (cur_head_pan_pos, cur_head_tilt_pos) = self.get_head_states()
-#        final_pan_angle = 1.5708 + pan_angle + cur_head_pan_pos
-#        final_tilt_angle = tilt_angle + cur_head_tilt_pos
-#        rospy.loginfo("x " + str(tilt_target.point.x) + " y " + str(tilt_target.point.y) + " z " + str(tilt_target.point.z) + " pan "+str(pan_angle) + " tilt " + str(tilt_angle) +  " cur_pan "+str(cur_head_pan_pos) + " cur_tilt " + str(cur_head_tilt_pos) + " final pan "+str(final_pan_angle) + " final_tilt " + str(final_tilt_angle))
-#        #return [pan_angle, -tilt_angle]
-
-
-        # from pr2_head_action.cpp
-        # tf_.transformPoint(pan_parent_, target_point, target_in_pan_);
-        # tf_.transformPoint(pan_link_, target_point, target_in_tilt);
-        # q_goal[0] = atan2(target_in_pan_.y(), target_in_pan_.x());
-        # q_goal[1] = atan2(-target_in_tilt.z(),
-        #                 sqrt(pow(target_in_tilt.x(),2) + pow(target_in_tilt.y(),2)));
+        # based on pr2_head_action.cpp
         pan_ref_frame = self.head_pan_frame
         tilt_ref_frame = self.head_tilt_frame
        
         # Wait for tf info (time-out in 5 seconds)
-        self.tf.waitForTransform(pan_ref_frame, target.header.frame_id, rospy.Time(), rospy.Duration(5.0))
-        self.tf.waitForTransform(tilt_ref_frame, target.header.frame_id, rospy.Time(), rospy.Duration(5.0))
+        try:
+          pan_trans = self.buf.lookup_transform(pan_ref_frame, self.base_frame, 
+                                      rospy.Time(0), timeout=rospy.Duration(4))
+          print pan_trans
+        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, 
+                tf2_ros.ExtrapolationException) as e:
+          print e 
 
-        pan_target = self.tf.transformPoint(pan_ref_frame, target)
-        tilt_target = self.tf.transformPoint(tilt_ref_frame, target)
+        try:
+          tilt_trans = self.buf.lookup_transform(tilt_ref_frame, 
+                 self.base_frame, rospy.Time(0), timeout=rospy.Duration(4))
+          print tilt_trans
+        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, 
+                tf2_ros.ExtrapolationException) as e:
+          print e
 
+        try:
+          target_trans = self.buf.lookup_transform(self.base_frame, 
+             target.header.frame_id, rospy.Time(0), timeout=rospy.Duration(4))
+          print target_trans
+        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, 
+                tf2_ros.ExtrapolationException) as e:
+          print e
+
+        rospy.loginfo( "ref frames: " + pan_ref_frame + ", " + tilt_ref_frame)
+        rospy.loginfo( "target point " + str(target.header.frame_id) + " x " + str( target.point.x) + " y " + str(target.point.y) + " z " + str(target.point.z))
+
+        # atan2 (opposite, adjacent)
         # Transform target point to pan reference frame & retrieve the pan angle
-        pan_angle = math.atan2( pan_target.point.y, pan_target.point.x)
-        tilt_angle = -1 * math.atan2( tilt_target.point.z,
-                                math.sqrt(math.pow(tilt_target.point.x, 2) 
-                              + math.pow(tilt_target.point.y, 2)))
+        pan_angle = math.atan2( 
+                         target_trans.transform.translation.y + target.point.y, 
+                         target_trans.transform.translation.x + target.point.x)
+        rospy.loginfo( "pan angle " + str( pan_angle))
+
+        pan_to_tilt_len = .09
+        tilt_angle = -1 * math.atan2( 
+	   (target_trans.transform.translation.z + target.point.z + tilt_trans.transform.translation.z - pan_to_tilt_len),
+	   math.sqrt(math.pow(target.point.x, 2) + math.pow(target.point.y, 2)))
+        rospy.loginfo( "tilt angle " + str( tilt_angle))
         return [pan_angle, tilt_angle]
 
 
 if __name__ == '__main__':
     try:
+        rospy.init_node("point_head")
         point_head = PointHeadNode()
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
+
 

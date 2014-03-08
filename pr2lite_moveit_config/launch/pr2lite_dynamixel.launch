@@ -21,6 +21,8 @@
 <!--
 shoulder_pan_controllerL
 shoulder_pan_controllerR
+right_gripper_left_controller
+right_gripper_right_controller
 -->
     <node name="smartarm_controller_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
           args="--manager=smartarm_motor_manager
@@ -38,8 +40,7 @@ shoulder_pan_controllerR
                 lidar_tilt_controller
                 right_elbow_flex_controller
                 right_elbow_pan_controller
-                right_gripper_left_controller
-                right_gripper_right_controller
+                velo_gripper_controller
                 right_shoulder_pan_controller
                 right_wrist_flex_controller 
                 right_wrist_roll_controller"

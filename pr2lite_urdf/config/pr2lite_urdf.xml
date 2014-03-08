@@ -1559,7 +1559,10 @@ hokuyo side bar dimensions:
       <origin rpy="0 0 0" xyz="0.0889 0.0 0.0"/>
       <geometry>
         <!-- 2", 1", 7" -->
+        <!--
         <box size="0.1524  0.1016 0.0254"/>
+        -->
+        <box size="0.188  0.1016 0.0254"/>
       </geometry>
       <material name="Silver1">
         <color rgba="0 0.9 0.9 1.0"/>
@@ -1901,14 +1904,60 @@ hokuyo side bar dimensions:
     <origin rpy="0 0 0" xyz="0.0762 0.0 0.0254"/>
     <parent link="right_elbow_flex_link"/>
     <child link="right_forearm_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
+  </joint>
+  <joint name="right_wrist_flex_joint" type="revolute">
+<!--
+    <origin rpy="0 0 0" xyz="0.1778 0 0"/>
+-->
+    <origin rpy="0 0 0" xyz="0.18 0 0"/>
+    <parent link="right_forearm_link"/>
+    <child link="right_wrist_flex_link"/>
     <axis xyz="0 -1 0"/>
     <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
-  <!-- ARD: VELO GRIPPER START ************************  -->
+  <joint name="right_wrist_roll_joint" type="revolute">
+<!--
+    <origin rpy="0 0 0" xyz="0.07 0 0.023"/>
+    <origin rpy="0 0 0" xyz="0.177 0 0.0 "/>
+-->
+    <origin rpy="0 0 0" xyz="0.185 0 0.0 "/>
+    <parent link="right_wrist_flex_link"/>
+    <child link="right_wrist_roll_link"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
+  </joint>
   <link name="right_wrist_roll_link">
+    <inertial>
+      <mass value="0.405"/>
+      <origin rpy="0 0 0" xyz="0.0 0 0.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
     <visual>
       <geometry>
-        <mesh filename="package://velo_description/meshes/velo_actuator_palm_mesh_v1-55.STL"  />
+        <box size="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <material name="r_palm-11_color">
+        <color rgba="0.796078 0.823529 0.937255 1"/>
+      </material>
+    </visual>
+  </link>
+  <joint name="right_wrist_velo_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0 0 0.0 "/>
+    <parent link="right_wrist_roll_link"/>
+    <child link="r_gripper_palm_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
+  </joint>
+
+  <!-- ARD: VELO GRIPPER START ************************  -->
+  <link name="r_gripper_palm_link">
+    <visual>
+      <geometry>
+        #<mesh filename="package://velo_gripper/velo_description/meshes/velo_actuator_palm_mesh_v1-55.STL"  />
+        <mesh filename="package://pr2lite_urdf/config/meshes/velo_actuator_palm_mesh_v1-55.STL"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <material name="r_palm-11_color">
@@ -1917,7 +1966,8 @@ hokuyo side bar dimensions:
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://velo_description/meshes/velo_actuator_palm_mesh_v1-55.STL"  />
+        #<mesh filename="package://velo_gripper/velo_description/meshes/velo_actuator_palm_mesh_v1-55.STL"  />
+        <mesh filename="package://pr2lite_urdf/config/meshes/velo_actuator_palm_mesh_v1-55.STL"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
     </collision>
@@ -1927,18 +1977,11 @@ hokuyo side bar dimensions:
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
     </inertial>
   </link>
-  <joint name="r_gripper_palm_joint" type="fixed">
-    <parent link="right_wrist_flex_link"/>
-    <child link="right_wrist_roll_link"/>
-<!--
-    <origin rpy="0 0 0" xyz="0.135 0.0 0.0"/>
--->
-    <origin rpy="0 0 0" xyz="0.135 0.0 0.0"/>
-  </joint>
   <link name="r_gripper_l_finger_link">
     <visual>
       <geometry>
-        <mesh filename="package://velo_description/meshes/velo_proximal_mesh_v1-55.STL"  />
+        #<mesh filename="package://velo_gripper/velo_description/meshes/velo_proximal_mesh_v1-55.STL"  />
+        <mesh filename="package://pr2lite_urdf/config/meshes/velo_proximal_mesh_v1-55.STL"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <material name="r_l_finger-11_color">
@@ -1947,7 +1990,8 @@ hokuyo side bar dimensions:
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://velo_description/meshes/velo_proximal_mesh_v1-55.STL"/>
+        #<mesh filename="package://velo_gripper/velo_description/meshes/velo_proximal_mesh_v1-55.STL"/>
+        <mesh filename="package://pr2lite_urdf/config/meshes/velo_proximal_mesh_v1-55.STL"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
     </collision>
@@ -1969,7 +2013,8 @@ hokuyo side bar dimensions:
   <link name="r_gripper_l_finger_tip_link">
     <visual>
       <geometry>
-        <mesh filename="package://velo_description/meshes/velo_distal_mesh_v1-55.STL"  />
+        #<mesh filename="package://velo_gripper/velo_description/meshes/velo_distal_mesh_v1-55.STL"  />
+        <mesh filename="package://pr2lite_urdf/config/meshes/velo_proximal_mesh_v1-55.STL"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <material name="r_l_finger_tip-11_color">
@@ -1978,7 +2023,8 @@ hokuyo side bar dimensions:
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://velo_description/meshes/velo_distal_mesh_v1-55.STL"  />
+        #<mesh filename="package://velo_gripper/velo_description/meshes/velo_distal_mesh_v1-55.STL"  />
+        <mesh filename="package://pr2lite_urdf/config/meshes/velo_proximal_mesh_v1-55.STL"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
     </collision>
@@ -2001,7 +2047,8 @@ hokuyo side bar dimensions:
   <link name="r_gripper_r_finger_link">
     <visual>
       <geometry>
-        <mesh filename="package://velo_description/meshes/velo_proximal_mesh_v1-55.STL"/>
+        #<mesh filename="package://velo_gripper/velo_description/meshes/velo_proximal_mesh_v1-55.STL"/>
+        <mesh filename="package://pr2lite_urdf/config/meshes/velo_proximal_mesh_v1-55.STL"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <material name="r_gripper_r_finger-11_color"  >
@@ -2010,7 +2057,8 @@ hokuyo side bar dimensions:
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://velo_description/meshes/velo_proximal_mesh_v1-55.STL"  />
+        #<mesh filename="package://velo_gripper/velo_description/meshes/velo_proximal_mesh_v1-55.STL"  />
+        <mesh filename="package://pr2lite_urdf/config/meshes/velo_proximal_mesh_v1-55.STL"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
     </collision>
@@ -2033,7 +2081,8 @@ hokuyo side bar dimensions:
   <link name="r_gripper_r_finger_tip_link">
     <visual>
       <geometry>
-        <mesh filename="package://velo_description/meshes/velo_distal_mesh_v1-55.STL"/>
+        #<mesh filename="package://velo_gripper/velo_description/meshes/velo_distal_mesh_v1-55.STL"/>
+        <mesh filename="package://pr2lite_urdf/config/meshes/velo_proximal_mesh_v1-55.STL"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <material name="r_r_finger_tip-11_color"  >
@@ -2042,7 +2091,8 @@ hokuyo side bar dimensions:
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://velo_description/meshes/velo_distal_mesh_v1-55.STL"  />
+        #<mesh filename="package://velo_gripper/velo_description/meshes/velo_distal_mesh_v1-55.STL"  />
+        <mesh filename="package://pr2lite_urdf/config/meshes/velo_proximal_mesh_v1-55.STL"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
     </collision>
@@ -2206,26 +2256,6 @@ hokuyo side bar dimensions:
   </transmission>
 
   <!-- ARD: VELO GRIPPER END   ************************  -->
-  <joint name="right_wrist_flex_joint" type="revolute">
-<!--
-    <origin rpy="0 0 0" xyz="0.1778 0 0"/>
--->
-    <origin rpy="0 0 0" xyz="0.18 0 0"/>
-    <parent link="right_forearm_link"/>
-    <child link="right_wrist_flex_link"/>
-    <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
-  </joint>
-  <joint name="right_wrist_roll_joint" type="revolute">
-<!--
-    <origin rpy="0 0 0" xyz="0.07 0 0.023"/>
--->
-    <origin rpy="0 0 0" xyz="0.177 0 0.0 "/>
-    <parent link="right_wrist_flex_link"/>
-    <child link="right_wrist_roll_link"/>
-    <axis xyz="-1 0 0"/>
-    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
-  </joint>
   <link name="right_elbow_pan_link">
     <inertial>
       <mass value="0.405"/>

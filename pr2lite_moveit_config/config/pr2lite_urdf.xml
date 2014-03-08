@@ -1904,7 +1904,7 @@ hokuyo side bar dimensions:
     <origin rpy="0 0 0" xyz="0.0762 0.0 0.0254"/>
     <parent link="right_elbow_flex_link"/>
     <child link="right_forearm_link"/>
-    <axis xyz="0 1 0"/>
+    <axis xyz="0 -1 0"/>
     <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <joint name="right_wrist_flex_joint" type="revolute">
@@ -2155,7 +2155,10 @@ hokuyo side bar dimensions:
       </collision>-->
   </link>
 
+<!--
   <joint name="r_gripper_motor_slider_joint" type="prismatic"  >
+-->
+  <joint name="velo_gripper_joint" type="prismatic"  >
     <origin rpy="0 0 1.57079632679" xyz="0 0 0.1117955"/>
     <axis xyz="1 0 0"/>
     <parent link="right_wrist_roll_link"/>
@@ -2252,7 +2255,10 @@ hokuyo side bar dimensions:
     <passive_joint name="r_gripper_r_finger_tip_joint"/>
     <passive_joint name="r_gripper_l_finger_tip_joint"  />
     <!-- screw joint to capture gripper "dynamics" -->
+<!--
     <simulated_actuated_joint name="r_gripper_motor_screw_joint" passive_actuated_joint="r_gripper_motor_slider_joint" simulated_reduction="20.0"/>
+-->
+    <simulated_actuated_joint name="r_gripper_motor_screw_joint" passive_actuated_joint="velo_gripper_joint" simulated_reduction="20.0"/>
   </transmission>
 
   <!-- ARD: VELO GRIPPER END   ************************  -->
