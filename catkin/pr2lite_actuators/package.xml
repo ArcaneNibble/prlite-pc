@@ -1,0 +1,52 @@
+<package>
+  <name>pr2lite_actuators</name>
+  <version>0.2.0</version>
+  <description>
+    linear actuators controllers for pr2lite.
+  </description>
+  <author>Nathaniel, Alan</author>
+  <maintainer email="downingbots@gmail.com">Downingbots</maintainer>
+  <license>BSD</license>
+  <url>http://mattdowning.wordpress.com</url>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+
+<!--
+  <run_depend package="actionlib" />
+  <depend package="actionlib_msgs" />
+  <depend package="geometry_msgs" />
+  <depend package="sensor_msgs" />
+  <depend package="dynamixel_msgs" />
+  <depend package="packets_485net" />
+  <depend package="tf"/>
+  <depend package="std_msgs"/>
+  <depend package="kdl"/>
+  <depend package="prlite_kinematics"/>
+  <depend package="dynamixel_controllers"/>
+
+find_package(catkin REQUIRED COMPONENTS roscpp actionlib std_msgs actionlib_msgs genmsg message_generation)
+
+-->
+
+  <build_depend>message_generation</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>actionlib</build_depend>
+
+  <run_depend>actionlib</run_depend>
+  <run_depend>actionlib_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>dynamixel_msgs</run_depend>
+  <run_depend>packets_485net</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>kdl</run_depend>
+  <run_depend>roslib</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>genmsg</run_depend>
+  <run_depend>message_generation</run_depend>
+  <run_depend>dynamixel_controllers</run_depend>
+  <run_depend>tf</run_depend>
+</package>
+
+

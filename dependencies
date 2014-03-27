@@ -1,0 +1,21 @@
+X dynamixel_joint_states_publisher
+X robot_monitor
+X arbotix_controllers
+move_arm
+X ompl_ros_interface
+X robot_state_publisher
+move_arm_warehouse
+interpolated_ik_motion_planner
+mongodb
+X dynamixel_controllers 
+turtlebot_block_manipulation
+trajectory_filter_server
+pr2_tuckarm
+wubble_actions
+semantic_point_annotator
+robot_self_filter
+X hokuyo_node
+mjpeg_server
+joy
+pi_rosbridge
+openni_camera

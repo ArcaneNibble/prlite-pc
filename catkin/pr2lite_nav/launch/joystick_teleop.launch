@@ -1,0 +1,14 @@
+<launch>
+
+  <!--- Teleop Joystick -->
+  <node pkg="pr2lite_nav_joy" type="pr2lite_nav_joy" name="pr2lite_nav_joy">
+    <param name="scale_angular" value="1.5"/>
+    <param name="scale_linear" value="0.3"/>
+    <param name="axis_deadman" value="7"/>
+    <param name="yaxis_deadman" value="5"/>
+    <remap from="pr2lite_nav_joy/cmd_vel" to="base_controller/command"/>
+  </node>
+
+  <node pkg="joy" type="joy_node" name="joystick"/>
+
+</launch>

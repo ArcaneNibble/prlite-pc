@@ -1,0 +1,15 @@
+<package>
+  <description brief="prlite_odom">
+     prlite_odom
+  </description>
+  <author>Andrew Downing</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>https://github.com/someh4x0r/prlite-pc</url>
+  <depend package="roscpp"/>
+  <depend package="nav_msgs"/>
+  <depend package="prlite_tf"/>
+  <depend package="pr2lite_moveit_config"/>
+
+</package>
+

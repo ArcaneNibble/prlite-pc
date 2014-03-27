@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/756/trunk/experimental/pi_rosbridge/launch
+END
+pi_joystick.launch
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/749/trunk/experimental/pi_rosbridge/launch/pi_joystick.launch
+END
+pi_rosbridge.launch
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/753/trunk/experimental/pi_rosbridge/launch/pi_rosbridge.launch
+END
+laptop_battery.launch
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/756/trunk/experimental/pi_rosbridge/launch/laptop_battery.launch
+END
+test_mapping.launch
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/753/trunk/experimental/pi_rosbridge/launch/test_mapping.launch
+END
+detect_obstacle_laser.launch
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/753/trunk/experimental/pi_rosbridge/launch/detect_obstacle_laser.launch
+END
+throttle_laser.launch
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/launch/throttle_laser.launch
+END
+throttle_camera.launch
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/launch/throttle_camera.launch
+END
+fake_pi_joystick.launch
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/749/trunk/experimental/pi_rosbridge/launch/fake_pi_joystick.launch
+END
+fake_pi_rosbridge.launch
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/753/trunk/experimental/pi_rosbridge/launch/fake_pi_rosbridge.launch
+END
+laptop_cam.launch
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/launch/laptop_cam.launch
+END
+tb_rosbridge.launch
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/749/trunk/experimental/pi_rosbridge/launch/tb_rosbridge.launch
+END

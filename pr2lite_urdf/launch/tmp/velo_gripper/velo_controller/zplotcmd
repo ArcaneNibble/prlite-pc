@@ -1,0 +1,1 @@
+rxplot -p10 -b100 joint_states/effort[0] cycle_controller/state/set_point,cycle_controller/state/process_value,cycle_controller/state/error joint_states/velocity[0] &

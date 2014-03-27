@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/757/trunk/experimental/pi_rosbridge/js
+END
+jquery-1.8.1.min.js
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jquery-1.8.1.min.js
+END
+ros2.js
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/ros2.js
+END
+pi_rosbridge.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/757/trunk/experimental/pi_rosbridge/js/pi_rosbridge.js
+END
+kinetic-v4.0.0.js
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/kinetic-v4.0.0.js
+END
+pi_rosbridge2.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/750/trunk/experimental/pi_rosbridge/js/pi_rosbridge2.js
+END
+joystick.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/joystick.js
+END
+keyboard.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/keyboard.js
+END
+ros_compatible.js
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/ros_compatible.js
+END
+ros.js
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/ros.js
+END

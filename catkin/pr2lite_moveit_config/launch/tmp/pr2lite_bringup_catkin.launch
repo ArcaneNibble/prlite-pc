@@ -1,0 +1,11 @@
+<launch>
+<!-- diff under hydro?
+  <include file="$(find pr2lite_arm_navigation)/launch/pr2lite_vision.launch" />
+-->
+  <include file="$(find pr2lite_moveit_config)/launch/move_group.launch">
+    <arg name="allow_trajectory_execution" value="true"/>
+  </include>
+
+  <include file="$(find pr2lite_moveit_config)/launch/moveit_rviz.launch"/>
+
+</launch>

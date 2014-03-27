@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/ros/rosbuild_ws/prlite-pc/prlite_tf/build/devel/setup.sh

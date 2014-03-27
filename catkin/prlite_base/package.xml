@@ -1,0 +1,45 @@
+<package>
+  <name>prlite_base</name>
+  <version>0.2.0</version>
+  <description>
+     prlite_base
+  </description>
+  <author>Andrew Downing, Alan Downing, Robert Ou</author>
+  <maintainer email="downingbots@gmail.com">Downingbots</maintainer>
+  <license>BSD</license>
+  <url>http://mattdowning.wordpress.com</url>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+
+
+  <build_depend>message_generation</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>roscpp_serialization</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>actionlib</build_depend>
+  <run_depend>actionlib</run_depend>
+  <run_depend>actionlib_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>dynamixel_msgs</run_depend>
+  <run_depend>packets_485net</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>kdl</run_depend>
+  <run_depend>roscpp_serialization</run_depend>
+  <run_depend>roslib</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>genmsg</run_depend>
+  <run_depend>message_generation</run_depend>
+  <run_depend>dynamixel_controllers</run_depend>
+  <run_depend>tf</run_depend>
+
+<!--
+  <depend package="geometry_msgs"/>
+  <depend package="roscpp"/>
+  <depend package="packets_485net"/>
+  <depend package="pr2lite_arm_navigation"/>
+  <depend package="net_485net_id_handler"/>
+-->
+</package>
+
+

@@ -1,0 +1,20 @@
+left_shoulder_tilt_joint:
+    id: 15
+    base_length: 9.9
+    extent: 4.0
+    type: "pr2lite.actuator.linactdynamixel"
+right_shoulder_tilt_joint:
+    id: 14
+    base_length: 9.9
+    extent: 4.0
+    type: "pr2lite.actuator.linactdynamixel"
+torso_lift_joint:
+    id: 12
+    base_length: 17
+    extent: 12
+    type: "pr2lite.actuator.linactdynamixel"
+wheel_linear_actuator_joint:
+    id: 13
+    base_length: 9.9
+    extent: 4.0
+    type: "pr2lite.actuator.linactdynamixel"

@@ -1,0 +1,8 @@
+<launch>
+  <include file="$(find pr2lite_moveit_config)/launch/pr2lite_bringup_torso.launch" />
+  <include file="$(find pr2lite_nav)/launch/pr2lite_bringup_base.launch" />
+  <include file="$(find pr2lite_moveit_config)/launch/fake_pub.launch" />
+  <include file="$(find pr2lite_moveit_config)/launch/festival.launch" />
+  <include file="$(find pr2lite_moveit_config)/launch/pr2lite_vision.launch" />
+  <include file="$(find pr2lite_moveit_config)/launch/pr2lite_teleop.launch" />
+</launch>

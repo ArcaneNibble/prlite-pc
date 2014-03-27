@@ -1,0 +1,13 @@
+<stack>
+  <description brief="velo_gripper">
+    Software for the Velo Gripper.
+  </description>
+  <author>Bob Holmberg, Matei Ciocarlie, Jeff Hawke et al.</author>
+  <license>BSD</license>  
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/velo_gripper</url>
+
+  <depend stack="pr2_controllers" />
+  <depend stack="pr2_mechanism" />
+
+</stack>

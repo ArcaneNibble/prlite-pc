@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>rosjs Publisher Subscriber Tutorial</title>
+<script type="text/javascript" src="http://brown-ros-pkg.googlecode.com/svn/tags/brown-ros-pkg/rosbridge/ros.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
+ 
+<script>
+function log(msg) { $("#log").append(msg.toString() + '<br>');  }
+
+function start() {
+
+    document.write("Start() called<br>");
+    log("Connecting to rosbridge.");
+    var node = new ros.Connection("ws://localhost:9090");
+
+    node.setOnClose(function(e) {
+        document.write("Disconnected or can't connect");
+        log("Disconnected or Can't Connect.");
+    });
+    node.setOnError(function(e) {
+        document.write("Unknown error");
+        log("Unknown error!");
+    });
+
+    node.setOnOpen(function(e) {
+        document.write("Connection established");
+        log("Connection to rosbridge established.");
+
+   //publish the time every 1000 miliseconds
+
+    setInterval(function(){
+        var currentTime=new Date();
+        var hours=currentTime.getHours();
+        var minutes=currentTime.getMinutes();
+        var seconds=currentTime.getSeconds();
+        var timeMessage="It is now "+ hours+ ":" + minutes + ":"+ seconds ;
+        node.publish('/talker', 'std_msgs/String', ros.json({data: timeMessage}));
+    }, 1000);
+
+/*
+    node.subscribe('/talker', 'std_msgs/String', function(msg){        
+
+        document.write("Subscribed");
+        log(msg.data) 
+    });
+*/
+});
+}
+
+</script></head>
+<body onload="start()" style="margin:0;padding:0;background-color:white;overflow:hidden">
+<div style="font-family: fixed-width; font-size: small;" id="log"></div>
+
+</body>
+</html>

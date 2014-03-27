@@ -1,0 +1,33 @@
+"fl_anchor_rod_joint", 
+"fl_caster_rotation_joint", 
+"fl_wheel_joint", 
+"base_link_fl_wheel_joint", 
+"fr_base_joint", 
+"fr_anchor_rod_joint", 
+"fr_caster_rotation_joint", 
+"fr_caster_motor_joint", 
+"fr_wheel_joint", 
+"base_link_fr_wheel_joint", 
+"bl_anchor_rod_joint", 
+"bl_caster_rotation_joint", 
+"bl_caster_motor_joint", 
+"bl_wheel_joint", 
+"base_link_bl_wheel_joint", 
+"br_anchor_rod_joint", 
+"br_caster_rotation_joint", 
+"base_link_br_wheel_joint", 
+"left_lin_act_cyl_joint", 
+"left_upper_arm_hinge_joint", 
+"right_lin_act_cyl_joint", 
+"right_upper_arm_hinge_joint", 
+"left_linear_actuator_joint",
+"right_linear_actuator_joint",
+
+--------------------
+[ WARN] [1389680371.445898935]: The complete state of the robot is not yet known.  Missing world_joint/x, world_joint/y, world_joint/theta, torso_lift_joint, left_shoulder_tilt_joint, right_upper_arm_hinge_joint, r_gripper_l_finger_joint, r_gripper_l_finger_tip_joint, r_gripper_motor_screw_joint, r_gripper_r_finger_joint, r_gripper_r_finger_tip_joint, r_gripper_joint, bl_caster_rotation_joint, bl_wheel_joint, br_caster_rotation_joint, br_wheel_joint, fl_caster_rotation_joint, fl_wheel_joint, fr_caster_rotation_joint, fr_wheel_joint, wheel_linear_actuator_joint, bl_anchor_rod_joint, br_anchor_rod_joint, fl_anchor_rod_joint, fr_anchor_rod_joint
+  
+Now OK: world_joint/x, world_joint/y, world_joint/theta, 
+
+, fl_anchor_rod_joint, fr_anchor_rod_joint
+[ WARN] [1389759324.410755665]: The complete state of the robot is not yet known.  Missing torso_lift_joint, left_shoulder_tilt_joint, right_upper_arm_hinge_joint, r_gripper_l_finger_joint, r_gripper_l_finger_tip_joint, r_gripper_motor_screw_joint, r_gripper_r_finger_joint, r_gripper_r_finger_tip_joint, r_gripper_joint, bl_caster_rotation_joint, bl_wheel_joint, br_caster_rotation_joint, br_wheel_joint, fl_caster_rotation_joint, fl_wheel_joint, fr_caster_rotation_joint, fr_wheel_joint, wheel_linear_actuator_joint, bl_anchor_rod_joint, br_anchor_rod_joint, fl_anchor_rod_joint, fr_anchor_rod_joint
+

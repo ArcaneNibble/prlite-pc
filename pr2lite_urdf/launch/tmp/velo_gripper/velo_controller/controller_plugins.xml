@@ -1,0 +1,11 @@
+<library path="lib/libvelo_controller">
+  <class name="velo_controller/VeloController" 
+         type="velo_controller::VeloController"           
+         base_class_type="pr2_controller_interface::Controller" />
+  <class name="velo_controller/VeloCalibrationController"
+         type="velo_controller::VeloCalibrationController"
+         base_class_type="pr2_controller_interface::Controller" />
+  <class name="velo_controller/CappedJointPositionController"
+         type="velo_controller::CappedJointPositionController"
+         base_class_type="pr2_controller_interface::Controller" />
+</library>

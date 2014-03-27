@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+roscore &
+# use <node name> interface instead and puy in rosbuild launch file?
+/home/ros/rosbuild_ws/prlite-pc/pc_485net_raw/src/pc_485net_joints.py &
+sleep 5
+/home/ros/rosbuild_ws/prlite-pc/net_485net_id_handler/src/id_server.py &
+sleep 5
+# put in arm navigaation rosbuild directory?
+source /home/ros/rosbuild_ws/setup.bash
+roslaunch pr2lite_bringup_rosbuild.launch &
+sleep 5
+source /home/ros/catkin_ws/setup.bash
+roslaunch pr2lite_bringup_catkin.launch &
+

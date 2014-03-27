@@ -1,0 +1,35 @@
+<package>
+  <description brief="velo_controller">
+    
+    Controller and transmission code and config files for the Velo Gripper.
+  
+  </description>
+  <author>Bob Holmberg, Jeff Hawke, Matei Ciocarlie</author>
+  
+  <license>BSD</license>
+  
+  <review status="unreviewed" notes=""/>
+
+  <url>http://ros.org/wiki/velo_controller</url>
+
+  <rosdep name="libcap-dev"/>
+
+  <depend package="roscpp"/>
+  <depend package="rospy"/>
+  <depend package="actionlib"/>
+  <depend package="pr2_controllers_msgs"/>
+  <depend package="pr2_controller_interface"/>
+  <depend package="pr2_controller_manager"/>
+  <depend package="pr2_mechanism_model"/>
+  <depend package="pluginlib"/>
+  <depend package="control_toolbox" />
+  <depend package="realtime_tools" />
+  <depend package="robot_mechanism_controllers" />
+  <depend package="message_filters" />
+  <depend package="control_msgs" />
+  <export>
+    <pr2_mechanism_model plugin="${prefix}/transmission_plugins.xml" />
+    <pr2_controller_interface plugin="${prefix}/controller_plugins.xml" />
+  </export>
+
+</package>

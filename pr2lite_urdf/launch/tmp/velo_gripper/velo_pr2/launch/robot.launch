@@ -1,0 +1,27 @@
+<launch>
+
+  <!-- Robot Description --> 
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find velo_pr2)/urdf/pr2.urdf.xacro'" />
+
+  <!-- Robot Analyzer --> 
+  <rosparam command="load" file="$(find pr2_bringup)/config/pr2_analyzers.yaml" ns="diag_agg" />
+
+  <!-- Robot bringup --> 
+  <include file="$(find velo_pr2)/launch/pr2.launch" />
+
+  <!-- Web ui  <include file="$(find webui)/webui.launch" /> -->
+   
+  <rosparam file="/etc/ros/robot.yaml"/>
+
+
+  <node if="0" name="plot_left"
+        pkg="rxtools" type="rxplot"
+        args="-b 100 -p 30 /l_gripper_joint/state/gap_size /l_gripper_joint/state/gap_force /l_gripper_controller/state/process_value_dot /l_gripper_joint/state/tendon_position /l_gripper_joint/state/tendon_force /l_gripper_joint/state/motor_torque"
+        respawn="false" output="screen" />
+
+  <node if="0" name="plot_right"
+        pkg="rxtools" type="rxplot"
+        args="-b 100 -p 30 /r_gripper_joint/state/gap_size /r_gripper_joint/state/gap_force /r_gripper_controller/state/process_value_dot /r_gripper_joint/state/tendon_position /r_gripper_joint/state/tendon_force /r_gripper_joint/state/motor_torque"
+        respawn="false" output="screen" />
+
+</launch> 

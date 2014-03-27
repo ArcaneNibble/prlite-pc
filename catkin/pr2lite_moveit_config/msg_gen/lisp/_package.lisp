@@ -1,0 +1,13 @@
+(cl:defpackage packets_485net-msg
+  (:use )
+  (:export
+   "<PACKET_485NET_STREAM>"
+   "PACKET_485NET_STREAM"
+   "<PACKET_485NET_BOOTLOADER>"
+   "PACKET_485NET_BOOTLOADER"
+   "<PACKET_485NET_DGRAM>"
+   "PACKET_485NET_DGRAM"
+   "<PACKET_485NET_RAW>"
+   "PACKET_485NET_RAW"
+  ))
+

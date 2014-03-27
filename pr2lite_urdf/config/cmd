@@ -1,0 +1,12 @@
+rosrun collada_urdf urdf_to_collada pr2lite_urdf.xml pr2lite_urdf.dae
+gdb --args /home/ros/ros_catkin_ws/devel_isolated/collada_urdf/lib/collada_urdf/urdf_to_collada pr2lite_tst.xml pr2lite_tst.dae
+
+rosrun urdfdom check_urdf pr2lite_urdf.xml
+catkin_make_isolated --pkg collada_urdf  --cmake-args -DCMAKE_BUILD_TYPE=Debug
+
+
+/opt/ros/hydro/lib/collada_urdf/urdf_to_collada pr2lite_tst.xml pr2lite_tst.dae
+
+/home/ros/ros_catkin_ws/install_isolated/lib/collada_urdf/urdf_to_collada pr2lite_tst.xml pr2lite_tst.dae
+
+/home/ros/ros_catkin_ws/devel_isolated/collada_urdf/lib/collada_urdf/urdf_to_collada pr2lite_tst.xml pr2lite_tst.dae

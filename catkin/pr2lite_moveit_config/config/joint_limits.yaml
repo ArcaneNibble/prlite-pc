@@ -1,0 +1,131 @@
+joint_limits:
+  torso_lift_joint:
+    has_velocity_limits: true
+    max_velocity: 0.05
+    has_acceleration_limits: false
+    max_acceleration: 0
+  left_shoulder_pan_joint:
+    has_velocity_limits: true
+    max_velocity: 0.1
+    has_acceleration_limits: false
+    max_acceleration: 0
+  left_shoulder_tilt_joint:
+    has_velocity_limits: true
+    max_velocity: 0.23
+    has_acceleration_limits: false
+    max_acceleration: 0
+  left_upper_arm_hinge_joint:
+    has_velocity_limits: true
+    max_velocity: 0.23
+    has_acceleration_limits: false
+    max_acceleration: 0
+  left_elbow_pan_joint:
+    has_velocity_limits: true
+    max_velocity: 0.1
+    has_acceleration_limits: false
+    max_acceleration: 0
+  left_elbow_flex_joint:
+    has_velocity_limits: true
+    max_velocity: 0.1
+    has_acceleration_limits: false
+    max_acceleration: 0
+  left_wrist_flex_joint:
+    has_velocity_limits: true
+    max_velocity: 0.1
+    has_acceleration_limits: false
+    max_acceleration: 0
+  right_shoulder_pan_joint:
+    has_velocity_limits: true
+    max_velocity: 0.1
+    has_acceleration_limits: false
+    max_acceleration: 0
+  r_gripper_r_finger_tip_joint:
+    has_velocity_limits: true
+    max_velocity: 10000
+    has_acceleration_limits: false
+    max_acceleration: 0
+  r_gripper_l_finger_tip_joint:
+    has_velocity_limits: true
+    max_velocity: 10000
+    has_acceleration_limits: false
+    max_acceleration: 0
+  velo_gripper_joint:
+    has_velocity_limits: true
+    max_velocity: 0.2
+    has_acceleration_limits: false
+    max_acceleration: 0
+  r_gripper_motor_screw_joint:
+    has_velocity_limits: false
+    max_velocity: 0
+    has_acceleration_limits: false
+    max_acceleration: 0
+  left_gripper_right_joint:
+    has_velocity_limits: true
+    max_velocity: 0.1
+    has_acceleration_limits: false
+    max_acceleration: 0
+  left_gripper_left_joint:
+    has_velocity_limits: true
+    max_velocity: 0.1
+    has_acceleration_limits: false
+    max_acceleration: 0
+  right_upper_arm_hinge_joint:
+    has_velocity_limits: true
+    max_velocity: 0.23
+    has_acceleration_limits: false
+    max_acceleration: 0
+  right_elbow_pan_joint:
+    has_velocity_limits: true
+    max_velocity: 0.1
+    has_acceleration_limits: false
+    max_acceleration: 0
+  right_elbow_flex_joint:
+    has_velocity_limits: true
+    max_velocity: 0.1
+    has_acceleration_limits: false
+    max_acceleration: 0
+  right_wrist_flex_joint:
+    has_velocity_limits: true
+    max_velocity: 0.1
+    has_acceleration_limits: false
+    max_acceleration: 0
+  right_wrist_roll_joint:
+    has_velocity_limits: true
+    max_velocity: 0.1
+    has_acceleration_limits: false
+    max_acceleration: 0
+  r_gripper_l_finger_joint:
+    has_velocity_limits: true
+    max_velocity: 10000
+    has_acceleration_limits: false
+    max_acceleration: 0
+  right_shoulder_tilt_joint:
+    has_velocity_limits: true
+    max_velocity: 0.23
+    has_acceleration_limits: false
+    max_acceleration: 0
+  left_wrist_roll_joint:
+    has_velocity_limits: true
+    max_velocity: 0.1
+    has_acceleration_limits: false
+    max_acceleration: 0
+  r_gripper_r_finger_joint:
+    has_velocity_limits: true
+    max_velocity: 10000
+    has_acceleration_limits: false
+    max_acceleration: 0
+  r_gripper_joint:
+    has_velocity_limits: true
+    max_velocity: 0.2
+    has_acceleration_limits: false
+    max_acceleration: 0
+  head_pan_joint:
+    has_velocity_limits: true
+    max_velocity: 3
+    has_acceleration_limits: false
+    max_acceleration: 0
+  head_tilt_joint:
+    has_velocity_limits: true
+    max_velocity: 3
+    has_acceleration_limits: false
+    max_acceleration: 0

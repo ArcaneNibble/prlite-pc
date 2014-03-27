@@ -1,0 +1,19 @@
+<package>
+  <description brief="velo_bench">
+
+     Launch and configuration files for stand-alone Velo gripper on workbench.
+
+  </description>
+  <author>Bob Holmberg, Matei Ciocarlie</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/velo_bench</url>
+
+  <rosdep name="libqt4-dev"/>
+
+  <depend package="roscpp" />
+  <depend package="pr2_controllers_msgs" />
+
+</package>
+
+

@@ -1,0 +1,62 @@
+<launch>
+
+  <arg name="interface" default="eth0" /> <!-- use ecat0 on a PR2-->
+  <arg name="show_plots" default="false" />
+  <arg name="ui" default="false" />
+
+  <node name="controller_manager" launch-prefix="pr2-grant" 
+        pkg="pr2_etherCAT" type="pr2_etherCAT"
+        args="-i $(arg interface) -x $(find velo_bench)/urdf/bench_l_gripper.xml"
+        output="screen"/>
+
+  <!-- NOTE: namespaces are buried inside this yaml file. -->
+  <rosparam command="load" 
+			file="$(find velo_bench)/config/bench_r_controllers.yaml" />
+
+  <rosparam command="load" ns="r_gripper_joint" 
+			file="$(find velo_controller)/config/velo_transmission_params.yaml"/>
+
+  <!-- Dashboard NOT usually present on desktop systems. (No E-Stop there.)--> 
+  <node if="0" name="dashboard" 
+        pkg="pr2_dashboard" type="pr2_dashboard"
+        respawn="false" output="screen" />
+
+  <!-- IF desired, but NOT PRESENT:  sudo apt-get install ros-fuerte-diagnostics-monitors -->
+  <node if="0" name="monitor" 
+        pkg="runtime_monitor" type="monitor"
+        respawn="false" output="screen" />
+
+  <!-- THE CALIBRATION CONTROLLER --> 
+  <node name="cal_r_gripper"
+        pkg="pr2_controller_manager" type="spawner"
+        args="cal_r_gripper"
+        respawn="false" output="screen" />
+
+  <!-- SOME GLUE TO GET THE CALIBRATION CONTROLLER TO TALK TO THE RUNTIME CONTROLLER -->
+  <node name="glueEmpty2Bool"
+        pkg="velo_bench" type="glueEmpty2Bool.py" args="-i cal_r_gripper/calibrated"
+        respawn="false" output="screen" />
+
+  <!-- THE RUNTIME CONTROLLER -->
+  <node name="default_controllers_spawner"
+        pkg="pr2_controller_manager" type="spawner"
+        args="--wait=glueEmpty2Bool/calibratedBool r_gripper_controller"
+        respawn="false" output="screen" />
+
+  <!-- Nodes on top of the controllers -->
+  <group ns="r_gripper_controller">
+    <node name="gripper_action_node"
+          pkg="pr2_gripper_action" type="pr2_gripper_action" />
+  </group>
+
+  <!-- Plot info from the transmission -->
+  <node if="$(arg show_plots)" name="plot_stuff"
+        pkg="rxtools" type="rxplot"
+        args="-b 100 -p 30 /r_gripper_joint/state/gap_size /r_gripper_joint/state/gap_force /r_gripper_joint/state/tendon_position /r_gripper_joint/state/tendon_force /r_gripper_joint/state/motor_torque"
+        respawn="false" output="screen" />
+
+  <!--start ui-->
+  <node if="$(arg ui)" name="velo_ui" pkg="velo_bench" type="velo_ui" required="true"/>
+
+</launch>
+

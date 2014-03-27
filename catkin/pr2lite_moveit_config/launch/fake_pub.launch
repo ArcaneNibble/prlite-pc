@@ -1,0 +1,9 @@
+<launch>
+  <!-- Start the point_head node -->
+  <node name="fake_pub" pkg="pr2lite_moveit_config" type="fake_pub.py" output="screen" />
+
+<!--
+  <node name="fake_tf" pkg="pr2lite_moveit_config" type="fake_tf.py" output="screen" />
+-->
+  <node pkg="tf" type="static_transform_publisher" name="virtual_joint_broadcaster_0" args="0 0 0 0 0 0 odom base_link 100" />
+</launch>

@@ -1,0 +1,7 @@
+<library path="lib/libvelo_transmission">
+
+  <class name="velo_controller/VeloTransmission"
+         type="velo_controller::VeloTransmission"
+         base_class_type="pr2_mechanism_model::Transmission" />
+
+</library>

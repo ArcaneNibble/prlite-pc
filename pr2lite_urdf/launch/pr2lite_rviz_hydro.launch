@@ -1,0 +1,12 @@
+<launch>
+  <!-- load robot -->
+  <param name="robot_description" command="/bin/cat $(find pr2lite_urdf)/config/pr2lite_urdf.xml" />
+
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" output="screen" >
+    <param name="/use_gui" value="True" />
+  </node>
+  <!-- Combine joint values -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+  <!-- Show in Rviz   -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find pr2lite_urdf)/launch/pr2lite.rviz"/>
+</launch>

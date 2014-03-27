@@ -1,0 +1,23 @@
+<package>
+
+  <name>prlite_tf</name>
+  <version>0.2.0</version>
+  <description>
+    prlite_tf
+  </description>
+  <maintainer email="downingbots@gmail.com">Downingbots</maintainer>
+  <license>BSD</license>
+  <url>http://mattdowning.wordpress.com</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscp</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+
+  <run_depend>roscp</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+</package>
+
+

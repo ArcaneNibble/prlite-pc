@@ -1,0 +1,67 @@
+<!-- -*- mode: XML -*- -->
+<!-- ARD: We are not using this high-level smart arm controller, although we are using the 
+     ARD: UofA (anton) dynamixel controller in pr2lite_dynamixel.launch.
+     ARD: this file launches a full-arm controller from UofA (Anton) that needs you to generate an openrave
+     ARD: trajectory server (e.g., using OpenRave) for your robot.  Anton also wrote his own custom
+     ARD: follow trajectory controller specific to his arm in C++
+     ARD -->
+<launch>
+        
+   <!-- Start the arm trajectory controller -->
+   <!-- arm_controller removed from above elbow_tilt_controllerL -->
+   <node name="left_arm_controller" pkg="dynamixel_controllers" type="controller_spawner.py"
+       args="--manager=smartarm_motor_manager
+             --type=meta
+             --port=smart_arm
+                elbow_tilt_controllerL
+                elbow_pan_controllerL
+                wrist_rotate_controllerL
+                wrist_tilt_controllerL
+                finger_right_controllerL
+                finger_left_controllerL"
+        output="screen"/>
+        
+   <node name="right_arm_controller" pkg="dynamixel_controllers" type="controller_spawner.py"
+       args="--manager=smartarm_motor_manager
+             --type=meta
+                elbow_tilt_controllerR
+                elbow_pan_controllerR
+                wrist_rotate_controllerR
+                wrist_tilt_controllerR
+                finger_right_controllerR
+                finger_left_controllerR"
+        output="screen"/>
+
+   
+    <!-- Load joint controller configuration from YAML file to parameter server -->
+<!--
+    <rosparam file="$(find pr2lite_arm_navigation)/config/dynamixel_params.yaml" command="load"/>
+-->
+
+   <!-- Start the Dynamixel Joint States Publisher -->
+   <node pkg="pr2lite_arm_navigation" name="dynamixel_joint_states_publisher" type="dynamixel_joint_state_publisher.py" output="screen">
+      <param name="rate" value="5" />
+   </node>
+
+
+<!--
+   <node name="dynamixel_joint_states_publisher" pkg="pi_head_tracking_3d_part2" type="dynamixel_joint_state_publisher.py" output="screen" >
+      <param name="rate" value="20" />
+   </node>
+
+    <node pkg="trajectory_filter_server" type="trajectory_filter_server" name="trajectory_filter_server">
+        <rosparam command="load" file="$(find trajectory_filter_server)/config/filters.yaml" />
+        <rosparam command="load" file="$(find pr2lite_arm_navigation)/config/joint_limits.yaml" />
+    </node>
+-->
+
+   <node pkg="diagnostic_aggregator" type="aggregator_node" name="diagnostic_aggregator" >
+      <rosparam command="load" file="$(find pr2lite_arm_navigation)/config/pr2lite_diagnostics.yaml" />
+   </node>
+
+   <node pkg="robot_monitor" type="robot_monitor" name="robot_monitor" />
+<!--
+-->
+
+   <node pkg="pr2lite_arm_navigation" type="relax_all_servos.py" name="relax_all_servos" />
+</launch>

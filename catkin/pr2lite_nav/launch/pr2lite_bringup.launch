@@ -1,0 +1,19 @@
+<launch>
+
+  <include file="$(find pr2lite_nav)/launch/neato.launch" />
+  <include file="$(find pr2lite_nav)/launch/imu.launch" />
+  <node pkg="prlite_tf" type="tf_broadcaster" name="transform_configuration" output="screen">
+    <!--<param name="transform_configuration_param" value="param_value" />-->
+  </node>
+  <node pkg="prlite_odom" type="odom" name="odom_node" output="screen">
+    <!--<param name="fake_localization" value="true" />-->
+  </node>
+  <include file="$(find pr2lite_nav)/launch/robot_pose_ekf.launch" />
+  <node pkg="prlite_base" type="base_controller" name="base_controller" output="screen">
+     <remap from="/cmd_vel" to="base_controller/command"/>
+  </node>
+  <include file="$(find pr2lite_nav)/launch/nav_amcl.launch" /> 
+  <include file="$(find pr2lite_nav)/launch/gmapping.launch" />
+  <!--<include file="$(find pr2lite_nav)/launch/move_base.launch" /> -->
+
+</launch>

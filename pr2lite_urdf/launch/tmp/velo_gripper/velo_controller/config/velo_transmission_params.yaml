@@ -1,0 +1,60 @@
+gripper_version: 1.58 # Version number of the gripper this data is based on.
+joints:
+  j0x:  0.0175  # m
+  j0y:  0.0     # m
+  j1x:  0.060   # m
+  j1y:  0.0     # m
+tendon_routing:
+  p0x:  0.025   # m
+  p0y:  0.002   # m
+  p1x:  0.045   # m
+  p1y:  0.0     # m
+  p2x:  0.0084  # m
+  p2y:  0.0023  # m
+  p3x:  0.044   # m
+  p3y: -0.005   # m
+links:
+  l0:   0.0175  # m
+  l1:   0.060   # m
+  l2:   0.050   # m
+  thickness:  0.0069 # m
+radii:
+  r_c0: 0.005   # m
+  r_c1: 0.005   # m
+  r_e0: 0.0054  # m
+  r_e1: 0.0032  # m
+  r_f1: 0.0032  # m
+spring:
+  k:  875       # N/m
+  x0: 0.015     # m
+limits:
+  theta_open_deg:   20     # Degrees proximal joint angle
+  theta_closed_deg: 101.5  # Degrees proximal joint angle
+  max_torque: 0.02         # Maximum motor torque
+  gap_closed: 0.0          # NOTE: gap_open will be derived from theta_open
+#  position_holding:
+#    stall_timeout: 3.0     # seconds
+#    stall_threshold: 0.001 # metres
+#    holding_torque: 0.002  # Nm
+actuator:
+  screw_lead: 0.00325   # m
+  gear_reduction: 15.0  # 15:1 reduction
+  efficiency: 0.4       # Overall efficiency of gripper + actuator
+polynomials:
+  l2g_0:  -0.000655359
+  l2g_1:  10.019957576
+  l2g_2:  799.03010689
+  l2g_3: -70983.900184
+  l2g_4:  1729405.0628
+
+  g2l_0:  0.000054298770
+  g2l_1:  0.097594704184
+  g2l_2: -0.46537557155
+  g2l_3:  3.3776098694
+  g2l_4: -6.6643179571
+
+  g2ed_0:  0.013021055202
+  g2ed_1: -0.020767789082
+  g2ed_2: -0.41359925158
+  g2ed_3:  4.8190129478
+  g2ed_4: -26.74286852

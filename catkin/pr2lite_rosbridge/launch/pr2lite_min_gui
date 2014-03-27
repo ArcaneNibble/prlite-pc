@@ -1,0 +1,10 @@
+cd /opt/ros/electric/stacks/prlite
+cd pr2lite_arm_navigation/launch
+roslaunch ./pr2lite_dynamixel.launch &
+sleep 5
+roslaunch ./pr2lite_realrobot0.launch &
+sleep 3
+roslaunch ./pr2lite_vision.launch &
+cd ../../pr2lite_rosbridge/launch
+roslaunch pr2lite_rosbridge pr2lite_rosbridge.launch &
+./dhttp.sh

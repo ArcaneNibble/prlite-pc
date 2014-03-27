@@ -1,0 +1,16 @@
+<package>
+  <description brief="prlite_base">
+     prlite_base
+  </description>
+  <author>Andrew Downing, Alan Downing, Robert Ou</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>https://github.com/someh4x0r/prlite-pc</url>
+  <depend package="geometry_msgs"/>
+  <depend package="roscpp"/>
+  <depend package="packets_485net"/>
+  <depend package="pr2lite_arm_navigation"/>
+  <depend package="net_485net_id_handler"/>
+</package>
+
+

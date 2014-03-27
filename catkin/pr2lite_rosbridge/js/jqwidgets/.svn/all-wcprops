@@ -1,0 +1,311 @@
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets
+END
+jqxtouch.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxtouch.js
+END
+jqxrating.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxrating.js
+END
+jqxvalidator.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxvalidator.js
+END
+jqxgrid.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxgrid.js
+END
+jqxcheckbox.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxcheckbox.js
+END
+jqxgrid.columnsresize.js
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxgrid.columnsresize.js
+END
+jqxdropdownlist.js
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxdropdownlist.js
+END
+jqxcore.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxcore.js
+END
+jqxdata.export.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxdata.export.js
+END
+jqxtabs.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxtabs.js
+END
+jqxgrid.aggregates.js
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxgrid.aggregates.js
+END
+jqxswitchbutton.js
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxswitchbutton.js
+END
+jqxbuttons.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxbuttons.js
+END
+jqxpanel.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxpanel.js
+END
+jqxdockpanel.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxdockpanel.js
+END
+jqxchart.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxchart.js
+END
+jqxdragdrop.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxdragdrop.js
+END
+jqxmenu.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxmenu.js
+END
+jqxgrid.export.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxgrid.export.js
+END
+jqxexpander.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxexpander.js
+END
+jqxcombobox.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxcombobox.js
+END
+jqxnumberinput.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxnumberinput.js
+END
+jqxcalendar.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxcalendar.js
+END
+jqxgrid.selection.js
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxgrid.selection.js
+END
+jqxgrid.grouping.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxgrid.grouping.js
+END
+jqxslider.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxslider.js
+END
+jqxgrid.pager.js
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxgrid.pager.js
+END
+jqxscrollbar.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxscrollbar.js
+END
+jqxlistbox.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxlistbox.js
+END
+jqxmaskedinput.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxmaskedinput.js
+END
+jqxnavigationbar.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxnavigationbar.js
+END
+jqx-all.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqx-all.js
+END
+jqxbuttongroup.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxbuttongroup.js
+END
+jqxdropdownbutton.js
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxdropdownbutton.js
+END
+jqxgauge.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxgauge.js
+END
+jqxprogressbar.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxprogressbar.js
+END
+jqxscrollview.js
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxscrollview.js
+END
+jqxtooltip.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxtooltip.js
+END
+jqxradiobutton.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxradiobutton.js
+END
+jqxtree.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxtree.js
+END
+jqxlistmenu.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxlistmenu.js
+END
+jqxpopup.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxpopup.js
+END
+jqxsplitter.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxsplitter.js
+END
+jqxwindow.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxwindow.js
+END
+jqxgrid.edit.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxgrid.edit.js
+END
+jqxdata.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxdata.js
+END
+jqxgrid.filter.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxgrid.filter.js
+END
+jqxgrid.sort.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxgrid.sort.js
+END
+jqxcolorpicker.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxcolorpicker.js
+END
+jqxdatetimeinput.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxdatetimeinput.js
+END
+jqxdocking.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/748/trunk/experimental/pi_rosbridge/js/jqwidgets/jqxdocking.js
+END

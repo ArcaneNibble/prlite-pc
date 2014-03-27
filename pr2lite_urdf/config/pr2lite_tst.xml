@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<robot name="pr2lite">
+  <link name="base_footprint">
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.00889"/>
+      <geometry>
+        <box size="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+  <joint name="base_footprint_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.26289"/>
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+  </joint>
+  <link name="base_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0.00889"/>
+      <geometry>
+        <box size="0.508 0.508 0.0127"/>
+      </geometry>
+    </visual>
+  </link>
+</robot>
+

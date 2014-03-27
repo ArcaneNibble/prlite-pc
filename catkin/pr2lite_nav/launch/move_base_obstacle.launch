@@ -1,0 +1,20 @@
+<launch>
+
+  <include file="$(find pr2lite_nav)/launch/move_base.launch" />
+  
+  <!-- Run the map server with a blank map -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find pr2lite_nav)/maps/blank_map_with_obstacle.yaml"/>
+    
+  <!-- Run a static transform between /odom and /map -->
+  <node pkg="tf" type="static_transform_publisher" name="odom_map_broadcaster" args="0 0 0 0 0 0 /odom /map 100" />
+<!--
+  <node pkg="tf" type="static_transform_publisher" name="base_link_map_broadcaster" args="0 0 0 0 0 0 /base_link /map 100" />
+  <node pkg="tf" type="static_transform_publisher" name="base_link_odom_broadcaster" args="0 0 0 0 0 0 /base_link /odom 100" />
+  <node pkg="tf" type="static_transform_publisher" name="odom_map_broadcaster" args="0 0 0 0 0 0 /map /odom_combined 100" />
+-->
+  
+  <!-- For the TurtleBot, we need Run a static transform between /odom and /odom_combined -->
+  <node pkg="tf" type="static_transform_publisher" name="odom_combined_broadcaster" args="0 0 0 0 0 0 /odom /odom_combined 100" />
+  <node pkg="tf" type="static_transform_publisher" name="odom_combined_base_link_broadcaster" args="0 0 0 0 0 0 /odom_combined base_footprint 100" />
+    
+</launch>

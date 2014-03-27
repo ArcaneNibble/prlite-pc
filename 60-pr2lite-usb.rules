@@ -1,0 +1,11 @@
+# make primesense device mount with writing permissions (default is read only for unknown devices)
+,MODE="666",GROUP="video"
+# ATTRS{idProduct}=="0600",ATTRS{idVendor}=="1d27",MODE="666",GROUP="video"
+# ATTRS{BUS}=="usb", ATTRS{idProduct}=="6001", ATTRS{idVendor}=="0403", ATTRS{serial}=="A600cUBW", SYMLINK="magellan_arm"
+ATTRS{idProduct}=="6001", ATTRS{idVendor}=="0403", ATTRS{serial}=="A600cUBW", SYMLINK="magellan_arm"
+ATTRS{idProduct}=="6001", ATTRS{idVendor}=="0403", ATTRS{serial}=="A8006DSv", SYMLINK="magellan_arm"
+ATTRS{idProduct}=="6001", ATTRS{idVendor}=="0403", ATTRS{serial}=="MGLNMOT_", SYMLINK="magellan-i2c-serial"
+ATTRS{idProduct}=="780b", ATTRS{idVendor}=="2108", SYMLINK="prlite-neato"
+ATTRS{idProduct}=="0000", ATTRS{idVendor}=="15d1", SYMLINK="prlite-hokuyo"
+ATTRS{idVendor}=="06c2", ATTRS{idProduct}=="00[3-a][0-f]", MODE:="0666"
+

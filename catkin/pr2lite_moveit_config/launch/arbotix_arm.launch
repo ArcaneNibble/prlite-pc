@@ -1,0 +1,16 @@
+<launch>
+
+  <!-- node name="arm_controller" pkg="pr2lite_moveit_config" type="follow_controller.py" output="screen" -->
+  <!-- node name="arm_controller" pkg="pr2lite_moveit_config" type="follow_controller_complex.py" output="screen"-->
+
+  <node name="arm_controller" pkg="pr2lite_moveit_config" type="follow_controller_complex.py" output="screen" >
+      <rosparam file="$(find pr2lite_moveit_config)/config/pr2lite_arm.yaml" command="load" />
+      <param name="my_arm_controller" value="arm_controller"/>
+  </node>
+
+  <node name="arm_controllerR" pkg="pr2lite_moveit_config" type="follow_controller_complex.py" output="screen">
+      <rosparam file="$(find pr2lite_moveit_config)/config/pr2lite_arm.yaml" command="load" />
+      <param name="my_arm_controller" value="arm_controllerR"/>
+  </node>
+
+</launch>

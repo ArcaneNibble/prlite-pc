@@ -1,0 +1,15 @@
+(cl:defpackage net_485net_id_handler-srv
+  (:use )
+  (:export
+   "RELOADID"
+   "<RELOADID-REQUEST>"
+   "RELOADID-REQUEST"
+   "<RELOADID-RESPONSE>"
+   "RELOADID-RESPONSE"
+   "SEARCHID"
+   "<SEARCHID-REQUEST>"
+   "SEARCHID-REQUEST"
+   "<SEARCHID-RESPONSE>"
+   "SEARCHID-RESPONSE"
+  ))
+

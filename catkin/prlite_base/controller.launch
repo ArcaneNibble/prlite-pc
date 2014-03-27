@@ -1,0 +1,4 @@
+<launch>
+  <!-- include file="$(find prlite_base)/../485.launch" -->
+  <node pkg="prlite_base" type="base_controller" name="base_controller_node" output="screen"/>
+</launch>
