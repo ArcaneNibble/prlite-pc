@@ -27,7 +27,7 @@
   ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-import roslib; roslib.load_manifest('pr2lite_arm_navigation')
+import roslib; roslib.load_manifest('pr2lite_moveit_config')
 import rospy, actionlib
 from control_msgs.msg import *
 from simple_arm_actions.msg import *

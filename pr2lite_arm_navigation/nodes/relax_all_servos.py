@@ -35,7 +35,8 @@ class dyno_torque():
             set_punch(val)
         
 if __name__=='__main__':
-    dyno_control()
+    dyno_torque()
+#    dyno_control()
 
 
 

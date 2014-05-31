@@ -5,4 +5,6 @@
   <include file="$(find pr2lite_moveit_config)/launch/festival.launch" />
   <include file="$(find pr2lite_moveit_config)/launch/pr2lite_vision.launch" />
   <include file="$(find pr2lite_moveit_config)/launch/pr2lite_teleop.launch" />
+<!--
+-->
 </launch>

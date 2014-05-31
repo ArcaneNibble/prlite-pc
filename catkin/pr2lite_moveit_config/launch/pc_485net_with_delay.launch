@@ -1,0 +1,7 @@
+
+<launch>
+  <node pkg="pr2lite_moveit_config" type="timed_roslaunch.sh" 
+    args="8 pr2lite_moveit_config pc_485net.launch" 
+    name="pc_485net_with_delay" output="screen">
+  </node>
+</launch>

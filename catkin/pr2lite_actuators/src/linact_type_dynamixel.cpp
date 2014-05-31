@@ -2,7 +2,7 @@
 #include "pr2lite_actuators/LinearActuator.hpp"
 #include "std_msgs/Float64.h"
 #include <string>
-#include "dynamixel_msgs/JointState.h"
+// #include "dynamixel_msgs/JointState.h"
 
 namespace pr2lite
 {

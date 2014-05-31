@@ -1,8 +1,11 @@
 <launch>
     <node pkg="pr2lite_nav" type="imu_um6_node.py" name="imu_um6_node" output="screen" respawn="true">
-        <param name="port" type="string" value="/dev/ttyUSB2"/>
+        <param name="port" type="string" value="/dev/imu"/>
     </node>
 
+<!--
+        <param name="port" type="string" value="/dev/ttyUSB2"/>
+-->
     <!--  If your IMU is oriented to base link, you can just fill the frame with base link.  Otherwise, publish a static tf publisher from base_link to imu_frame for how your IMU is oriented relative to your base_link. 
    change: imu_link to: base_link
    change: imu_link to: base_footprint?

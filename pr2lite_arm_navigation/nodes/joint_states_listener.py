@@ -5,7 +5,7 @@
 import roslib
 roslib.load_manifest('pr2lite_arm_navigation')
 import rospy
-from pr2lite_arm_navigation.srv import *
+#from pr2lite_arm_navigation.srv import *
 from sensor_msgs.msg import JointState
 import threading
 

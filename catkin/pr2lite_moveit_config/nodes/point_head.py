@@ -118,6 +118,11 @@ class PointHeadNode():
             return
         rospy.loginfo("transtargpnt");
         target_angles = self.transform_target_point(self.target_point.target)
+        if target_angles[0] == -1000 and target_angles[1] == -1000:
+            rospy.loginfo("tf transform failed");
+            self.server.set_succeeded()
+            return
+        self.head_tilt_pub.publish(target_angles[1])
         rospy.loginfo("publishing");
         self.head_pan_pub.publish(target_angles[0])
         self.head_tilt_pub.publish(target_angles[1])
@@ -137,29 +142,38 @@ class PointHeadNode():
         tilt_ref_frame = self.head_tilt_frame
        
         # Wait for tf info (time-out in 5 seconds)
+        rospy.loginfo( "pan tf: ")
         try:
           pan_trans = self.buf.lookup_transform(pan_ref_frame, self.base_frame, 
                                       rospy.Time(0), timeout=rospy.Duration(4))
           print pan_trans
+          rospy.loginfo( pan_trans)
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, 
                 tf2_ros.ExtrapolationException) as e:
           print e 
+          return [-1000, -1000]
 
+        rospy.loginfo( "tilt tf: ")
         try:
           tilt_trans = self.buf.lookup_transform(tilt_ref_frame, 
                  self.base_frame, rospy.Time(0), timeout=rospy.Duration(4))
           print tilt_trans
+          rospy.loginfo( tilt_trans)
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, 
                 tf2_ros.ExtrapolationException) as e:
           print e
+          return [-1000, -1000]
 
+        rospy.loginfo( "target tf: ")
         try:
           target_trans = self.buf.lookup_transform(self.base_frame, 
              target.header.frame_id, rospy.Time(0), timeout=rospy.Duration(4))
           print target_trans
+          rospy.loginfo( target_trans)
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, 
                 tf2_ros.ExtrapolationException) as e:
           print e
+          return [-1000, -1000]
 
         rospy.loginfo( "ref frames: " + pan_ref_frame + ", " + tilt_ref_frame)
         rospy.loginfo( "target point " + str(target.header.frame_id) + " x " + str( target.point.x) + " y " + str(target.point.y) + " z " + str(target.point.z))

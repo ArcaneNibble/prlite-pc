@@ -211,12 +211,12 @@ class FollowController:
           for joint_state_name in msg.name:
             if joint == joint_state_name:
               tolerance = .01
-              if joint == 'right_elbow_flex_joint' or joint == 'right_shoulder_pan_joint' or joint == 'left_elbow_flex_joint' or joint == 'leftt_shoulder_pan_joint' or joint == 'left_wrist_flex_joint':
+              if joint == 'right_elbow_flex_joint' or joint == 'right_shoulder_pan_joint' or joint == 'left_elbow_flex_joint' or joint == 'leftt_shoulder_pan_joint' or joint == 'left_wrist_flex_joint' or joint == 'right_wrist_roll_joint':
                 tolerance = .1
               if self.current_pos[i] == msg.position[j]:
                 # give it a second to get started
                 tolerance = .04 * max(self.current_pos_cnt[i] - 4, 1)
-                if joint == 'right_elbow_flex_joint' or joint == 'right_shoulder_pan_joint' or joint == 'left_elbow_flex_joint' or joint == 'leftt_shoulder_pan_joint' or joint == 'left_wrist_flex_joint':
+                if joint == 'right_elbow_flex_joint' or joint == 'right_shoulder_pan_joint' or joint == 'left_elbow_flex_joint' or joint == 'leftt_shoulder_pan_joint' or joint == 'left_wrist_flex_joint' or joint == 'right_wrist_roll_joint':
                   tolerance = .1 * max(self.current_pos_cnt[i] - 1, 1)
                 self.current_pos_cnt[i] += 1
               else:
@@ -282,7 +282,11 @@ class FollowController:
           #desired = self.execute_positions[k] 
           endtime = start + self.trajectory_goal[0].trajectory.points[self.cur_point].time_from_start
           endsecs = endtime.to_sec()
-          velocity = abs((desired-msg.position[match])/ (endsecs-nowsecs))
+          # msg.position may not be valid for phase 3 as linact and dynamixels
+          # are in different joint state messages. Need to save last known pos.
+          # velocity = abs((desired-msg.position[match])/ (endsecs-nowsecs))
+          # for now, just set to max
+          velocity = self.max_speed
 
           if  exec_joint == 'left_shoulder_pan_joint' or exec_joint == 'right_shoulder_pan_joint':
             velocity = self.max_speed_shoulder_pan

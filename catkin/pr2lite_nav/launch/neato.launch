@@ -1,12 +1,27 @@
 <launch>
 
-  <param name="port" type="str" value="/dev/ttyACM0" />
 <!--
+  <param name="port" type="str" value="/dev/ttyS0" />
+  <param name="port" type="str" value="/dev/prlite-neato" />
+  <param name="port" type="str" value="/dev/ttyACM0" />
   <node pkg="tf" type="static_transform_publisher" name="laser_to_base"
     args="-0.1016 0 0.0889 0 0 0 lidar_base_link base_link 50" />
   <node pkg="tf" type="static_transform_publisher" name="laser_to_base"
     args="-0.1016 0 0.0889 0 0 0 base_link lidar_base_link 100" />
 -->
-  <node name="neato" pkg="pr2lite_nav" type="neato.py" output="screen" />
+<!--
+  <node name="neato" pkg="pr2lite_nav" type="pr2lite_neato.py" output="screen" />
+-->
+    <node name="neck_laser" pkg="hokuyo_node" type="hokuyo_node" respawn="false"
+ output="screen">
+        <remap from="scan" to="base_scan"/>
+        <param name="port" value="/dev/prlite-hokuyo"/>
+        <!-- param name="intensity" value="true" -->
+        <param name="min_ang" value="-2.08"/>
+        <param name="max_ang" value="2.08"/>
+        <!-- param name="frame_id" value="neck_scan_link" -->
+        <param name="frame_id" value="/laser_link"/>
+    </node>
+
 
 </launch>

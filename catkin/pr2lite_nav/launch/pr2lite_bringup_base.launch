@@ -9,9 +9,7 @@
     <!--<param name="fake_localization" value="true" />-->
   </node>
   <include file="$(find pr2lite_nav)/launch/robot_pose_ekf.launch" />
-  <node pkg="prlite_base" type="base_controller" name="base_controller" output="screen">
-     <remap from="/cmd_vel" to="base_controller/command"/>
-  </node>
+  <include file="$(find pr2lite_moveit_config)/launch/base_controller_with_delay.launch" />
   <include file="$(find pr2lite_nav)/launch/nav_amcl.launch" /> 
   <include file="$(find pr2lite_nav)/launch/gmapping.launch" />
   <!--<include file="$(find pr2lite_nav)/launch/move_base.launch" /> -->

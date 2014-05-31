@@ -8,6 +8,7 @@
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/pr2lite_arm_navigation</url>
+  <!-- 
   <depend package="planning_environment"/>
   <depend package="pr2_controllers_msgs"/>
   <depend package="dynamixel_controllers"/>
@@ -16,6 +17,7 @@
   <depend package="trajectory_filter_server"/>
   <depend package="constraint_aware_spline_smoother"/>
   <depend package="move_arm"/>
+  -->
 
 </package>
 

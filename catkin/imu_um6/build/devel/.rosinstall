@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/ros/rosbuild_ws/prlite-pc/imu_um6/build/devel/setup.sh

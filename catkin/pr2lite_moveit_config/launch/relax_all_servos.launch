@@ -1,0 +1,3 @@
+<launch>
+   <node pkg="pr2lite_moveit_config" type="relax_all_servos.py" name="relax_all_servos" />
+</launch>

@@ -1,0 +1,20 @@
+<launch>
+   <!-- Start the Dynamixel Joint States Publisher -->
+  <!-- pr2lite is an awesome mobile manipulator. 
+       This launch file brings him to life. -->
+  <node pkg="pr2lite_moveit_config" name="pc_485net_raw" type="pc_485net_raw.py" output="screen" />
+  <node pkg="pr2lite_moveit_config" name="net_485net_packet_sorter" type="net_485net_packet_sorter.py" output="screen" />
+  <node pkg="pr2lite_moveit_config" name="search_id" type="id_server.py" output="screen" >
+<!--
+    <param name="~uc_config_file" value="$(find pr2lite_moveit_config)/config/uc.txt" /> 
+-->
+    <param name="~uc_config_file" value="/home/ros/catkin_ws/src/pr2lite_moveit_config/config/uc.txt" />
+  </node>
+  <include file="$(find pr2lite_moveit_config)/launch/base_controller_with_delay.launch" />
+
+  <!--
+  <node pkg="prlite_base" name="base_controller" type="base_controller" output="screen" />
+-->
+
+</launch>
+

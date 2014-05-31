@@ -46,34 +46,41 @@ class VeloGripperController:
         self.max_opening = rospy.get_param("~max", 2.0)
 
         self.controller = 'velo_gripper_controller'
+        self.ax12_controller = 'velo_gripper_ax12_controller'
 
         if self.torque > 1023:
            self.torque = 1023
         if self.torque < 0:
            self.torque = 0
-        #torque_service = '/' + self.controller + '/torque_enable'
-        torque_service = '/' + self.controller + '/set_torque_limit'
-        # torque_service = '/' + self.controller + '/set_compliance_punch' # min torque
-        # torque_service = '/' + self.controller + '/set_compliance_limit' # max torque
+        # torque_service = '/' + self.ax12_controller + '/torque_enable'
+        # torque_service = '/' + self.ax12_controller + '/set_compliance_punch' # min torque
+        # torque_service = '/' + self.ax12_controller + '/set_compliance_limit' # max torque
+        # torque_service = '/' + self.ax12_controller + '/set_torque_limit'
         # limit, punch 0-1023
-        rospy.wait_for_service(torque_service)
-        #self.my_torque_service = rospy.ServiceProxy
-        rospy.wait_for_service(torque_service)
+        # rospy.wait_for_service(torque_service)
         #self.my_torque_service = rospy.ServiceProxy (torque_service, TorqueEnable)
-        self.my_torque_service = rospy.ServiceProxy (torque_service, SetTorqueLimit)
-        speed_service = '/' + self.controller + '/set_speed'
+
+        #torque_service = '/' + self.ax12_controller + '/set_torque_limit'
+        #rospy.loginfo("waiting for torque_service")
+        #rospy.wait_for_service(torque_service)
+        #self.my_torque_service = rospy.ServiceProxy (torque_service, SetTorqueLimit)
+        speed_service = '/' + self.ax12_controller + '/set_speed'
+        rospy.loginfo("waiting for speed_service")
         rospy.wait_for_service(speed_service)
         # speed_services.append(rospy.ServiceProxy (speed_service, SetSpeed))
         self.my_speed_service = rospy.ServiceProxy (speed_service, SetSpeed)
         # position in radians
-        pub_topic = '/' + self.controller + '/command'
+        rospy.loginfo("pub_topic")
+        pub_topic = '/' + self.ax12_controller + '/command'
         self.velo_pub = rospy.Publisher(pub_topic, Float64)
 
         # subscribe to command and then spin
         # Pr2GripperCommand(position, max_effort)
         #self.server = actionlib.SimpleActionServer(side_c +"_gripper_controller/gripper_action", Pr2GripperCommandAction, execute_cb=self.commandCb, auto_start=False)
+        rospy.loginfo("gripper_action")
         self.server = actionlib.SimpleActionServer("velo_gripper_controller/gripper_action", Pr2GripperCommandAction, execute_cb=self.commandCb, auto_start=False)
         self.iter = 0
+        rospy.loginfo("start server")
         self.server.start()
 
     def commandCb(self, msg):
@@ -103,7 +110,7 @@ class VeloGripperController:
         # print "Velo pos " + str(self.iter) + ' is ' + str(velopos) 
         # self.speed = .5
         self.torque = 300
-        self.my_torque_service(self.torque)
+        # self.my_torque_service(self.torque)
         self.my_speed_service(self.speed)
 
         # publish msgs

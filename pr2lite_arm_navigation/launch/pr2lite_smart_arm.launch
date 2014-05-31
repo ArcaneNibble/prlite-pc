@@ -28,8 +28,7 @@
                 elbow_pan_controllerR
                 wrist_rotate_controllerR
                 wrist_tilt_controllerR
-                finger_right_controllerR
-                finger_left_controllerR"
+                velo_controllerR "
         output="screen"/>
 
    

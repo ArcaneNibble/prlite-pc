@@ -1,7 +1,7 @@
 // Implementation of our simple linear actuator control object
 #include "pr2lite_actuators/LinearActuator.hpp"
 #include <sensor_msgs/JointState.h>
-#include "dynamixel_msgs/JointState.h"
+/* #include "dynamixel_msgs/JointState.h" */
 #include "ros/time.h"
 
 using namespace pr2lite::actuators;

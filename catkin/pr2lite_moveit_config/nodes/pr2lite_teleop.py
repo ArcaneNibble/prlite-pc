@@ -123,8 +123,8 @@ class JoyNode():
 
         # controllers
         velo_controller = 'velo_gripper_controller/gripper_action'
-        velo_torque_service = '/velo_gripper_controller/set_torque_limit'
-        velo_speed_service = '/velo_gripper_controller/set_speed'
+        velo_torque_service = '/velo_gripper_ax12_controller/set_torque_limit'
+        velo_speed_service = '/velo_gripper_ax12_controller/set_speed'
         left_gripper_controller = '/gripper_controller/gripper_action'
         head_controller = '/head_traj_controller/point_head_action'
         base_controller = '/base_controller/command'
@@ -145,8 +145,7 @@ class JoyNode():
            self.torque = 0
         print "wait for velo torque service"
         rospy.wait_for_service(velo_torque_service)
-        self.velo_torque_service = rospy.ServiceProxy(
-                  velo_torque_service, SetTorqueLimit)
+        self.velo_torque_service = rospy.ServiceProxy( velo_torque_service, SetTorqueLimit)
         self.speed = 0.5
         print "wait for velo speed service"
         rospy.wait_for_service(velo_speed_service)
@@ -183,16 +182,19 @@ class JoyNode():
 
         #TODO: moveit!
         print "left arm and torso moveit commander"
+        rospy.loginfo("pr2lite_teleop: left arm and torso moveit commander")
         try:
           self.left_arm_group = MoveGroupCommander("left_arm_and_torso")
         except rospy.ServiceException, e:
           self.left_arm_group = MoveGroupCommander("left_arm_and_torso")
         print "right arm and torso moveit commander"
+        rospy.loginfo("pr2lite_teleop: right arm and torso moveit commander")
         try:
           self.right_arm_group = MoveGroupCommander("right_arm_and_torso")
         except rospy.ServiceException, e:
           self.right_arm_group = MoveGroupCommander("right_arm_and_torso")
 
+        rospy.loginfo("pr2lite_teleop: speech engine")
         self.se = SpeechEngine()
 
         print "subscribe to joystick"
@@ -248,6 +250,7 @@ class JoyNode():
             if new_pos and self.cur_pos == self.pose_move_aside:
               print "move_aside_right_arm"
               self.se.say( "move aside right arm")
+              self.right_arm_group.allow_replanning(True)
               self.right_arm_group.set_named_target("move_aside_right_arm")
               # planned = self.right_arm_group.plan()
               if self.right_arm_group.go() == False:
@@ -255,6 +258,7 @@ class JoyNode():
             elif new_pos and self.cur_pos == self.pose_tuck:
               print "tuck_right_arm"
               self.se.say( "tuck right arm")
+              self.right_arm_group.allow_replanning(True)
               self.right_arm_group.set_named_target("tuck_right_arm")
               # planned = self.right_arm_group.plan()
               if self.right_arm_group.go() == False:
@@ -262,6 +266,7 @@ class JoyNode():
             elif new_pos and self.cur_pos == self.pose_untuck:
               print "untuck_right_arm"
               self.se.say( "untuck right arm")
+              self.right_arm_group.allow_replanning(True)
               self.right_arm_group.set_named_target("untuck_right_arm")
               # planned = self.right_arm_group.plan()
               if self.right_arm_group.go() == False:
@@ -269,32 +274,38 @@ class JoyNode():
             elif new_pos and self.cur_pos == self.pose_stretch:
               print "stretch_right_arm"
               self.se.say( "stretch right arm")
+              self.right_arm_group.allow_replanning(True)
               self.right_arm_group.set_named_target("stretch_right_arm")
               # planned = self.right_arm_group.plan()
               if self.right_arm_group.go() == False:
                 self.se.say( "Error")
             threshold = 0.1
 	    if math.fabs(joy.axes[self.wrist_right_left]) > threshold or math.fabs(joy.axes[self.wrist_fwd_bck]) > threshold or math.fabs(joy.axes[self.wrist_up_down]) > threshold:
+              return
               self.se.say( "joystick control of right arm")
               print "joystick right arm control"
               currentrf = self.right_arm_group.get_pose_reference_frame()
               self.right_arm_group.set_pose_reference_frame(currentrf)
+              self.right_arm_group.allow_replanning(False)
               # Comment out replanning:
               # self.right_arm_group.allow_replanning(True)
               # With replanning, the joystick arm control is frequently called
               # with a new status.   The planning never executes anything 
               # because it is always replanning and never executing.  
               # For now, no replannng and use blocking callbacks.
-              newpose = self.right_arm_group.get_current_pose().pose
-              print "eef: " +  self.right_arm_group.get_end_effector_link()
-              # newposerpy = self.right_arm_group.get_current_rpy()
-              arm_delta = 0.45
-              newpose.position.x = newpose.position.x-arm_delta * joy.axes[self.wrist_right_left]
-              newpose.position.y = newpose.position.y-arm_delta * joy.axes[self.wrist_fwd_bck]
-              newpose.position.z = newpose.position.z-arm_delta * joy.axes[self.wrist_up_down]
-              print newpose   
-              print('Setting a new target pose..')
-              self.right_arm_group.set_pose_target(newpose)
+#following lines core dump
+#              ee_link = self.right_arm_group.get_end_effector_link()
+#              newpose = self.right_arm_group.get_current_pose(ee_link).pose
+#              if self.right_arm_group.has_end_effector_link():
+#                print "eef: " +  self.right_arm_group.get_end_effector_link()
+#              # newposerpy = self.right_arm_group.get_current_rpy()
+#              arm_delta = 0.45
+#              newpose.position.x = newpose.position.x-arm_delta * joy.axes[self.wrist_right_left]
+#              newpose.position.y = newpose.position.y-arm_delta * joy.axes[self.wrist_fwd_bck]
+#              newpose.position.z = newpose.position.z-arm_delta * joy.axes[self.wrist_up_down]
+#              # print newpose   
+#              print('Setting a new target pose..')
+#              self.right_arm_group.set_pose_target(newpose, ee_link)
               self.right_arm_group.set_start_state_to_current_state()
               planned = self.right_arm_group.plan()
               print ('Joint interpolated plan:')

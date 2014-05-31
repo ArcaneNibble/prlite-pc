@@ -49,7 +49,7 @@ joint_limits:
     max_velocity: 10000
     has_acceleration_limits: false
     max_acceleration: 0
-  velo_gripper_joint:
+  velo_gripper_ax12_joint:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false

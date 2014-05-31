@@ -21,7 +21,8 @@
     http://www.gnu.org/licenses/gpl.html
 """
 
-import roslib; roslib.load_manifest('pi_dynamixel_controller')
+#import roslib; roslib.load_manifest('pi_dynamixel_controller')
+import roslib; roslib.load_manifest('pr2lite_moveit_config')
 import rospy
 
 from sensor_msgs.msg import JointState as JointStatePR2

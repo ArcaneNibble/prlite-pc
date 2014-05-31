@@ -1,0 +1,20 @@
+<package>
+  <name>imu_um6</name>
+  <version>0.2.0</version>
+  <description>
+This package is a ROS driver for the CH Robotics UM6 IMU
+  </description>
+  <author>Jeff Rousseau</author>
+  <maintainer email="Rousseau@chr.com">Rousseau</maintainer>
+  <license>BSD</license>
+  <url type="website">http://ros.org/wiki/imu_um6</url>
+
+  <build_depend>catkin</build_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>tf</run_depend>
+
+</package>
+
+

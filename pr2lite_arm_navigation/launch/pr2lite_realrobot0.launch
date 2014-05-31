@@ -9,10 +9,8 @@
       <rosparam command="load" file="$(find pr2lite_arm_navigation)/config/pr2lite_diagnostics.yaml" />
    </node>
 
-   <node pkg="robot_monitor" type="robot_monitor" name="robot_monitor" />
-
-
 <!--
+   <node pkg="robot_monitor" type="robot_monitor" name="robot_monitor" />
   <node name="reset_arm_server" pkg="pr2lite_arm_navigation" type="dynamixel_reset_arm_server.py" output="screen">
       <rosparam file="$(find pr2lite_arm_navigation)/config/pr2lite_arm.yaml" command="load" />
   </node>

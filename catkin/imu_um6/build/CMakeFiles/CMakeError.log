@@ -1,0 +1,57 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/ros/rosbuild_ws/prlite-pc/imu_um6/build/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/make "cmTryCompileExec1276016043/fast"
+make[1]: Entering directory `/home/ros/rosbuild_ws/prlite-pc/imu_um6/build/CMakeFiles/CMakeTmp'
+/usr/bin/make -f CMakeFiles/cmTryCompileExec1276016043.dir/build.make CMakeFiles/cmTryCompileExec1276016043.dir/build
+make[2]: Entering directory `/home/ros/rosbuild_ws/prlite-pc/imu_um6/build/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/ros/rosbuild_ws/prlite-pc/imu_um6/build/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec1276016043.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTryCompileExec1276016043.dir/CheckSymbolExists.c.o   -c /home/ros/rosbuild_ws/prlite-pc/imu_um6/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTryCompileExec1276016043
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec1276016043.dir/link.txt --verbose=1
+/usr/bin/cc         CMakeFiles/cmTryCompileExec1276016043.dir/CheckSymbolExists.c.o  -o cmTryCompileExec1276016043 -rdynamic 
+CMakeFiles/cmTryCompileExec1276016043.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x16): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+make[2]: *** [cmTryCompileExec1276016043] Error 1
+make[2]: Leaving directory `/home/ros/rosbuild_ws/prlite-pc/imu_um6/build/CMakeFiles/CMakeTmp'
+make[1]: *** [cmTryCompileExec1276016043/fast] Error 2
+make[1]: Leaving directory `/home/ros/rosbuild_ws/prlite-pc/imu_um6/build/CMakeFiles/CMakeTmp'
+
+File /home/ros/rosbuild_ws/prlite-pc/imu_um6/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/ros/rosbuild_ws/prlite-pc/imu_um6/build/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/make "cmTryCompileExec2342042132/fast"
+make[1]: Entering directory `/home/ros/rosbuild_ws/prlite-pc/imu_um6/build/CMakeFiles/CMakeTmp'
+/usr/bin/make -f CMakeFiles/cmTryCompileExec2342042132.dir/build.make CMakeFiles/cmTryCompileExec2342042132.dir/build
+make[2]: Entering directory `/home/ros/rosbuild_ws/prlite-pc/imu_um6/build/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/ros/rosbuild_ws/prlite-pc/imu_um6/build/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec2342042132.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTryCompileExec2342042132.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-2.8/Modules/CheckFunctionExists.c
+Linking C executable cmTryCompileExec2342042132
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec2342042132.dir/link.txt --verbose=1
+/usr/bin/cc     -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTryCompileExec2342042132.dir/CheckFunctionExists.c.o  -o cmTryCompileExec2342042132 -rdynamic -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+make[2]: *** [cmTryCompileExec2342042132] Error 1
+make[2]: Leaving directory `/home/ros/rosbuild_ws/prlite-pc/imu_um6/build/CMakeFiles/CMakeTmp'
+make[1]: *** [cmTryCompileExec2342042132/fast] Error 2
+make[1]: Leaving directory `/home/ros/rosbuild_ws/prlite-pc/imu_um6/build/CMakeFiles/CMakeTmp'
+
+

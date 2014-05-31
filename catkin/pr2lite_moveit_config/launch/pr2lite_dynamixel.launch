@@ -40,7 +40,7 @@ right_gripper_right_controller
                 lidar_tilt_controller
                 right_elbow_flex_controller
                 right_elbow_pan_controller
-                velo_gripper_controller
+                velo_gripper_ax12_controller
                 right_shoulder_pan_controller
                 right_wrist_flex_controller 
                 right_wrist_roll_controller"
@@ -54,5 +54,6 @@ right_gripper_right_controller
    <!-- arm_controller removed from above elbow_tilt_controllerL -->
 
 <!--
--->
+ -->
+    <node pkg="pr2lite_moveit_config" type="relax_all_servos.py" name="relax_all_servos" />
 </launch>

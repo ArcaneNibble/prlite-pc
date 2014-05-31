@@ -149,8 +149,8 @@
 
 
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="right_eef" parent_link="right_wrist_roll_link" group="velo_gripper" />
-    <end_effector name="left_eef" parent_link="left_wrist_roll_link" group="left_gripper" />
+    <end_effector name="right_eef" parent_link="right_wrist_roll_link" group="right_arm_and_torso" />
+    <end_effector name="left_eef" parent_link="left_wrist_roll_link" group="left_arm_and_torso" />
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="world_joint" type="planar" parent_frame="odom_combined" child_link="base_footprint" />
     <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated

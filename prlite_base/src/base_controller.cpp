@@ -30,7 +30,7 @@
 #include "geometry_msgs/Twist.h"
 #include "packets_485net/packet_485net_dgram.h"
 #include "net_485net_id_handler/SearchID.h"
-#include "pr2lite_arm_navigation/ReturnJointStates.h"
+#include "pr2lite_moveit_config/ReturnJointStates.h"
 #include <unistd.h>
 #include <cstdlib>
 
@@ -41,13 +41,16 @@ const double TH_MULT = 5; // tuned manually (is about right)
 #define INCHES_TO_METERS 0.0254
 #define linact_len(x) (x * 4.0 / 1000.0 * INCHES_TO_METERS)
 
+const uint16_t EXTEND_LINACT_0 = 1000;
 const uint16_t LINACT_0 = 915;
 const uint16_t LINACT_45 = 530;
 const uint16_t LINACT_90 = 70;
+const uint16_t EXTEND_LINACT_90 = 0;
 const uint16_t LINACT_PRECISION = 15;
 const ros::Duration WHEEL_TO(5.0);
 const ros::Duration LINACT_TO(5.0);
 const ros::Duration LINACT_FINISH_TO(5.0);
+const ros::Duration LINACT_EXTEND_TO(2.0);
 extern bool get_linact_state();
 
 ros::Publisher cmd_pub;
@@ -72,8 +75,8 @@ bool force_wheel_update = false;
 bool rosinfodbg = true;
 
 // base states
-enum base_state_enum {ready, linact_start, linact_moving, wheel_start, wheel_moving};
-std::string base_state_name[] = {"ready", "linact_start", "linact_moving", "wheel_start", "wheel_moving"};
+enum base_state_enum {ready, linact_start, linact_moving, linact_extend, wheel_start, wheel_moving};
+std::string base_state_name[] = {"ready", "linact_start", "linact_moving", "linact_extend", "wheel_start", "wheel_moving"};
 base_state_enum base_state = ready;
 ros::Time base_state_time; // time of last transition
 
@@ -150,10 +153,33 @@ void state_change(void)
         // shouldn't happen
         base_state = wheel_moving;
       } else if (linact_goal == linact_goal_last && (cmd_l != 0 || cmd_r != 0)) {
-        // publish wheel commands
-        if (rosinfodbg) ROS_INFO("WHEEL START");
-        base_state = wheel_start;
-        cmdPublishWheel();
+        if (cmd_l * cmd_r < 0 && linact_goal != LINACT_45) {
+          ROS_INFO("ERR: WHEEL ROTATION NOT AT LINACT_45");
+          // illegal state; stop and refuse to go
+          cmd_l = 0;
+          cmd_r = 0;
+          cmdPublishWheel();
+          base_state = ready;
+        } else if (cmd_l*cmd_r > 0 && linact_goal != EXTEND_LINACT_0 
+                                   && linact_goal != EXTEND_LINACT_90) { 
+          if (linact_goal == LINACT_0 || linact_goal == LINACT_90) {
+            // initial condition, allow to extend
+            ROS_INFO("linact not extended");
+            base_state = linact_moving;
+          } else {
+            ROS_INFO("ERR: WHEELS WANT STRAIGHT WHEN LINACT NOT READY");
+            // illegal state; stop and refuse to go
+            cmd_l = 0;
+            cmd_r = 0;
+            cmdPublishWheel();
+            base_state = ready;
+          }
+        } else {
+          // publish wheel commands
+          if (rosinfodbg) ROS_INFO("WHEEL START");
+          base_state = wheel_start;
+          cmdPublishWheel();
+        }
       } else if (linact_goal != linact_goal_last) {
         // publish new linear actuator command
         base_state = linact_start;
@@ -171,7 +197,10 @@ void state_change(void)
           // timeout without linact moving
           if (cmd_l != 0 || cmd_r != 0)
             ROS_INFO("ERR: LINACT START TIMEOUT");
-          base_state = ready;
+
+          // need to check all base_state settings to ready ; 
+          //  cmdPublishLinactStop();
+          //  base_state = ready;
         }
         else if (linact_does_not_seem_to_be_moving)
         {
@@ -202,9 +231,9 @@ void state_change(void)
           if (linact_does_not_seem_to_be_moving)
           {
             linact_does_not_seem_to_be_moving = false;
-            ROS_INFO("Placing a bet that linear actuator is stopped");
-            cmdPublishLinactStop();
-            base_state = ready;
+            ROS_INFO("Want to place a bet that linear actuator is stopped");
+            // cmdPublishLinactStop();
+            // base_state = ready;
           }
         } else if (state_timeout(linact_moving, &now, LINACT_FINISH_TO)) {
           // TODO: make timeout more precise based on starting / end point
@@ -218,10 +247,32 @@ void state_change(void)
         } 
         else if (linact_arrived && linact_goal_arrived)
         {
-          if (rosinfodbg) ROS_INFO("BASE READY");
+          if (rosinfodbg) ROS_INFO("BASE LINACT EXTEND");
+
           // done with linact
-          base_state = ready;
+          if (linact_goal == LINACT_0) {
+            linact_goal = EXTEND_LINACT_0;
+            cmdPublishLinact();
+            base_state = linact_extend;
+            now = ros::Time::now();
+          } else if (linact_goal == LINACT_90) {
+            linact_goal = EXTEND_LINACT_90;
+            cmdPublishLinact();
+            base_state = linact_extend;
+            now = ros::Time::now();
+          } else
+            base_state = ready;
         }
+    } else if (state_timeout(linact_extend, &now, LINACT_EXTEND_TO)) {
+            uint16_t tmp_linact_goal = linact_goal;
+            ROS_INFO("linact extend timeout (expected)");
+            cmdPublishLinactStop();
+            // fake out linact stopping
+            linact_arrived = true;
+            linact_goal = tmp_linact_goal;
+            linact_goal_last = linact_goal;
+            ROS_INFO("linact extend timeout (expected)");
+            base_state = ready;
     } else if (base_state == wheel_start) {
         if ((cmd_l == 0 || (wheel_started[0] && wheel_started[2])) &&
             (cmd_r == 0 || (wheel_started[1] && wheel_started[3]))) {
@@ -309,12 +360,12 @@ bool get_linact_state()
   static bool do_init = true;
   static int cnt = 0;
   static int notmoving = 0;
-  static pr2lite_arm_navigation::ReturnJointStates srv;
+  static pr2lite_moveit_config::ReturnJointStates srv;
   static ros::ServiceClient client;
 
   if (do_init) { 
     ros::NodeHandle n;
-    client = n.serviceClient<pr2lite_arm_navigation::ReturnJointStates>("return_joint_states");
+    client = n.serviceClient<pr2lite_moveit_config::ReturnJointStates>("return_joint_states");
     do_init = false;
   }
   srv.request.name.push_back("wheel_linear_actuator_joint");
@@ -334,14 +385,17 @@ bool get_linact_state()
     } else {
         linact_arrived = true;
         notmoving++;
-        if(notmoving >= MOVING_LAST_N)
+        // we're supposed to timeout for Linact extension goals
+        if(notmoving >= MOVING_LAST_N && linact_goal != EXTEND_LINACT_0 && linact_goal != EXTEND_LINACT_90)
         {
           ROS_INFO("By the alignment of the planets, I conclude that the linact isn't actually moving.");
           linact_does_not_seem_to_be_moving = true;
         }
     }
-    ROS_INFO("wheel linact: goal %f dif %f prec %f", linact_len(linact_goal), fabs(srv.response.position[0] - linact_len(linact_goal)), linact_len(LINACT_PRECISION));
-    if (fabs(srv.response.position[0] - linact_len(linact_goal)) < linact_len(LINACT_PRECISION)) 
+    ROS_INFO("wheel linact: goal %f dif %f prec %f pos %f", linact_len(linact_goal), fabs(srv.response.position[0] - linact_len(linact_goal)), linact_len(LINACT_PRECISION), srv.response.position[0]);
+    if (fabs(srv.response.position[0] - linact_len(linact_goal)) < linact_len(LINACT_PRECISION)
+       || ((linact_goal == LINACT_0 || linact_goal == EXTEND_LINACT_0) && srv.response.position[0] > linact_len(LINACT_0))
+       || ((linact_goal == LINACT_90 || linact_goal == EXTEND_LINACT_0) && srv.response.position[0] < linact_len(LINACT_90))) 
     {
         ROS_INFO("linact goal arrived");
         linact_goal_arrived = true;
@@ -361,7 +415,7 @@ bool get_linact_state()
   return false;
 }
 
-// only routine that can change linact_goal_last
+// only routine that can change linact_goal_last except for extend timeout
 void cmdPublishLinact(void)
 {
   uint16_t itmp;
@@ -558,7 +612,7 @@ static void multicastSetWheelSpeeds(int16_t fl, int16_t fr, int16_t bl, int16_t 
 // only routine that can change cmd_l_last, cmd_r_last
 void cmdPublishWheel(void)
 {
-  if (cmd_l != cmd_l_last || cmd_r != cmd_r_last || (LINACT_90 == linact_goal) != cmd_90_last || force_wheel_update)
+  if (cmd_l != cmd_l_last || cmd_r != cmd_r_last || (LINACT_90 == linact_goal || EXTEND_LINACT_90 == linact_goal) != cmd_90_last || force_wheel_update)
   {
     // publish wheel commands
     packets_485net::packet_485net_dgram wheel_cmd;
@@ -569,7 +623,7 @@ void cmdPublishWheel(void)
     wheel_cmd.source = 0xF0;
     wheel_cmd.sport = 7;
     wheel_cmd.dport = 6;
-    if (LINACT_90 == linact_goal)
+    if (LINACT_90 == linact_goal || EXTEND_LINACT_90 == linact_goal)
     {
       ROS_INFO("LINACT_90");
       // move sideways (positive cmd_l/cmd_r means go left)
@@ -585,7 +639,7 @@ void cmdPublishWheel(void)
     }
     cmd_l_last = cmd_l;
     cmd_r_last = cmd_r;
-    cmd_90_last = (LINACT_90 == linact_goal);
+    cmd_90_last = (LINACT_90 == linact_goal || EXTEND_LINACT_90 == linact_goal);
     if (rosinfodbg) ROS_INFO("l %d r %d", cmd_l, cmd_r);
   }
 }
@@ -597,14 +651,18 @@ void cmdCallback(const geometry_msgs::Twist& cmd_vel)
     // move forwards/backwards
     cmd_l = cmd_vel.linear.x * X_MULT - cmd_vel.angular.z * TH_MULT;
     cmd_r = cmd_vel.linear.x * X_MULT + cmd_vel.angular.z * TH_MULT;
-    linact_goal = LINACT_0;
+    if (linact_goal != EXTEND_LINACT_0)
+      linact_goal = LINACT_0;
   }
   else
   {
     // move sideways
+    // Note: cmdPublishWheel will make the wheels move in opposite directions
+    // to make sideways wheels go fwd/bck.
     cmd_l = cmd_vel.linear.y * X_MULT - cmd_vel.angular.z * TH_MULT;
     cmd_r = cmd_vel.linear.y * X_MULT + cmd_vel.angular.z * TH_MULT;
-    linact_goal = LINACT_90;
+    if (linact_goal != EXTEND_LINACT_90)
+      linact_goal = LINACT_90;
   }
   if (cmd_l * cmd_r < 0)
   {
@@ -614,7 +672,7 @@ void cmdCallback(const geometry_msgs::Twist& cmd_vel)
     linact_goal = LINACT_45;
     ROS_INFO("LINACT_45");
   }
-  ROS_INFO("x %f y %f th %f", cmd_vel.linear.x, cmd_vel.linear.y, cmd_vel.angular.z);
+  ROS_INFO("x %f y %f th %f cmd_l %d cmd_r %d linact_goal %d", cmd_vel.linear.x, cmd_vel.linear.y, cmd_vel.angular.z, cmd_l, cmd_r, linact_goal);
   state_change();
 }
 

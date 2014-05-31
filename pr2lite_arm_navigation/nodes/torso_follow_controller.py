@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 import roslib; roslib.load_manifest('pr2lite_arm_navigation')
-roslib.load_manifest('pr2_position_scripts')
+roslib.load_manifest('pr2lite_arm_navigation')
 import actionlib
 import rospy
 from sensor_msgs.msg import JointState

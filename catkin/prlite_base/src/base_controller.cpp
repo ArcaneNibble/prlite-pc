@@ -36,7 +36,11 @@
 
 #define MAX_LINACT 0x3FF
 
-const double X_MULT = 7.51913116; // speed is ticks per interval and interval is 1/10 sec, so should be WHEEL_TICKS_PER_METER / 10
+// const double X_MULT = 7.51913116; // speed is ticks per interval and interval is 1/10 sec, so should be WHEEL_TICKS_PER_METER / 10
+// (1 meter) / ((6 * pi inches) / 36) / 10 sec = 7.51913117
+// const double X_MULT = 7.51913117; // speed is ticks per interval and interval is 1/10 sec, so should be WHEEL_TICKS_PER_METER / 10
+const double X_MULT = 7.51913117; // speed is ticks per interval and interval is 1/10 sec, so should be WHEEL_TICKS_PER_METER / 10
+// const double X_MULT = 1.25318853;
 const double TH_MULT = 5; // tuned manually (is about right)
 #define INCHES_TO_METERS 0.0254
 #define linact_len(x) (x * 4.0 / 1000.0 * INCHES_TO_METERS)
@@ -71,6 +75,10 @@ int16_t cmd_r = 0;
 int16_t cmd_r_last = 10000;
 bool cmd_90_last = false;
 bool force_wheel_update = false;
+
+int pid_p = 0;
+int pid_i = 0;
+int pid_d = 0;
 
 bool rosinfodbg = true;
 
@@ -489,26 +497,52 @@ static void initOneWheelPID(unsigned char id, int32_t p, int32_t i, int32_t d, u
   
   pid_gains.destination = lookup_id("wheel-cnt", names[id]);
   
+  int w = 10;
   do
   {
-    ROS_INFO("Trying to send pid to %s %d\n", names[id],wheel_debug_bits[id]);
+    ROS_INFO("Trying to send pid to %d %s %d\n", pid_gains.destination, names[id],wheel_debug_bits[id]);
     cmd_pub.publish(pid_gains);
     ros::Duration(1.0).sleep();
     ros::spinOnce();
+    // w--;
   }
-  while((wheel_debug_bits[id] & 4) == 0);
+  // ARD debugging hack
+  while((wheel_debug_bits[id] & 4) == 0 && w > 0);
+  // while(false);
+  ROS_INFO("WC 1 : %d %d %d %d", lookup_id("wheel-cnt", "front left"), lookup_id("wheel-cnt", "front right") , lookup_id("wheel-cnt", "back right"), lookup_id("wheel-cnt", "back left"));
 }
 
 static void initWheelPID(void)
 {
+  /* TUNING THE PID
+     First set K_i and K_d values to zero. 
+     Increase the K_p until the output of the loop oscillates, 
+     Then the K_p should be set to approximately half of that value 
+         for a "quarter amplitude decay" type response. 
+     Then increase K_i until any offset is corrected 
+          Too much K_i will cause instability. 
+     Finally, increase K_d, if required, until the loop is acceptably quick 
+          to reach its reference after a load disturbance. i
+          Too much K_d will cause excessive response and overshoot. 
+     A fast PID loop tuning usually overshoots slightly to reach the setpoint 
+     If overshoot undesirable set K_p significantly less than half that of 
+          the K_p setting that was causing oscillation.
+
+Effects of increasing a parameter independently
+Parameter Rise time 	Overshoot 	Settling time 	Steady-state?   Stabile
+K_p 	Decrease 	Increase 	Small change 	Decrease 	Degrade
+K_i 	Decrease 	Increase 	Increase 	Eliminate 	Degrade
+K_d 	Minor change 	Decrease 	Decrease 	No effect in theory 	Improve if K_d small
+  */ 
+
   //front left
-  initOneWheelPID(0, 5 << 16, 25 << 16, 3 << 16, 1);
+  initOneWheelPID(0, pid_p << 16, pid_i << 16, pid_d << 16, 1);
   //front right
-  initOneWheelPID(1, 5 << 16, 25 << 16, 3 << 16, 255);
+  initOneWheelPID(1, pid_p << 16, pid_i << 16, pid_d << 16, 255);
   //back left
-  initOneWheelPID(2, 5 << 16, 25 << 16, 3 << 16, 1);
+  initOneWheelPID(2, pid_p << 16, pid_i << 16, pid_d << 16, 1);
   //back right
-  initOneWheelPID(3, 5 << 16, 25 << 16, 3 << 16, 255);
+  initOneWheelPID(3, pid_p << 16, pid_i << 16, pid_d << 16, 255);
 }
 
 static void multicastSetWheelSpeeds(int16_t fl, int16_t fr, int16_t bl, int16_t br)
@@ -559,7 +593,6 @@ static void multicastSetWheelSpeeds(int16_t fl, int16_t fr, int16_t bl, int16_t 
   while((wheel_debug_bits[0] & 0x10) != 0x10 || (wheel_debug_bits[1] & 0x10) != 0x10 || (wheel_debug_bits[2] & 0x10) != 0x10 || (wheel_debug_bits[3] & 0x10) != 0x10);
   
   //all got commands now
-  
   wheel_cmd.data.clear();
   wheel_cmd.data.push_back(0xa5);
   wheel_cmd.data.push_back(0x5a);
@@ -683,14 +716,19 @@ void wheelCallback(const packets_485net::packet_485net_dgram& ws)
   static int16_t vr[2];
 
   uint16_t itmp;
+// ROS_INFO("WC 1 : %d  %d %d %d %d", ws.source, lookup_id("wheel-cnt", "front left"), lookup_id("wheel-cnt", "front right") , lookup_id("wheel-cnt", "front right"), lookup_id("wheel-cnt", "back left"));
   if(ws.source != lookup_id("wheel-cnt", "front left") && ws.source != lookup_id("wheel-cnt", "front right") && ws.source != lookup_id("wheel-cnt", "back left") && ws.source != lookup_id("wheel-cnt", "back right"))
     return;
+// ROS_INFO("WC 2");
   if(!(ws.destination == 0xF0 || ws.destination == 0x00))
     return;
+// ROS_INFO("WC 3");
   if(ws.dport != 7)
     return;
+// ROS_INFO("WC 4");
   if(ws.data.size() != 23)
     return;
+// ROS_INFO("WC 5");
     
   itmp = ws.data[4] | ((ws.data[5]) << 8);
   ROS_INFO("ws data[4,5] = %d", itmp); 
@@ -793,6 +831,9 @@ int main(int argc, char **argv)
    * NodeHandle destructed will close down the node.
    */
   ros::NodeHandle n;
+  n.param("pid_p", pid_p, 5);
+  n.param("pid_i", pid_i, 25);
+  n.param("pid_d", pid_p, 16);
 
   /**
    * The subscribe() call is how you tell ROS that you want to receive messages
@@ -812,7 +853,7 @@ int main(int argc, char **argv)
 
   base_state_time = ros::Time::now();
   
-  idlookup = n.serviceClient<net_485net_id_handler::SearchID>("search_id", true);
+  idlookup = n.serviceClient<net_485net_id_handler::SearchID>("/search_id", true);
   idlookup.waitForExistence();
 
   ros::Subscriber cmd_sub = n.subscribe("cmd_vel", 1000, cmdCallback);

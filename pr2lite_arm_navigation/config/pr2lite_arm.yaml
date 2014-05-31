@@ -8,16 +8,15 @@ read_rate: 5
 write_rate: 5
 joints: {
 head_pan_joint:{id: 1, max_angle: 150, min_angle: -150, max_speed: 25},
-right_elbow_flex_joint:{id: 3, max_angle: 150, min_angle: -150, max_speed: 25},
+right_elbow_flex_joint:{id: 13, max_angle: 150, min_angle: -150, max_speed: 25},
 left_gripper_left_joint:{id: 5, max_angle: 150, min_angle: -150, max_speed: 25},
 left_wrist_roll_joint:{id: 6,max_angle: 150, min_angle: -150, max_speed: 25},
 left_gripper_right_joint:{id: 7,max_angle: 150, min_angle: -150, max_speed: 25},
 left_elbow_flex_joint: {id: 8, max_angle: 150, min_angle: -150, max_speed: 25},
-right_gripper_left_joint:{id: 10,max_angle: 150, min_angle: -150, max_speed: 25},
+velo_gripper_joint:{id: 10,max_angle: 150, min_angle: -150, max_speed: 25},
 left_wrist_flex_joint:{id: 11, max_angle: 150, min_angle: -150, max_speed: 25},
 lidar_tilt_joint:{id: 12, max_angle: 150, min_angle: -150, max_speed: 25},
-right_wrist_flex_joint:{id: 14, max_angle: 150, min_angle: -150, max_speed: 25},
-right_gripper_right_joint:{id: 15,max_angle: 150,min_angle: -150, max_speed: 25},
+right_wrist_flex_joint:{id: 4, max_angle: 150, min_angle: -150, max_speed: 25},
 right_wrist_roll_joint:{id: 18,max_angle: 150,min_angle: -150, max_speed: 25},
 right_elbow_pan_joint:{id: 19, max_angle: 150, min_angle: -150, max_speed: 25},
 left_elbow_pan_joint: {id: 21, max_angle: 150, min_angle: -150, max_speed: 25},
@@ -27,17 +26,16 @@ right_shoulder_pan_joint:{id: 17, max_angle: 150, min_angle: -150, max_speed: 25
 }
 
 dynamixels: {
-head_pan_joint:{id: 1, max_angle: 150, min_angle: -150, max_speed: 25},
-right_elbow_flex_joint:{id: 3, max_angle: 150, min_angle: -150, max_speed: 25},
+head_pan_joint:{id: 13, max_angle: 150, min_angle: -150, max_speed: 25},
+right_elbow_flex_joint:{id: 13, max_angle: 150, min_angle: -150, max_speed: 25},
 left_gripper_left_joint:{id: 5, max_angle: 150, min_angle: -150, max_speed: 25},
 left_wrist_roll_joint:{id: 6,max_angle: 150, min_angle: -150, max_speed: 25},
 left_gripper_right_joint:{id: 7,max_angle: 150, min_angle: -150, max_speed: 25},
 left_elbow_flex_joint: {id: 8, max_angle: 150, min_angle: -150, max_speed: 25},
-right_gripper_left_joint:{id: 10,max_angle: 150, min_angle: -150, max_speed: 25},
 left_wrist_flex_joint:{id: 11, max_angle: 150, min_angle: -150, max_speed: 25},
 lidar_tilt_joint:{id: 12, max_angle: 150, min_angle: -150, max_speed: 25},
-right_wrist_flex_joint:{id: 14, max_angle: 150, min_angle: -150, max_speed: 25},
-right_gripper_right_joint:{id: 15,max_angle: 150,min_angle: -150, max_speed: 25},
+right_wrist_flex_joint:{id: 4, max_angle: 150, min_angle: -150, max_speed: 25},
+velo_gripper_joint:{id: 15,max_angle: 150,min_angle: -150, max_speed: 25},
 right_wrist_roll_joint:{id: 18,max_angle: 150,min_angle: -150, max_speed: 25},
 right_elbow_pan_joint:{id: 19, max_angle: 150, min_angle: -150, max_speed: 25},
 left_elbow_pan_joint: {id: 21, max_angle: 150, min_angle: -150, max_speed: 25},
@@ -49,7 +47,6 @@ right_shoulder_pan_joint:{id: 17, max_angle: 150, min_angle: -150, max_speed: 25
 fudge_factor: {
 left_elbow_pan_joint: {value: 1.31922347758},
 left_elbow_flex_joint: {value: 1.51352771071},
-right_elbow_flex_joint: {value: 1.67715232809},
 head_tilt_joint: {value: 0.03}
 }
 

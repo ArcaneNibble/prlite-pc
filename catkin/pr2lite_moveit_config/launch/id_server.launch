@@ -1,0 +1,12 @@
+<launch>
+  <node pkg="pr2lite_moveit_config" name="search_id" type="id_server.py" output="screen" >
+<!--
+    <param name="~uc_config_file" value="$(find pr2lite_moveit_config)/config/uc.txt" /> 
+-->
+    <param name="~uc_config_file" value="/home/ros/catkin_ws/src/pr2lite_moveit_config/config/uc.txt" />
+  </node>
+  <!--
+-->
+
+</launch>
+

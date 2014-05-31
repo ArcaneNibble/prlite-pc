@@ -34,7 +34,8 @@ left_shoulder_pan_controller:
         min: 0
         max: 1023
     motor_slave:
-        id: 22
+        id: 29
+# real:        id: 22
 
 left_elbow_pan_controller:
     controller:
@@ -123,8 +124,8 @@ left_gripper_left_controller:
 right_shoulder_pan_controller:
     controller:
         package: dynamixel_controllers
-        module: joint_position_controller_dual_motor
-        type: JointPositionControllerDual
+        module: joint_position_controller
+        type: JointPositionController
     joint_name: right_shoulder_pan_joint
     joint_speed: .2
     motor_master:
@@ -132,14 +133,12 @@ right_shoulder_pan_controller:
         init: 512
         min: 0
         max: 1023
-    motor_slave:
-        id: 20
 
 right_elbow_flex_controller:
     controller:
         package: dynamixel_controllers
-        module: joint_position_controller_dual_motor
-        type: JointPositionControllerDual
+        module: joint_position_controller
+        type: JointPositionController
     joint_name: right_elbow_flex_joint
     joint_speed: .5
     motor_master:
@@ -147,8 +146,6 @@ right_elbow_flex_controller:
         init: 192
         min: 0
         max: 1023
-    motor_slave:
-        id: 3
 
 right_elbow_pan_controller:
     controller:
@@ -166,8 +163,8 @@ right_elbow_pan_controller:
 right_wrist_flex_controller: 
     controller:
         package: dynamixel_controllers
-        module: joint_position_controller_dual_motor
-        type: JointPositionControllerDual
+        module: joint_position_controller
+        type: JointPositionController
     joint_name: right_wrist_flex_joint 
     joint_speed: .5
     motor_master:
@@ -175,8 +172,6 @@ right_wrist_flex_controller:
         init: 512
         min: 0
         max: 1023
-    motor_slave:
-        id: 14
 
 right_wrist_roll_controller:
     controller:
@@ -191,31 +186,20 @@ right_wrist_roll_controller:
         min: 0
         max: 1023
 
-right_gripper_right_controller:
+velo_controller:
     controller:
         package: dynamixel_controllers
-        module: joint_position_controller
-        type: JointPositionController
-    joint_name: right_gripper_right_joint
+        module: joint_position_controller_dual_motor
+        type: JointPositionControllerDual
+    joint_name: velo_gripper
     joint_speed: .5
     motor:
-        id: 10
+        id: 28
         init: 600
         min: 0
         max: 1023
-
-right_gripper_left_controller:
-    controller:
-        package: dynamixel_controllers
-        module: joint_position_controller
-        type: JointPositionController
-    joint_name: right_gripper_left_joint
-    joint_speed: .5
-    motor:
-        id: 15
-        init: 400
-        min: 0
-        max: 1023
+    motor_slave:
+        id: 27
 
 head_tilt_controller:
     controller:
