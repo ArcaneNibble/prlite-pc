@@ -36,8 +36,8 @@
 <!--
   <include file="$(find pr2lite_moveit_config)/launch/torso_follow_controller.launch" />
   <node name="follow_joint_trajectory" pkg="pr2lite_moveit_config" type="follow_controller.py" ns="arm_controller" output="screen" />
--->
   <node name="statepub" pkg="robot_state_publisher" type="state_publisher" />
+-->
 
   <!-- Monitoring and Diagnostics -->
   <node pkg="maxwell_defs" type="laptop_battery.py" name="laptop_battery" />
@@ -45,9 +45,12 @@
       <rosparam command="load" file="$(find pr2lite_moveit_config)/config/pr2lite_diagnostics.yaml" />
   </node>
   <include file="$(find pr2lite_actuators)/launch/linact_server.launch" />
+<!--
   <node name="rob_st_pub" pkg="robot_state_publisher" type="state_publisher" >
       <param name="publish_frequency" value="5.0" />
   </node>
+-->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="rob_st_pub" />
 
   <include file="$(find pr2lite_moveit_config)/launch/fake_pub.launch" />
 

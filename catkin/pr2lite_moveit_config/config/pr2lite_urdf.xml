@@ -1493,7 +1493,7 @@ hokuyo side bar dimensions:
     <origin rpy="0 0 0" xyz="0.18 0 0"/>
     <parent link="left_forearm_link"/>
     <child link="left_wrist_flex_link"/>
-    <axis xyz="0 1 0"/>
+    <axis xyz="0 -1 0"/>
     <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <joint name="left_wrist_roll_joint" type="revolute">
@@ -1851,7 +1851,10 @@ hokuyo side bar dimensions:
     <!--
             <limit  lower="-1.04" upper="1.95" effort="300" velocity=".1" />
 -->
+    <limit effort="300" lower="0.32" upper="1.2" velocity=".23"/>
+<!-- upper-> 69.5 degrees.  Lower: 15.3 degrees 
     <limit effort="300" lower="0.268" upper="1.213" velocity=".23"/>
+-->
 <!--
     <safety_controller k_position="100" k_velocity="15.0" soft_lower_limit="-0.94719755" soft_upper_limit="1.872222"/>
 -->
@@ -1915,18 +1918,22 @@ hokuyo side bar dimensions:
     <parent link="right_forearm_link"/>
     <child link="right_wrist_flex_link"/>
     <axis xyz="0 -1 0"/>
+<!--
     <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
+-->
+    <limit effort="300" lower="-1.5" upper="1.5" velocity=".1"/>
   </joint>
   <joint name="right_wrist_roll_joint" type="revolute">
 <!--
     <origin rpy="0 0 0" xyz="0.07 0 0.023"/>
     <origin rpy="0 0 0" xyz="0.177 0 0.0 "/>
+    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
 -->
     <origin rpy="0 0 0" xyz="0.185 0 0.0 "/>
     <parent link="right_wrist_flex_link"/>
     <child link="right_wrist_roll_link"/>
     <axis xyz="1 0 0"/>
-    <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
+    <limit effort="300" lower="-2.2" upper="2.2" velocity=".1"/>
   </joint>
   <link name="right_wrist_roll_link">
     <inertial>
@@ -2303,8 +2310,11 @@ hokuyo side bar dimensions:
     <visual>
       <origin rpy="0 0 0" xyz="0.0889 0.0 0.0"/>
       <geometry>
+	<!-- ARD: .19 in length.  Was: -->
+        <!-- box size="0.1524  0.1016 0.0254" -->
         <!-- 2", 1", 7" -->
-        <box size="0.1524  0.1016 0.0254"/>
+        <!-- box size="0.19  0.1016 0.0254" -->
+        <box size="0.1524  0.1016 0.0254" />
       </geometry>
       <material name="Silver1">
         <color rgba="0 0.9 0.9 1.0"/>

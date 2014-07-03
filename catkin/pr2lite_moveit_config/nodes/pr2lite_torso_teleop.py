@@ -56,6 +56,7 @@ class JoyNode():
         self.body_mode = 6        # front top right (head mode)
         # self.head_mode = 7             # front top left
         self.no_mode = 0        # no mode set
+        self.prev_mode = 0        # no mode set
 
 #
 #       # BUTTON mapping
@@ -77,7 +78,7 @@ class JoyNode():
 #       # analog joysticks Axes; mode dependent
 #
         # joystick 
-        self.elbow_pan_joy = 1   # left Joy: 1 = up, -1 = down
+        self.elbow_pan_joy = 0   # left Joy: 1 = right, -1 = left
         self.elbow_flex_joy = 1  # left Joy: 1 = up, -1 = down
         self.wrist_flex_joy = 2  # right joy: 1 = up, 2 = down
         self.wrist_roll_joy = 3  # right joy: 1 = counter, 2 = clock
@@ -90,6 +91,8 @@ class JoyNode():
         self.pose_tuck   = 1   
         self.pose_untuck = 2   
         self.pose_stretch = 3
+        self.pose_decr = 8  # select
+        self.pose_incr = 9  # start
 
         self.cur_pos = 0
         self.new_pos = 0
@@ -178,8 +181,6 @@ class JoyNode():
 
         # self.cmd_vel = rospy.Publisher(base_controller, Twist)
 
-
-
         print "subscribe to joystick"
         self.joy = rospy.Subscriber('joy', Joy, self.joyCallback)
         print "joystick ready"
@@ -215,7 +216,7 @@ class JoyNode():
         if joy.buttons[self.right_arm_mode]:
             if self.prev_mode != self.right_arm_mode:
               self.prev_mode = self.right_arm_mode
-            self.new_pos = False
+            self.new_pos = 0
             if joy.buttons[self.pose_incr]:
               self.cur_pos = self.cur_pos + 1
               if self.cur_pos > self.pose_stretch:
@@ -231,84 +232,115 @@ class JoyNode():
             if self.new_pos and self.cur_pos == self.pose_move_aside:
               print "move_aside_right_arm"
               self.torso_lift_client.publish(0)
-              self.right_elbow_flex_client.publish(-1.57)
-              self.right_elbow_pan_client.publish(0)
-              self.right_shoulder_pan_client.publish(1.57)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_elbow_flex_joint' + '/value', 0.0)
+              self.right_elbow_flex_client.publish(-1.57 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_elbow_pan_joint' + '/value', 0.0)
+              self.right_elbow_pan_client.publish(0 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_shoulder_pan_joint' + '/value', 0.0)
+              self.right_shoulder_pan_client.publish(1.57 + fudge_value)
               self.right_shoulder_tilt_client.publish(1.213)
-              self.right_wrist_flex_client.publish(0)
-              self.right_wrist_roll_client.publish(0)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_wrist_flex_joint' + '/value', 0.0)
+              self.right_wrist_flex_client.publish(0 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_wrist_roll_joint' + '/value', 0.0)
+              self.right_wrist_roll_client.publish(0 + fudge_value)
             elif self.new_pos and self.cur_pos == self.pose_tuck:
               print "tuck_right_arm"
-              self.torso_lift_client.publish(0)
-              self.right_elbow_flex_client.publish(-1.57)
-              self.right_elbow_pan_client.publish(0)
-              self.right_shoulder_pan_client.publish(0)
-              self.right_shoulder_tilt_client.publish(1.213)
-              self.right_wrist_flex_client.publish(0)
-              self.right_wrist_roll_client.publish(0)
+              self.torso_lift_client.publish(0 )
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_elbow_flex_joint' + '/value', 0.0)
+              self.right_elbow_flex_client.publish(-1.57 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_elbow_pan_joint' + '/value', 0.0)
+              self.right_elbow_pan_client.publish(0 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_shoulder_pan_joint' + '/value', 0.0)
+              self.right_shoulder_pan_client.publish(0 + fudge_value)
+              self.right_shoulder_tilt_client.publish(1.213 )
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_wrist_flex_joint' + '/value', 0.0)
+              self.right_wrist_flex_client.publish(0 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_wrist_roll_joint' + '/value', 0.0)
+              self.right_wrist_roll_client.publish(0 + fudge_value)
             elif self.new_pos and self.cur_pos == self.pose_untuck:
               print "untuck_right_arm"
               self.torso_lift_client.publish(0)
-              self.right_elbow_flex_client.publish(-1.57)
-              self.right_elbow_pan_client.publish(0)
-              self.right_shoulder_pan_client.publish(0)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_elbow_flex_joint' + '/value', 0.0)
+              self.right_elbow_flex_client.publish(-1.57 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_elbow_pan_joint' + '/value', 0.0)
+              self.right_elbow_pan_client.publish(0 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_shoulder_pan_joint' + '/value', 0.0)
+              self.right_shoulder_pan_client.publish(0 + fudge_value)
               self.right_shoulder_tilt_client.publish(.27)
-              self.right_wrist_flex_client.publish(1.57)
-              self.right_wrist_roll_client.publish(0)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_wrist_flex_joint' + '/value', 0.0)
+              self.right_wrist_flex_client.publish(1.57 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_wrist_roll_joint' + '/value', 0.0)
+              self.right_wrist_roll_client.publish(0 + fudge_value)
             elif self.new_pos and self.cur_pos == self.pose_stretch:
               print "stretch_right_arm"
               self.torso_lift_client.publish(0.3)
-              self.right_elbow_flex_client.publish(0)
-              self.right_elbow_pan_client.publish(0)
-              self.right_shoulder_pan_client.publish(0)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_elbow_flex_joint' + '/value', 0.0)
+              self.right_elbow_flex_client.publish(0 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_elbow_pan_joint' + '/value', 0.0)
+              self.right_elbow_pan_client.publish(0 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_shoulder_pan_joint' + '/value', 0.0)
+              self.right_shoulder_pan_client.publish(0 + fudge_value)
               self.right_shoulder_tilt_client.publish(1.213)
-              self.right_wrist_flex_client.publish(0)
-              self.right_wrist_roll_client.publish(0)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_wrist_flex_joint' + '/value', 0.0)
+              self.right_wrist_flex_client.publish(0 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_wrist_roll_joint' + '/value', 0.0)
+              self.right_wrist_roll_client.publish(0 + fudge_value)
             if self.new_pos > 0:
               self.new_pos = self.new_pos - 1
             threshold = 0.1
-	    if math.fabs(joy.axes[self.elbow_pan_joy]) > threshold or math.fabs(joy.axes[self.elbow_flex_joy]) > threshold or math.fabs(joy.axes[self.wrist_flex_joy]) > threshold or math.fabs(joy.axes[self.wrist_roll_joy]) > threshold:
-              print "joystick right arm control"
-            else:
-              return
-            joint_delta = .15
-            if joy.axes[self.wrist_roll_joy]:
-              right_wrist_roll_pos = self.get_joint_state('right_wrist_roll_joint')
-              right_wrist_roll_pos = right_wrist_roll_pos - joy.axes[self.wrist_roll_joy]*joint_delta
-              self.right_wrist_roll_client.publish(right_wrist_roll_pos)
-            if joy.axes[self.wrist_flex_joy] != 0:
-              right_wrist_flex_pos = self.get_joint_state('right_wrist_flex_joint')
-              right_wrist_flex_pos = right_wrist_flex_pos - joy.axes[self.wrist_flex]*joint_delta
-              self.right_wrist_flex_client.publish(right_wrist_flex_pos)
-            if joy.axes[self.elbow_pan_joy] != 0:
-              right_elbow_pan_pos = self.get_joint_state('right_elbow_pan_joint')
-              right_elbow_pan_pos = right_elbow_pan_pos - joy.axes[self.elbow_pan_joy]*joint_delta
-              self.right_elbow_pan_client.publish(right_elbow_pan_pos)
-            if joy.axes[self.elbow_flex_joy] != 0:
-              right_elbow_flex_pos = self.get_joint_state('right_elbow_flex_joint')
-              right_elbow_flex_pos = right_elbow_flex_pos - joy.axes[self.elbow_flex_joy]*joint_delta
-              self.right_elbow_flex_client.publish(right_elbow_flex_pos)
 
-            if joy.axes[self.shoulder_tilt_crs] != 0:
-              right_shoulder_tilt_pos = self.get_joint_state('shoulder_tilt_joint')
-              right_shoulder_tilt_pos = right_shoulder_tilt_pos - joy.axes[self.shoulder_tilt_crs]*joint_delta
-              self.right_shoulder_tilt_client.publish(right_shoulder_tilt_pos)
-            if joy.axes[self.shoulder_pan_crs] != 0:
-              right_shoulder_pan_pos = self.get_joint_state('shoulder_pan_joint')
-              right_shoulder_pan_pos = right_shoulder_pan_pos - joy.axes[self.shoulder_pan_crs]*joint_delta
+
+#	    if math.fabs(joy.axes[self.elbow_pan_joy]) > threshold or math.fabs(joy.axes[self.elbow_flex_joy]) > threshold or math.fabs(joy.axes[self.wrist_flex_joy]) > threshold or math.fabs(joy.axes[self.wrist_roll_joy]) > threshold or math.fabs(joy.axes[self.shoulder_pan_joy]) > threshold or math.fabs(joy.axes[self.shoulder_tilt_joy]) > threshold or math.fabs(joy.axes[self.wrist_flex_joy]) > threshold or math.fabs(joy.axes[self.wrist_roll_joy]) > threshold:
+#              print "joystick right arm control"
+#            else:
+#              return
+            joint_delta = .15
+            if math.fabs(joy.axes[self.wrist_roll_joy]) > threshold:
+              right_wrist_roll_pos = self.get_joint_state('right_wrist_roll_joint')
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_wrist_roll_joint' + '/value', 0.0)
+
+              right_wrist_roll_pos = right_wrist_roll_pos - joy.axes[self.wrist_roll_joy]*joint_delta + fudge_value
+              self.right_wrist_roll_client.publish(right_wrist_roll_pos)
+            if math.fabs(joy.axes[self.wrist_flex_joy]) > threshold:
+              right_wrist_flex_pos = self.get_joint_state('right_wrist_flex_joint')
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_wrist_flex_joint' + '/value', 0.0)
+              right_wrist_flex_pos = right_wrist_flex_pos - joy.axes[self.wrist_flex_joy]*joint_delta + fudge_value
+              self.right_wrist_flex_client.publish(right_wrist_flex_pos)
+            if math.fabs(joy.axes[self.elbow_pan_joy]) > threshold:
+              right_elbow_pan_pos = self.get_joint_state('right_elbow_pan_joint')
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_elbow_pan_joint' + '/value', 0.0)
+              right_elbow_pan_pos = right_elbow_pan_pos - joy.axes[self.elbow_pan_joy]*joint_delta + fudge_value
+              self.right_elbow_pan_client.publish(right_elbow_pan_pos)
+            if math.fabs(joy.axes[self.elbow_flex_joy]) > threshold:
+              right_elbow_flex_pos = self.get_joint_state('right_elbow_flex_joint')
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_elbow_flex_joint' + '/value', 0.0)
+              print "right_elbow_flex old pos " + str(right_elbow_flex_pos)
+              print "right_elbow_flex fudge value " + str(fudge_value)
+              right_elbow_flex_pos = right_elbow_flex_pos - joy.axes[self.elbow_flex_joy]*joint_delta + fudge_value
+              self.right_elbow_flex_client.publish(right_elbow_flex_pos)
+              print "right_elbow_flex new pos " + str(right_elbow_flex_pos)
+
+            if math.fabs(joy.axes[self.shoulder_tilt_crs]) > threshold:
+              right_shoulder_tilt_pos = self.get_joint_state('right_shoulder_tilt_joint')
+              right_elbow_pan_pos = right_elbow_pan_pos - joy.axes[self.elbow_pan_joy]*joint_delta
+              right_shoulder_tilt_pos = right_shoulder_tilt_pos - joy.axes[self.shoulder_tilt_crs]*joint_delta 
+            if math.fabs(joy.axes[self.shoulder_pan_crs]) > threshold:
+              right_shoulder_pan_pos = self.get_joint_state('right_shoulder_pan_joint')
+              fudge_value = rospy.get_param('~fudge_factor/' + 'right_shoulder_pan_joint' + '/value', 0.0)
+              right_shoulder_pan_pos = right_shoulder_pan_pos - joy.axes[self.shoulder_pan_crs]*joint_delta + fudge_value
               self.right_shoulder_pan_client.publish(right_shoulder_pan_pos)
 
-            if joy.buttons[self.torso_up_btn]:
+            if math.fabs(joy.buttons[self.torso_up_btn]) > threshold:
               torso_pos = self.get_joint_state('torso_lift_joint')
               if torso_pos < 2.95:
                 torso_pos = torso_pos + .05
               self.torso_lift_client.publish(torso_pos)
-            if joy.buttons[self.torso_down_btn]:
+            if math.fabs(joy.buttons[self.torso_down_btn]) > threshold:
               torso_pos = self.get_joint_state('torso_lift_joint')
               if torso_pos > .05:
                 torso_pos = torso_pos - .05
               self.torso_lift_client.publish(torso_pos)
-            if joy.buttons[self.gripper_open_btn]:
+            if math.fabs(joy.buttons[self.gripper_open_btn]) > threshold:
               velo_delta = .005
               self.velo_gripper_pos = self.velo_gripper_pos + velo_delta
               if self.velo_gripper_pos > self.max_velo_gripper_pos:
@@ -319,7 +351,7 @@ class JoyNode():
               goal.command.max_effort = 1000
               self.velo_gripper_client.send_goal(goal)
               self.velo_gripper_client.wait_for_result(rospy.Duration(1.0))
-            if joy.buttons[self.gripper_close]:
+            if math.fabs(joy.buttons[self.gripper_close_btn]) > threshold:
               velo_delta = .005
               self.velo_gripper_pos = self.velo_gripper_pos - velo_delta
               if self.velo_gripper_pos < 0:
@@ -332,6 +364,7 @@ class JoyNode():
               self.velo_gripper_client.wait_for_result(rospy.Duration(1.0))
 
         elif joy.buttons[self.left_arm_mode]:
+                
             if self.prev_mode != self.left_arm_mode:
               self.prev_mode = self.left_arm_mode
             self.new_pos = 0
@@ -344,29 +377,121 @@ class JoyNode():
               self.cur_pos = self.cur_pos - 1
               if self.cur_pos < self.pose_move_aside:
                 self.cur_pos = self.pose_stretch
-              self.new_pos = True
+              self.new_pos = 5
             print "new pos " + str(self.new_pos)
             # TODO: have head follow arm?
             if self.new_pos and self.cur_pos == self.pose_move_aside:
               print "move_aside_left_arm"
-              self.left_arm_group.set_named_target("move_aside_left_arm")
-              # planned = self.left_arm_group.plan()
+              self.torso_lift_client.publish(0)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_elbow_flex_joint' + '/value', 0.0)
+              self.left_elbow_flex_client.publish(-1.57 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_elbow_pan_joint' + '/value', 0.0)
+              self.left_elbow_pan_client.publish(0 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_shoulder_pan_joint' + '/value', 0.0)
+              self.left_shoulder_pan_client.publish(-1.57 + fudge_value)
+              self.left_shoulder_tilt_client.publish(1.213)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_wrist_flex_joint' + '/value', 0.0)
+              self.left_wrist_flex_client.publish(0 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_wrist_roll_joint' + '/value', 0.0)
+              self.left_wrist_roll_client.publish(0 + fudge_value)
             elif self.new_pos and self.cur_pos == self.pose_tuck:
               print "tuck_left_arm"
-              self.left_arm_group.set_named_target("tuck_left_arm")
-              # planned = self.left_arm_group.plan()
+              self.torso_lift_client.publish(0 )
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_elbow_flex_joint' + '/value', 0.0)
+              self.left_elbow_flex_client.publish(-1.57 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_elbow_pan_joint' + '/value', 0.0)
+              self.left_elbow_pan_client.publish(0 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_shoulder_pan_joint' + '/value', 0.0)
+              self.left_shoulder_pan_client.publish(0 + fudge_value)
+              self.left_shoulder_tilt_client.publish(1.213 )
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_wrist_flex_joint' + '/value', 0.0)
+              self.left_wrist_flex_client.publish(0 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_wrist_roll_joint' + '/value', 0.0)
+              self.left_wrist_roll_client.publish(0 + fudge_value)
             elif self.new_pos and self.cur_pos == self.pose_untuck:
               print "untuck_left_arm"
-              self.left_arm_group.set_named_target("untuck_left_arm")
-              # planned = self.left_arm_group.plan()
+              self.torso_lift_client.publish(0)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_elbow_flex_joint' + '/value', 0.0)
+              self.left_elbow_flex_client.publish(-1.57 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_elbow_pan_joint' + '/value', 0.0)
+              self.left_elbow_pan_client.publish(0 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_shoulder_pan_joint' + '/value', 0.0)
+              self.left_shoulder_pan_client.publish(0 + fudge_value)
+              self.left_shoulder_tilt_client.publish(.27)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_wrist_flex_joint' + '/value', 0.0)
+              self.left_wrist_flex_client.publish(1.57 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_wrist_roll_joint' + '/value', 0.0)
+              self.left_wrist_roll_client.publish(0 + fudge_value)
             elif self.new_pos and self.cur_pos == self.pose_stretch:
               print "stretch_left_arm"
-              self.left_arm_group.set_named_target("stretch_left_arm")
-              # planned = self.left_arm_group.plan()
-                
-            # TODO: Joystick Arm control
-            #
-            if joy.buttons[self.gripper_open]:
+              self.torso_lift_client.publish(0.3)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_elbow_flex_joint' + '/value', 0.0)
+              self.left_elbow_flex_client.publish(0 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_elbow_pan_joint' + '/value', 0.0)
+              self.left_elbow_pan_client.publish(0 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_shoulder_pan_joint' + '/value', 0.0)
+              self.left_shoulder_pan_client.publish(0 + fudge_value)
+              self.left_shoulder_tilt_client.publish(1.213)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_wrist_flex_joint' + '/value', 0.0)
+              self.left_wrist_flex_client.publish(0 + fudge_value)
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_wrist_roll_joint' + '/value', 0.0)
+              self.left_wrist_roll_client.publish(0 + fudge_value)
+            if self.new_pos > 0:
+              self.new_pos = self.new_pos - 1
+            threshold = 0.1
+
+
+#	    if math.fabs(joy.axes[self.elbow_pan_joy]) > threshold or math.fabs(joy.axes[self.elbow_flex_joy]) > threshold or math.fabs(joy.axes[self.wrist_flex_joy]) > threshold or math.fabs(joy.axes[self.wrist_roll_joy]) > threshold or math.fabs(joy.axes[self.shoulder_pan_joy]) > threshold or math.fabs(joy.axes[self.shoulder_tilt_joy]) > threshold or math.fabs(joy.axes[self.wrist_flex_joy]) > threshold or math.fabs(joy.axes[self.wrist_roll_joy]) > threshold:
+#              print "joystick left arm control"
+#            else:
+#              return
+            joint_delta = .15
+            if math.fabs(joy.axes[self.wrist_roll_joy]) > threshold:
+              left_wrist_roll_pos = self.get_joint_state('left_wrist_roll_joint')
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_wrist_roll_joint' + '/value', 0.0)
+
+              left_wrist_roll_pos = left_wrist_roll_pos - joy.axes[self.wrist_roll_joy]*joint_delta + fudge_value
+              self.left_wrist_roll_client.publish(left_wrist_roll_pos)
+            if math.fabs(joy.axes[self.wrist_flex_joy]) > threshold:
+              left_wrist_flex_pos = self.get_joint_state('left_wrist_flex_joint')
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_wrist_flex_joint' + '/value', 0.0)
+              left_wrist_flex_pos = left_wrist_flex_pos - joy.axes[self.wrist_flex_joy]*joint_delta + fudge_value
+              self.left_wrist_flex_client.publish(left_wrist_flex_pos)
+            if math.fabs(joy.axes[self.elbow_pan_joy]) > threshold:
+              left_elbow_pan_pos = self.get_joint_state('left_elbow_pan_joint')
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_elbow_pan_joint' + '/value', 0.0)
+              left_elbow_pan_pos = left_elbow_pan_pos - joy.axes[self.elbow_pan_joy]*joint_delta + fudge_value
+              self.left_elbow_pan_client.publish(left_elbow_pan_pos)
+            if math.fabs(joy.axes[self.elbow_flex_joy]) > threshold:
+              left_elbow_flex_pos = self.get_joint_state('left_elbow_flex_joint')
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_elbow_flex_joint' + '/value', 0.0)
+              print "left_elbow_flex old pos " + str(left_elbow_flex_pos)
+              print "left_elbow_flex fudge value " + str(fudge_value)
+              left_elbow_flex_pos = left_elbow_flex_pos - joy.axes[self.elbow_flex_joy]*joint_delta + fudge_value
+              self.left_elbow_flex_client.publish(left_elbow_flex_pos)
+              print "left_elbow_flex new pos " + str(left_elbow_flex_pos)
+
+            if math.fabs(joy.axes[self.shoulder_tilt_crs]) > threshold:
+              left_shoulder_tilt_pos = self.get_joint_state('left_shoulder_tilt_joint')
+              left_elbow_pan_pos = left_elbow_pan_pos - joy.axes[self.elbow_pan_joy]*joint_delta
+              left_shoulder_tilt_pos = left_shoulder_tilt_pos - joy.axes[self.shoulder_tilt_crs]*joint_delta 
+            if math.fabs(joy.axes[self.shoulder_pan_crs]) > threshold:
+              left_shoulder_pan_pos = self.get_joint_state('left_shoulder_pan_joint')
+              fudge_value = rospy.get_param('~fudge_factor/' + 'left_shoulder_pan_joint' + '/value', 0.0)
+              left_shoulder_pan_pos = left_shoulder_pan_pos - joy.axes[self.shoulder_pan_crs]*joint_delta + fudge_value
+              self.left_shoulder_pan_client.publish(left_shoulder_pan_pos)
+
+            if math.fabs(joy.buttons[self.torso_up_btn]) > threshold:
+              torso_pos = self.get_joint_state('torso_lift_joint')
+              if torso_pos < 2.95:
+                torso_pos = torso_pos + .05
+              self.torso_lift_client.publish(torso_pos)
+            if math.fabs(joy.buttons[self.torso_down_btn]) > threshold:
+              torso_pos = self.get_joint_state('torso_lift_joint')
+              if torso_pos > .05:
+                torso_pos = torso_pos - .05
+              self.torso_lift_client.publish(torso_pos)
+            if joy.buttons[self.gripper_open_btn]:
               left_gripper_delta = .005
               self.left_gripper_pos = self.left_gripper_pos + left_gripper_delta
               if self.left_gripper_pos > self.max_left_gripper_pos:
@@ -377,7 +502,7 @@ class JoyNode():
               goal.command.max_effort = 1000
               self.left_gripper_client.send_goal(goal)
               self.left_gripper_client.wait_for_result(rospy.Duration(1.0))
-            if joy.buttons[self.gripper_close]:
+            if joy.buttons[self.gripper_close_btn]:
               left_gripper_delta = .005
               self.left_gripper_pos = self.left_gripper_pos - left_gripper_delta
               if self.left_gripper_pos < 0:
@@ -388,9 +513,9 @@ class JoyNode():
               goal.command.max_effort = 1000
               self.left_gripper_client.send_goal(goal)
               self.left_gripper_client.wait_for_result(rospy.Duration(1.0))
-        elif joy.buttons[self.head_mode]:
-            if self.prev_mode != self.head_mode:
-              self.prev_mode = self.head_mode
+        elif joy.buttons[self.body_mode]:
+            if self.prev_mode != self.body_mode:
+              self.prev_mode = self.body_mode
 
             level_head = 1
             head_mv_tm = .75
@@ -414,11 +539,11 @@ class JoyNode():
               print "cur head tilt %f !"%cur_head_tilt
               print "cur head pan %f !"%cur_head_pan
               threshold = 0.1
-              # if math.fabs(joy.axes[self.head_pan]) > threshold or math.fabs(joy.axes[self.head_tilt]) > threshold:
+              # if math.fabs(joy.axes[self.head_pan_joy]) > threshold or math.fabs(joy.axes[self.head_tilt]) > threshold:
               if True:
                 # 3.14 / 2 = 1.57
-                new_head_pan = joy.axes[self.head_pan] - 3.14
-                new_head_tilt = joy.axes[self.head_tilt] - 1.57
+                new_head_pan = joy.axes[self.head_pan_joy] - 3.14
+                new_head_tilt = joy.axes[self.head_tilt_joy] - 1.57
                 self.phg.target.header.frame_id = 'head_pan_link'
                 self.phg.pointing_frame = "kinect_depth_optical_frame";
                 self.phg.target.point.x = 5* math.sin(new_head_tilt) * math.cos(new_head_pan)
@@ -526,8 +651,6 @@ class JoyNode():
               self.head_client.send_goal(self.phg)
               self.head_client.wait_for_result()
 
-        elif joy.buttons[self.body_mode]:
-          print "body mode"
         if self.head_pos == self.head_left_hand or self.head_pos == self.head_right_hand:
           self.head_client.send_goal(self.phg)
           self.head_client.wait_for_result()

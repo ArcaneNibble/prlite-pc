@@ -2,7 +2,10 @@
 
   <include file="$(find pr2lite_moveit_config)/launch/planning_context.launch" />
 
+<!-- ARD
   <arg name="debug" default="false" />
+-->
+  <arg name="debug" default="true" />
   <arg unless="$(arg debug)" name="launch_prefix" value="" />
   <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
 

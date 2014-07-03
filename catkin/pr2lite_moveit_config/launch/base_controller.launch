@@ -2,9 +2,8 @@
 <launch>
   <node pkg="prlite_base" type="base_controller" name="base_controller" output="screen">
      <remap from="/cmd_vel" to="base_controller/command"/>
-     <param name="pid_p" value="5" />
-     <param name="pid_i" value="25" />
-     <param name="pid_d" value="16" />
-
+     <param name="pid_p" value="11" /> 
+     <param name="pid_i" value="6" /> 
+     <param name="pid_d" value="0" /> 
   </node>
 </launch>

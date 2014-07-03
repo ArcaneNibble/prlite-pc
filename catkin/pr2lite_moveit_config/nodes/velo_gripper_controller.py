@@ -100,13 +100,21 @@ class VeloGripperController:
         #   self.iter = 25
         # velopos = self.iter * (2.618 / 25)
         # velopos = (2.618 )
-        # velopos = 2.618 - self.iter * (5.36 / 50) 
+        # velopos = 2.618 - self.iter * (5.236 / 50) 
         # velopos = -2.618
         # velopos = 2.3 is max
         # velopos = 0
         max_width = .125
-        max_rad = 2.3
+        real_max_rad = 2.3
+        max_rad = 2.0
         velopos = (1 - msg.command.position/max_width) * max_rad
+        # chessboard open
+        if msg.command.position == .05:
+           velopos = 1.0
+        # chessboard close
+        if msg.command.position == .00:
+           velopos = 2.1
+           
         # print "Velo pos " + str(self.iter) + ' is ' + str(velopos) 
         # self.speed = .5
         self.torque = 300

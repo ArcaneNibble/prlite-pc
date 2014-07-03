@@ -35,7 +35,7 @@ controller_list:
     action_ns: gripper_action
     default: true
     joints:
-      - velo_gripper_joint
+      - velo_gripper_ax12_joint
 
 
 

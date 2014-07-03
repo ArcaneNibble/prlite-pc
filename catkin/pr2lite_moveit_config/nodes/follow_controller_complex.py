@@ -201,6 +201,8 @@ class FollowController:
           rospy.loginfo( self.execute_positions)
           self.trajectory_goal.append(goal)
           rospy.loginfo('follow_controller: appending goal')
+        while len(self.trajectory_goal) > 0:
+          rospy.sleep(0.5)
         self.server.set_succeeded()
 
     def getJointState(self, msg):
@@ -211,12 +213,12 @@ class FollowController:
           for joint_state_name in msg.name:
             if joint == joint_state_name:
               tolerance = .01
-              if joint == 'right_elbow_flex_joint' or joint == 'right_shoulder_pan_joint' or joint == 'left_elbow_flex_joint' or joint == 'leftt_shoulder_pan_joint' or joint == 'left_wrist_flex_joint' or joint == 'right_wrist_roll_joint':
+              if joint == 'right_elbow_pan_joint' or joint == 'right_elbow_flex_joint' or joint == 'right_shoulder_pan_joint' or joint == 'left_elbow_flex_joint' or joint == 'left_shoulder_pan_joint' or joint == 'left_wrist_flex_joint' or joint == 'right_wrist_roll_joint':
                 tolerance = .1
               if self.current_pos[i] == msg.position[j]:
                 # give it a second to get started
                 tolerance = .04 * max(self.current_pos_cnt[i] - 4, 1)
-                if joint == 'right_elbow_flex_joint' or joint == 'right_shoulder_pan_joint' or joint == 'left_elbow_flex_joint' or joint == 'leftt_shoulder_pan_joint' or joint == 'left_wrist_flex_joint' or joint == 'right_wrist_roll_joint':
+                if joint == 'right_elbow_pan_joint' or joint == 'right_elbow_flex_joint' or joint == 'right_shoulder_pan_joint' or joint == 'left_elbow_flex_joint' or joint == 'left_shoulder_pan_joint' or joint == 'left_wrist_flex_joint' or joint == 'right_wrist_roll_joint':
                   tolerance = .1 * max(self.current_pos_cnt[i] - 1, 1)
                 self.current_pos_cnt[i] += 1
               else:
@@ -230,7 +232,9 @@ class FollowController:
                   # IndexError: list index out of range
                   rospy.loginfo("desired index k %d" % k)
                   # was abs(self.execute_positions[k] - msg.position[j]) 
-                  if abs(desired- msg.position[j]) < tolerance or joint == 'left_upper_arm_hinge_joint' or joint == 'right_upper_arm_hinge_joint' or joint == 'left_shoulder_tilt_joint' or joint == 'right_shoulder_tilt_joint' or (joint == 'torso_lift_joint' and abs(desired - msg.position[j]) < .06):
+                  # if abs(desired- msg.position[j]) < tolerance or joint == 'left_upper_arm_hinge_joint' or joint == 'right_upper_arm_hinge_joint' or joint == 'left_shoulder_tilt_joint' or joint == 'right_shoulder_tilt_joint' or (joint == 'torso_lift_joint' and abs(desired - msg.position[j]) < .06):
+                  # ARD: try to handle shoulder tilt joints like dynamixel joints
+                  if abs(desired- msg.position[j]) < tolerance or joint == 'left_upper_arm_hinge_joint' or joint == 'right_upper_arm_hinge_joint' or (joint == 'torso_lift_joint' and abs(desired - msg.position[j]) < .06):
                     # close enough to consider the goal met
                     if self.current_pos_cnt[i] - 5 > 0:
                       rospy.loginfo('Stall Warning: ' + joint + ' cur_pos:' + str (msg.position[j]) + " desired_pos " + str(self.execute_positions[k]))

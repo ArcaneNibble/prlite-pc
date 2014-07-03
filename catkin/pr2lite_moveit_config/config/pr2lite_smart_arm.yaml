@@ -251,9 +251,9 @@ left_wrist_flex_controller:
     joint_name: left_wrist_flex_joint
     joint_speed: .5
     motor_master:
-        id: 9
+        id: 11
         init: 512
         min: 0
         max: 1023
     motor_slave:
-        id: 11
+        id: 9
