@@ -1,6 +1,7 @@
 #! /usr/bin/python
 import roslib
-roslib.load_manifest('pr2_position_scripts')
+# roslib.load_manifest('pr2_position_scripts')
+roslib.load_manifest('pr2lite_moveit_config')
 
 import rospy
 import actionlib
@@ -15,7 +16,7 @@ client.wait_for_server()
 
 g = PointHeadGoal()
 g.target.header.frame_id = 'base_link'
-g.target.point.x = 0.6
+g.target.point.x = 0.75
 g.target.point.y = 0.0
 g.target.point.z = 0.0
 g.pointing_frame = "kinect_depth_optical_frame";

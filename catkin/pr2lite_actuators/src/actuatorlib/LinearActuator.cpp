@@ -100,6 +100,7 @@ void LinearActuator::publish_dyna_state(int cur_pos)
 #define HYPOTENUSE (14.968)    /* Len from bottom LinAct hole to Shoulder Joint
     // double angle = (1.44129 - pow(acos((length + 9.9), 2.0) - 256.0)/(-162.2));
 
+    angle = angle + .1;   // ard: attempt to match kinect
     // ROS_INFO("current length of \"%s\" dynamixel: %lf radians %d cur_pos", m_name.c_str(), angle, cur_pos);
 
     // Bound the value

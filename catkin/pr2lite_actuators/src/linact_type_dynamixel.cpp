@@ -39,7 +39,9 @@ namespace pr2lite
 
                     // Calculate from the angle the length of the actuator, 
                     // then the number to sent to it
-                    length = sqrt(-162.2 * cos(1.44129 - command->data) + 256.0)
+                    // length = sqrt(-162.2 * cos(1.44129 - command->data) + 256.0)
+                    //         - m_base_length;
+                    length = sqrt(-162.2 * cos(1.44129 - command->data + .1) + 256.0)
                              - m_base_length;
                     length *= (1000.0f / m_extent);
 

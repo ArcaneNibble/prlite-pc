@@ -41,7 +41,8 @@
 // const double X_MULT = 7.51913117; // speed is ticks per interval and interval is 1/10 sec, so should be WHEEL_TICKS_PER_METER / 10
 const double X_MULT = 7.51913117; // speed is ticks per interval and interval is 1/10 sec, so should be WHEEL_TICKS_PER_METER / 10
 // const double X_MULT = 1.25318853;
-const double TH_MULT = 5; // tuned manually (is about right)
+// const double TH_MULT = 5; // tuned manually (is about right)
+const double TH_MULT = 15; // tuned manually (is about right)
 #define INCHES_TO_METERS 0.0254
 #define linact_len(x) (x * 4.0 / 1000.0 * INCHES_TO_METERS)
 
@@ -510,6 +511,7 @@ static void initOneWheelPID(unsigned char id, int32_t p, int32_t i, int32_t d, u
   while((wheel_debug_bits[id] & 4) == 0 && w > 0);
   // while(false);
   ROS_INFO("WC 1 : %d %d %d %d", lookup_id("wheel-cnt", "front left"), lookup_id("wheel-cnt", "front right") , lookup_id("wheel-cnt", "back right"), lookup_id("wheel-cnt", "back left"));
+  ROS_INFO("pid_p %d pid_i %d pid_p %d\n", pid_p, pid_i, pid_d);
 }
 
 static void initWheelPID(void)
@@ -534,15 +536,18 @@ K_p 	Decrease 	Increase 	Small change 	Decrease 	Degrade
 K_i 	Decrease 	Increase 	Increase 	Eliminate 	Degrade
 K_d 	Minor change 	Decrease 	Decrease 	No effect in theory 	Improve if K_d small
   */ 
+  int16_t p = pid_p;
+  int16_t i = pid_i;
+  int16_t d = pid_d;
 
   //front left
-  initOneWheelPID(0, pid_p << 16, pid_i << 16, pid_d << 16, 1);
+  initOneWheelPID(0, p << 16, i << 16, d << 16, 1);
   //front right
-  initOneWheelPID(1, pid_p << 16, pid_i << 16, pid_d << 16, 255);
+  initOneWheelPID(1, p << 16, i << 16, d << 16, 255);
   //back left
-  initOneWheelPID(2, pid_p << 16, pid_i << 16, pid_d << 16, 1);
+  initOneWheelPID(2, p << 16, i << 16, d << 16, 1);
   //back right
-  initOneWheelPID(3, pid_p << 16, pid_i << 16, pid_d << 16, 255);
+  initOneWheelPID(3, p << 16, i << 16, d << 16, 255);
 }
 
 static void multicastSetWheelSpeeds(int16_t fl, int16_t fr, int16_t bl, int16_t br)
@@ -829,11 +834,8 @@ int main(int argc, char **argv)
    * NodeHandle is the main access point to communications with the ROS system.
    * The first NodeHandle constructed will fully initialize this node, and the last
    * NodeHandle destructed will close down the node.
-   */
+  */
   ros::NodeHandle n;
-  n.param("pid_p", pid_p, 5);
-  n.param("pid_i", pid_i, 25);
-  n.param("pid_d", pid_p, 16);
 
   /**
    * The subscribe() call is how you tell ROS that you want to receive messages
@@ -863,6 +865,9 @@ int main(int argc, char **argv)
   cmd_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
   linact_pub = n.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
   
+  n.param("/base_controller/pid_p", pid_p, 11);
+  n.param("/base_controller/pid_i", pid_i, 6);
+  n.param("/base_controller/pid_d", pid_d, 0);
   initWheelPID();
 
   /**

@@ -282,7 +282,26 @@ class FollowController:
             rospy.loginfo('ERROR: no match for ' + exec_joint)
             return
           self.current_pos_cnt[match] = 0
-          desired = self.execute_positions[k] + self.fudge_value[match]
+          if  exec_joint == 'right_elbow_flex_joint':
+            # Shoulder mimic jnt to elbow joint compensation for gravity
+            jnt_fudge = 0
+            if self.execute_positions[k] > -.4 and self.execute_positions[k] < .4:
+              jnt_fudge = -.03
+              if self.execute_positions[k] > -.3 and self.execute_positions[k] < .3:
+                jnt_fudge = -.06
+                if self.execute_positions[k] > -.2 and self.execute_positions[k] < .2:
+                  jnt_fudge = -.09
+                  if self.execute_positions[k] > -.1 and self.execute_positions[k] < .1:
+                    jnt_fudge = -.12
+
+              # jnt_fudge = .15 * (.5 - self.execute_positions[k])
+              # jnt_fudge = -.08
+            # jnt_fudge = -.1
+            rospy.loginfo('gravity compensation = ' + str(jnt_fudge))
+          else:
+            jnt_fudge = 0
+          # jnt_fudge = 0
+          desired = self.execute_positions[k] + self.fudge_value[match] + jnt_fudge
           #desired = self.execute_positions[k] 
           endtime = start + self.trajectory_goal[0].trajectory.points[self.cur_point].time_from_start
           endsecs = endtime.to_sec()

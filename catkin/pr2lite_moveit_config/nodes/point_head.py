@@ -138,6 +138,7 @@ class PointHeadNode():
 
     def transform_target_point(self, target):
         # based on pr2_head_action.cpp
+        # http://docs.ros.org/diamondback/api/pr2_head_action/html/pr2__head__action_8cpp_source.html
         pan_ref_frame = self.head_pan_frame
         tilt_ref_frame = self.head_tilt_frame
        

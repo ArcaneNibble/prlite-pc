@@ -1,7 +1,8 @@
 
 <launch>
   <node pkg="pr2lite_moveit_config" type="timed_roslaunch.sh" 
-    args="2 pr2lite_moveit_config base_controller.launch pid_p:=5 pid_i:=25 pid_d:=16" 
+    args="20 pr2lite_moveit_config base_controller.launch pid_p:=20 pid_i:=0 pid_d:=0" 
+
     name="base_controller_with_delay" output="screen">
   </node>
 </launch>

@@ -35,7 +35,7 @@
   <include file="$(find pr2lite_moveit_config)/launch/torso_follow_controller.launch" />
   <node name="follow_joint_trajectory" pkg="pr2lite_moveit_config" type="follow_controller.py" ns="arm_controller" output="screen" />
 -->
-  <node name="statepub" pkg="robot_state_publisher" type="state_publisher" />
+  <node name="statepub" pkg="robot_state_publisher" type="robot_state_publisher" />
 
   <!-- Monitoring and Diagnostics -->
   <node pkg="maxwell_defs" type="laptop_battery.py" name="laptop_battery" />

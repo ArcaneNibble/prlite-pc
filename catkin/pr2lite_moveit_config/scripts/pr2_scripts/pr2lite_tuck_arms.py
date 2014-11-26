@@ -32,6 +32,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 import roslib
-roslib.load_manifest('pr2lite_arm_navigation')
+roslib.load_manifest('pr2lite_moveit_config')
 from pr2lite_tuck_arms_action import tuck_arms_main
 tuck_arms_main.main() 

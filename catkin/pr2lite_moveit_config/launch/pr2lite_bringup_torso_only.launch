@@ -1,4 +1,5 @@
 <launch>
+  <include file="$(find pr2lite_moveit_config)/launch/pr2lite_vision.launch" />
   <include file="$(find pr2lite_moveit_config)/launch/id_server.launch" />
   <include file="$(find pr2lite_moveit_config)/launch/pc_485net_with_delay.launch" />
 
@@ -34,7 +35,6 @@
   <include file="$(find pr2lite_moveit_config)/launch/point_head.launch" />
 
 <!--
-  <include file="$(find pr2lite_moveit_config)/launch/torso_follow_controller.launch" />
   <node name="follow_joint_trajectory" pkg="pr2lite_moveit_config" type="follow_controller.py" ns="arm_controller" output="screen" />
   <node name="statepub" pkg="robot_state_publisher" type="state_publisher" />
 -->
@@ -44,6 +44,7 @@
   <node pkg="diagnostic_aggregator" type="aggregator_node" name="diagnostic_aggregator" >
       <rosparam command="load" file="$(find pr2lite_moveit_config)/config/pr2lite_diagnostics.yaml" />
   </node>
+  <node pkg="pr2lite_moveit_config" type="joint_states_listener.py" name="joint_states_listener" />
   <include file="$(find pr2lite_actuators)/launch/linact_server.launch" />
 <!--
   <node name="rob_st_pub" pkg="robot_state_publisher" type="state_publisher" >
@@ -54,12 +55,17 @@
 
   <include file="$(find pr2lite_moveit_config)/launch/fake_pub.launch" />
 
+<!-- put in base_only?
+-->
   <include file="$(find pr2lite_nav)/launch/nav_amcl.launch" /> 
 
   <node pkg="prlite_tf" type="tf_broadcaster" name="transform_configuration" output="screen"/>
+<!-- move up without delay ; unreliable here
+  <include file="$(find pr2lite_moveit_config)/launch/pr2lite_vision_with_delay.launch" />
+-->
 
-  <node pkg="pr2lite_moveit_config" type="joint_states_listener.py" name="joint_states_listener" />
 
+  <include file="$(find pr2lite_moveit_config)/launch/torso_follow_controller.launch" />
   <include file="$(find pr2lite_moveit_config)/launch/move_group.launch">
     <arg name="allow_trajectory_execution" value="true"/>
   </include>

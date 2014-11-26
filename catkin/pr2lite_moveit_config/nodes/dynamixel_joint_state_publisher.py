@@ -93,8 +93,28 @@ class JointStatePublisher():
        
         for joint in self.joint_states.values():
             msg.name.append(joint.name)
+            if  joint.name == 'right_elbow_flex_joint':
+              # Shoulder mimic jnt to elbow joint compensation for gravity
+              # code must match follow_controller_complex.py
+              jnt_fudge = 0
+              if joint.position > -.42 and joint.position < .38:
+                jnt_fudge = -.02
+                if joint.position > -.34 and joint.position < .26:
+                  jnt_fudge = -.04
+                  if joint.position > -.26 and joint.position < .14:
+                    jnt_fudge = -.06
+                    if joint.position > -.18 and joint.position < .02:
+                      jnt_fudge = -.08
+
+                # jnt_fudge = .15 * (.5 - joint.position)
+                # jnt_fudge = -.08
+              # jnt_fudge = -.1
+              rospy.loginfo('elbow compensation = ' + str(jnt_fudge))
+            else:
+              jnt_fudge = 0
+            jnt_fudge = 0
             fudge_value = rospy.get_param('~fudge_factor/' + joint.name + '/value', 0.0)
-            j_pos = joint.position - fudge_value
+            j_pos = joint.position - fudge_value - jnt_fudge
             # rospy.loginfo("fudge " + str(joint.name) + ': ' + str(j_pos) + ' = ' + str(joint.position) + ' - ' + str(fudge_value))
             msg.position.append(j_pos)
             msg.velocity.append(joint.velocity)
