@@ -16,8 +16,8 @@
   <depend package="visualization_msgs"/>
   <depend package="tf"/>
   <depend package="actionlib"/>
-  <depend package="kdl"/>
   <depend package="dynamic_reconfigure"/>
+  <depend package="imu_um6"/>
 
 </package>
 

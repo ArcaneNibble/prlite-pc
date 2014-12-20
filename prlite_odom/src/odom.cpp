@@ -147,7 +147,7 @@ void odometryUpdate(void)
 
   last_time = current_time;
 
-  ROS_INFO("x %f y %f theta %f vx %f vy %f vtheta %f", x, y, th, vx, vy, vth);
+  // ROS_INFO("x %f y %f theta %f vx %f vy %f vtheta %f", x, y, th, vx, vy, vth);
 }
 
 void wheelStatusCallback(const packets_485net::packet_485net_dgram& ws)

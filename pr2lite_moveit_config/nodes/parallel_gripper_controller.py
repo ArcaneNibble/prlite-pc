@@ -52,7 +52,7 @@ class ParallelGripperController:
             #              + length of gripper fingers to computation point
             #              = compute angles based on a desired width at comp. point
         self.pad_width = rospy.get_param("~pad_width", 0.01)
-        self.finger_length = rospy.get_param("~finger_length", 0.02)
+        self.finger_length = rospy.get_param("~finger_length", 0.1016)
         self.min_opening = rospy.get_param("~min", 0.0)
         self.max_opening = rospy.get_param("~max", 2*self.finger_length)
 
@@ -93,9 +93,9 @@ class ParallelGripperController:
         else:
             l = angle + self.center_l
         if self.invert_r:
-            r = angle + self.center_r
-        else:
             r = -angle + self.center_r
+        else:
+            r = angle + self.center_r
         # publish msgs
         lmsg = Float64(l)
         rmsg = Float64(r)

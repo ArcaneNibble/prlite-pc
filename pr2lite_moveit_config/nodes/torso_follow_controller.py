@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 
 import roslib; roslib.load_manifest('pr2lite_moveit_config')
+import sys
+import math
 roslib.load_manifest('pr2lite_moveit_config')
 import actionlib
 import rospy
@@ -14,6 +16,9 @@ from joint_states_listener import ReturnJointStates
 import time
 import sys
 import roslib
+import tf
+import tf2_ros
+
 roslib.load_manifest('rospy')
 roslib.load_manifest('actionlib')
 roslib.load_manifest('pr2_controllers_msgs')
@@ -43,7 +48,22 @@ class TorsoFollowTrajController:
         self.current_pos = 0.0
         self.velocity = 0.0508
         rospy.loginfo("Started TorsoFollowTrajController")
+        # self.current_pos = torso_state()
+        # self.handle_camera(self.current_pos)
+        rospy.loginfo("init camera in TorsoFollowTrajController (%f)", self.current_pos)
         self.server.start()
+
+    def handle_camera(self, curpos):
+      try:
+         br = tf.TransformBroadcaster()
+         # br.sendTransform((0, 0, curpos), 
+         br.sendTransform((0, 0, 0), 
+                         tf.transformations.quaternion_from_euler(0, 0, 0),
+                         rospy.Time.now(),
+                         # "/base_link", "kinect_depth_optical_frame")
+                         "/base_link", "kinect_link")
+      except rospy.ServiceException, e:
+         rospy.loginfo("Service call failed: %s",e);
 
     def actionCb(self, goal):
         rospy.loginfo(self.name + ": Action goal recieved %f" % goal.position)
@@ -51,25 +71,33 @@ class TorsoFollowTrajController:
 
         self.torso_pub.publish(goal.position)
         self.current_pos = torso_state()
-        while abs(self.current_pos[0] - desired_pos_in_meters) > .006:
+        # while math.fabs(self.current_pos[0] - desired_pos_in_meters) > .006:
+        i = 0
+        while math.fabs(self.current_pos - desired_pos_in_meters) > .006 and i < 14:
           rospy.sleep(.05)
-          self.current_pos = torso_state()
+          i = i + 1
+          # self.current_pos = torso_state()
+          # handle_camera(self.current_pos)
         self.server.set_succeeded()
 
 def torso_state():
     rospy.wait_for_service("return_joint_states")
     joint_names = ["torso_lift_joint"]
-    try:
+    error = 1
+    while (error == 1):
+      try:
         s = rospy.ServiceProxy("return_joint_states", ReturnJointStates)
         resp = s(joint_names)
-    except rospy.ServiceException, e:
+      except rospy.ServiceException, e:
         print "error when calling return_joint_states: %s"%e
-        sys.exit(1)
-    for (ind, joint_name) in enumerate(joint_names):
+      for (ind, joint_name) in enumerate(joint_names):
         if(not resp.found[ind]):
             print "joint %s not found!"%joint_name
+            rospy.sleep(.1)
+        else:
+             error = 0
     # return (resp.position, resp.velocity, resp.effort)
-    return (resp.position)
+    return resp.position[ind]
   
 if __name__ == '__main__':
   rospy.init_node("TorsoFollowTrajController")

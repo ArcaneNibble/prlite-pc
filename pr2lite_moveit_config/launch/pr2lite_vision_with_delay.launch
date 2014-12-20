@@ -1,0 +1,8 @@
+
+<launch>
+  <node pkg="pr2lite_moveit_config" type="timed_roslaunch.sh" 
+    args="15 pr2lite_moveit_config pr2lite_vision.launch" 
+
+    name="pr2lite_vision_with_delay" output="screen">
+  </node>
+</launch>

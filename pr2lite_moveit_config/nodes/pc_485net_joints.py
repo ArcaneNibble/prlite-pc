@@ -24,6 +24,11 @@ jspr2msg = None
 ser = None
 joint_states_msg = None
 joint_states_pub = None
+r_arm_la_ctr = 0
+l_arm_la_ctr = 0
+torso_la_ctr= 0
+base_la_ctr = 0
+bad_usb_tx = 0
 
 class JointStatePR2Message():
     def __init__(self):
@@ -44,15 +49,33 @@ class JointStateMessages():
       joint_states_msg = JointStatePR2Message()
       joint_states_pub = rospy.Publisher('/joint_states', JointState)
       global ser
+      global r_arm_la_ctr 
+      global l_arm_la_ctr 
+      global torso_la_ctr
+      global base_la_ctr 
+      global bad_usb_tx 
 
+# returns the joint state (e.g. angles) associated with the shoulders 
+#   based on linact length per feedback sensor
+# must be kept in sync with pr2lite_actuators pkg, which sets the linact length
+#   based on the desired angle
 def shoulder_handler(packet):
       global  jspr2msg
+      global r_arm_la_ctr 
+      global l_arm_la_ctr 
+
       # set some local constants
       ONE_PI = 3.14159265359
       BAR_LEN = 4.3 - .315  # Upper arm bar that LinAct connects to
+      # LINACT_MXLN = 4      # length of LinAct extension
+      # LINACT_MXLN = 3.7    # length of LinAct extension
+      LINACT_MXLN = 4        # length of LinAct extension
       LINACT_DWN = 9.9      # length of LinAct when retracted
-      LINACT_UP = 13.9      # length of LinAct when extended
+      # reducing to 9.5 causes failures of driver
+      #LINACT_DWN = 9.5      # length of LinAct when retracted
+      LINACT_UP = LINACT_DWN + LINACT_MXLN # length of LinAct when extended
       HYPOTENUSE = 14.968   # Len from bottom LinAct hole to Shoulder Joint
+      # HYPOTENUSE = LINACT_DWN + 5.068   # Len from bottom LinAct hole to Shoulder Joint
       LINACT_VEL = .5       # inches per second */
       FIXED_LA_ANGLE = (math.atan(BAR_LEN / HYPOTENUSE))
       INCHES_TO_METERS = 0.0254
@@ -72,20 +95,23 @@ def shoulder_handler(packet):
       b2 = struct.unpack('B', packet.data[5])[0]
       cur_pos = 256.0 * b2 + b
       m_arrived = struct.unpack("B", packet.data[4+2])
-      length = (cur_pos) * 4.0 / 1000.0
+      length = (cur_pos) * LINACT_MXLN / 1000.0
       linact_length = length * INCHES_TO_METERS
 
-      # linact_cyl_angle is the upper arm tilt & uppper_armhing
-      angle=1.44129-math.acos((math.pow((length + 9.9), 2.0) - 256.0)/(-162.2));
+      # linact_cyl_angle is the upper arm tilt & uppper_arm hinge
+      angle=1.44129-math.acos((math.pow((length + LINACT_DWN), 2.0) - 256.0)/(-162.2));
+      angle=angle + .1
       linact_cyl_angle = math.asin( (BAR_LEN*INCHES_TO_METERS) * math.sin(ONE_PI-angle) / (linact_length + (LINACT_DWN*INCHES_TO_METERS))) 
 
       # Bound the angle values to +- PI ?
       upper_arm_angle = angle
+      # upper_arm_angle = angle + FIXED_LA_ANGLE 
       # prevent false collisions: unnecessary with fixed la angle?
       # the linact_cyl_angle is mostly for looks.  It's probably off by
       # a tiny fixed bracket angle.  Currently OK as it avoids false conflicts.
 
       if packet.source == LEFT_SHOULDER_LINACT:
+	l_arm_la_ctr = 0
         jspr2msg.position[LEFT_LINEAR_ACTUATOR_JOINT] = linact_length
         jspr2msg.position[LEFT_LIN_ACT_CYL_JOINT] = linact_cyl_angle
         jspr2msg.position[LEFT_SHOULDER_TILT_JOINT] = upper_arm_angle
@@ -100,6 +126,7 @@ def shoulder_handler(packet):
           jspr2msg.velocity[LEFT_LIN_ACT_CYL_JOINT] = LINACT_VEL*INCHES_TO_METERS
           jspr2msg.velocity[LEFT_SHOULDER_TILT_JOINT] = LINACT_VEL*INCHES_TO_METERS
       elif packet.source == RIGHT_SHOULDER_LINACT:
+	  r_arm_la_ctr = 0
           jspr2msg.position[RIGHT_LINEAR_ACTUATOR_JOINT] = linact_length
           jspr2msg.position[RIGHT_LIN_ACT_CYL_JOINT] = linact_cyl_angle
           jspr2msg.position[RIGHT_SHOULDER_TILT_JOINT] = upper_arm_angle
@@ -109,6 +136,8 @@ def shoulder_handler(packet):
             jspr2msg.velocity[RIGHT_LINEAR_ACTUATOR_JOINT] = 0
             jspr2msg.velocity[RIGHT_LIN_ACT_CYL_JOINT] = 0
             jspr2msg.velocity[RIGHT_SHOULDER_TILT_JOINT] = 0
+            # print "linact: Right Shoulder len %f angle %f" %  ( jspr2msg.position[RIGHT_LINEAR_ACTUATOR_JOINT], jspr2msg.position[RIGHT_SHOULDER_TILT_JOINT])
+            # rospy.loginfo( "linact: Right Shoulder len %f angle %f" %  ( jspr2msg.position[RIGHT_LINEAR_ACTUATOR_JOINT], jspr2msg.position[RIGHT_SHOULDER_TILT_JOINT]))
           else:
             jspr2msg.velocity[RIGHT_LINEAR_ACTUATOR_JOINT] = LINACT_VEL*INCHES_TO_METERS
             jspr2msg.velocity[RIGHT_LIN_ACT_CYL_JOINT] = LINACT_VEL*INCHES_TO_METERS
@@ -116,7 +145,9 @@ def shoulder_handler(packet):
    
 def torso_handler(packet):
       global jspr2msg
+      global torso_la_ctr 
 
+      torso_la_ctr = 0
       TORSO_LIFT_JOINT = 8
       INCHES_TO_METERS = 0.0254
       FAST_LINACT_VEL = 2   # inches per second */
@@ -130,7 +161,7 @@ def torso_handler(packet):
       # length = (1000 - cur_pos) * 12.0 / 1000.0 * INCHES_TO_METERS
       length = (cur_pos) * 12.0 / 1000.0 * INCHES_TO_METERS
       # if jspr2msg.position[TORSO_LIFT_JOINT] - length > .006:
-      #   print "linact: torso cur_pos %d" % cur_pos
+        # print "linact: torso cur_pos %d" % cur_pos
 
       jspr2msg.position[TORSO_LIFT_JOINT] = length
       if m_arrived:
@@ -147,7 +178,9 @@ def set_torso_pos(length):
 
 def base_handler(packet):
       global jspr2msg
+      global base_la_ctr 
 
+      base_la_ctr = 0
       PUSH_ROD_LEN = 0.1778
       CASTER_LEN = 0.089 / 2.0
       ONE_PI = 3.14159265359
@@ -327,7 +360,7 @@ crc8_table = [
 
 def valid_dgram_packet(packet):
     if packet.source < 7 or packet.source > 15:
-        # rospy.loginfo( "bad message source : %d" % packet.source)
+        rospy.loginfo( "bad message source : %d" % packet.source)
         return False
     if packet.destination != 0xF0 and packet.destination != 0x00:
         # rospy.loginfo( "bad message dest : %d" % packet.destination)
@@ -338,7 +371,8 @@ def valid_dgram_packet(packet):
     # if packet.data.size() != 7:
     if len(packet.data) != 7:
         # probably a wheel rotation
-        # print "[id %d] invalid size" % packet.source
+        if packet.source < 7 or packet.source > 11:
+           print "[id %d] invalid size" % packet.source
         return False
     return True
    
@@ -357,6 +391,11 @@ def handler_incoming(packet):
 	global dgram_pub
 	global bootloader_pub
         global prev_time
+	global r_arm_la_ctr
+	global l_arm_la_ctr
+	global torso_la_ctr
+	global base_la_ctr
+	global bad_usb_tx
 
 	#packet is a packet_485net_raw
 	proto = struct.unpack("B", packet.data[2])[0] & 0b11000000
@@ -382,6 +421,7 @@ def handler_incoming(packet):
 		pkt.data		= packet.data[3:-1]
 		pkt.checksum	= struct.unpack("B", packet.data[-1])[0]
 		
+		# rospy.loginfo("packet: %s" % binascii.hexlify(packet.source ))
                 if valid_dgram_packet(pkt):
                   packet_dgram_handler(pkt)   
                 else:
@@ -389,6 +429,13 @@ def handler_incoming(packet):
 		  dgram_pub.publish(pkt)
                 cur_time = rospy.Time.now()
                 if cur_time.to_sec() > prev_time.to_sec() + .2:
+                  r_arm_la_ctr = r_arm_la_ctr + 1
+                  l_arm_la_ctr = l_arm_la_ctr + 1
+                  torso_la_ctr = torso_la_ctr + 1
+                  base_la_ctr = base_la_ctr + 1
+                  if r_arm_la_ctr > 5 or l_arm_la_ctr > 5 or torso_la_ctr > 5 or base_la_ctr > 5:
+                    bad_usb_tx = 1
+                    rospy.loginfo("bad_usb_tx set %d %d %d %d", r_arm_la_ctr, l_arm_la_ctr, torso_la_ctr, base_la_ctr)
                   publish_LA_states()
                   # print "pub LA"
                   prev_time = cur_time
@@ -513,21 +560,51 @@ def decode_blob(blob):
 decode_blob.leftovers = ""
 
 def tx_packet(packet):
-    #There is no good way to determine if the bus is free
-    #We just transmit
-    ser.setRTS(False)
-    ser.setDTR(False)
-    ser.write(packet.data)
-    ser.flush()
-    #we really really need a fix for this
-    time.sleep(0.01)
-    #change time from 0.2 to 0.01 and appear ok
-    #send command twice in a row; the second time, no one should be on the bus
-    ser.write(packet.data)
-    ser.flush()
-    time.sleep(0.01)
-    ser.setRTS(True)
-    ser.setDTR(True)
+   global bad_usb_tx
+
+   if bad_usb_tx == 1:
+     return
+   #There is no good way to determine if the bus is free
+   #We just transmit
+   global ser
+   delay150us = bytearray.fromhex(u'FF') * 19
+   delay312us = bytearray.fromhex(u'FF') * 39
+   #ser.setRTS(False)
+   #ser.setDTR(False)
+   #ser.write(packet.data)
+   #ser.flush()
+   ser.setRTS(False)
+   ser.setDTR(False)
+   ser.write(packet.data)
+   ser.flush()
+   ser.write(delay312us)
+   ser.flush()
+   ser.write(packet.data)
+   ser.flush()
+   ser.write(delay150us)
+   ser.flush()
+   #we really really need a fix for this
+   #time.sleep(0.01)
+   #change time from 0.2 to 0.01 and appear ok
+   #send command twice in a row; the second time, no one should be on the bus
+   #time.sleep(0.01)
+   ser.setRTS(True)
+   ser.setDTR(True)
+#    #There is no good way to determine if the bus is free
+#    #We just transmit
+#    ser.setRTS(False)
+#    ser.setDTR(False)
+#    ser.write(packet.data)
+#    ser.flush()
+#    #we really really need a fix for this
+#    time.sleep(0.01)
+#    #change time from 0.2 to 0.01 and appear ok
+#    #send command twice in a row; the second time, no one should be on the bus
+#    ser.write(packet.data)
+#    ser.flush()
+#    time.sleep(0.01)
+#    ser.setRTS(True)
+#    ser.setDTR(True)
 
 
 def main():
@@ -537,6 +614,7 @@ def main():
     global outgoing_pub
     global prev_time
     global ser
+    global bad_usb_tx
     
     print "PC 485net interface (raw serial)"
     print "485net packet sorter"
@@ -552,7 +630,8 @@ def main():
     # self.msg = JointStatePR2Message()
     prev_time = rospy.Time.now()
 
-    ser = serial.Serial(serport, baud, timeout=0)
+    #ser = serial.Serial(serport, baud, timeout=0)
+    ser = serial.Serial(serport, baud, timeout=1)
     ser.setRTS(True)
     ser.setDTR(True)
    
@@ -570,7 +649,38 @@ def main():
     # rospy.Subscriber("net_485net_set_torso_pos", Float64, set_torso_pos)
     # i = 0
     while not rospy.is_shutdown():
-          bytes = ser.read(500)
+
+          bytes = ser.read(1)
+          if bytes:
+              bytes += ser.read(ser.inWaiting())
+          else:
+              raise Exception("timeout")
+          # bytes = ser.read(500)
+	  if bad_usb_tx == 1:
+            # if haven't receive linact packets from any linact for > 1 sec
+            # throw away next <50> bytes and continue again
+            b_ctr = len(bytes) 
+            while b_ctr < 50:
+              # bytes = ser.read(500)
+              bytes = ser.read(1)
+              if bytes:
+                  bytes += ser.read(ser.inWaiting())
+              else:
+                  raise Exception("timeout2")
+              b_ctr = b_ctr + len(bytes) 
+	    bad_usb_tx = 0
+            r_arm_la_ctr = 0
+            l_arm_la_ctr = 0
+            torso_la_ctr = 0
+            base_la_ctr = 0
+            rospy.loginfo("bad_usb_tx clear")
+            decode_blob.leftovers = ""
+            # bytes = ser.read(500)
+            bytes = ser.read(1)
+            if bytes:
+                bytes += ser.read(ser.inWaiting())
+            else:
+                raise Exception("timeout3")
           if len(bytes) > 0:
             packets = decode_blob(bytes)
             for p in packets:

@@ -32,12 +32,29 @@ int main(int argc, char** argv){
   ros::init(argc, argv, "robot_tf_publisher");
   ros::NodeHandle n;
 
-  ros::Rate r(100);
+  ros::Rate r(5);
 
   while(n.ok()){
     tf::TransformBroadcaster broadcaster;
 
+    // The tf system keeps track of a tree of frames; every link in the
+    // tree represents a relative pose between two frames. In C++, the 
+    // function TransformBroadcaster::sendTransform() adds links to this tree. 
+
+    // broadcaster.sendTransform(t[0], t[1], rospy.Time.now(), 
+    //                           '/kinect_link', '/base_link')
     broadcaster.sendTransform(
+/*
+      tf::StampedTransform(
+        tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(0.43, 0.0, 0.1)),
+          ros::Time::now(),"base_link", "hokuyo_torso_link"));
+      tf::StampedTransform(
+        tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(0.43, 0.0, 0.1)),
+        ros::Time::now(),"base_link", "kinect_link");
+      tf::StampedTransform(
+        tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(0.43, 0.0, 0.1)),
+        ros::Time::now(),"base_link", "hokuyo_tilt_link");
+*/
       tf::StampedTransform(
         tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(0.43, 0.0, 0.1)),
         ros::Time::now(),"base_link", "base_laser"));

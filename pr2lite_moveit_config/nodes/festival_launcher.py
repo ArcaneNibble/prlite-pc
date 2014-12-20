@@ -3,4 +3,4 @@
 import socket, sys 
 import subprocess
 
-subprocess.call(["festival", "--server"])
+subprocess.call(["/home/ros/festival/festival/festival/bin/festival", "--server"])

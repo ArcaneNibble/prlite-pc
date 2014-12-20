@@ -1,0 +1,5 @@
+rostopic pub /right_shoulder_pan_controller/command std_msgs/Float64 0
+rostopic pub /right_shoulder_tilt_controller/command std_msgs/Float64 .5
+rostopic pub /right_wrist_flex_controller/command std_msgs/Float64 0.0
+rostopic pub /right_elbow_flex_controller/command std_msgs/Float64 2.0
+rostopic pub /right_shoulder_tilt_controller/command std_msgs/Float64 1

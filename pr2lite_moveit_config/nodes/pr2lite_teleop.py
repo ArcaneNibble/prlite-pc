@@ -26,8 +26,8 @@ from moveit_commander import RobotCommander, PlanningSceneInterface, MoveGroupCo
 #from moveit_msgs.msg import RobotTrajectory, Grasp
 from moveit_msgs.msg import *
 from pr2lite_moveit_config.srv import ReturnJointStates
-
-
+from sound_utilities import SpeechEngine
+#from parallel_gripper_controller import ParallelGripperController
 
 
 # In ROS Electric, the Joy message gained a header and moved to
@@ -55,23 +55,17 @@ class JoyNode():
         self.left_arm_mode = 4    # front bottom left
         self.body_mode = 6             # front top right
         self.head_mode = 7             # front top left
+        self.prev_mode = 0        # no mode set
 #
 #       # BUTTON mapping
-        self.gripper_open = 1     # "O"
-        self.gripper_close = 3    # "square"
-        self.wrist_roll_left = 0   # triangle
-        self.wrist_roll_right = 2  # X
         self.cur_pos = 0        
         self.pose_incr = 9        # start
         self.pose_decr = 8        # select
-#        self.tuck_arm = 9         # start
-#        self.untuck_arm = 8       # select
-#       self.torso_up = 0         # triangle
-#       self.torso_down = 2       # X
 #   
 #       # digital Joystick Axes
-#       self.shoulder_tilt = 5    # cross: 1 = up, -1 = down
-#       self.shoulder_pan = 4     # cross: 1 = right -1 = left 
+        # self.torso_up_down = 5    # cross: 1 = up, -1 = down
+        # self.shoulder_tilt = 5    # cross: 1 = up, -1 = down
+        # self.shoulder_pan = 4     # cross: 1 = right -1 = left 
 
 #
 #       # analog joysticks Axes; mode dependent
@@ -84,23 +78,21 @@ class JoyNode():
         self.move_fwd_bck = 1     # left Joy: 1 = fwd, -1 = back
         self.rot_left_right = 0   # left Joy: 1 = right, -1 = left
         self.move_left_right = 3  # right Joy: 1 = right -1 = left 
-        self.rot_right_left = 3   # right Joy: 1 = fwd, -1 = back
+        self.rot_right_left = 2   # right Joy: 1 = fwd, -1 = back
 
         self.follow_mode = 8      # select
 
         # cross - gripper orientation
-        # ARD: wrist_flex & elbow_pan are wrong
         self.elbow_pan = 4           # cross: 1 = right -1 = left 
         self.wrist_flex = 5          # cross: 1 = up, -1 = down
         self.wrist_roll_clock = 0     # triangle
         self.wrist_roll_counterclock = 2   # X
         self.gripper_close = 3       # square
-        self.gripper_open = 0        # triangle
+        self.gripper_open = 1        # circle
         # joystick - gripper movement
         self.wrist_up_down = 1       # left Joy: 1 = up, -1 = down
         self.wrist_fwd_bck = 2       # right Joy: 1 = up, -1 = down
         self.wrist_right_left = 3    # right Joy: 1 = right -1 = left 
-
 
         # Velo Testing
         # buttons
@@ -131,9 +123,9 @@ class JoyNode():
 
         # controllers
         velo_controller = 'velo_gripper_controller/gripper_action'
-        velo_torque_service = '/velo_gripper_controller/set_torque_limit'
-        velo_speed_service = '/velo_gripper_controller/set_speed'
-        gripper_controller = '/gripper_controller/gripper_action'
+        velo_torque_service = '/velo_gripper_ax12_controller/set_torque_limit'
+        velo_speed_service = '/velo_gripper_ax12_controller/set_speed'
+        left_gripper_controller = '/gripper_controller/gripper_action'
         head_controller = '/head_traj_controller/point_head_action'
         base_controller = '/base_controller/command'
         left_wrist_flex_controller = '/left_wrist_flex_controller/command'
@@ -153,8 +145,7 @@ class JoyNode():
            self.torque = 0
         print "wait for velo torque service"
         rospy.wait_for_service(velo_torque_service)
-        self.velo_torque_service = rospy.ServiceProxy(
-                  velo_torque_service, SetTorqueLimit)
+        self.velo_torque_service = rospy.ServiceProxy( velo_torque_service, SetTorqueLimit)
         self.speed = 0.5
         print "wait for velo speed service"
         rospy.wait_for_service(velo_speed_service)
@@ -166,8 +157,10 @@ class JoyNode():
         self.velo_gripper_client.wait_for_server()
         # position in radians
         # self.velo_gripper_pub = rospy.Publisher(velo_controller, Float64)
-        self.max_velo_gripper_pos = 2
+        self.max_velo_gripper_pos = .125
         self.velo_gripper_pos = self.max_velo_gripper_pos
+        self.max_left_gripper_pos = .125
+        self.left_gripper_pos = self.max_left_gripper_pos
         self.right_wrist_flex_client = rospy.Publisher(right_wrist_flex_controller, Float64)
         self.left_wrist_flex_client = rospy.Publisher(left_wrist_flex_controller, Float64)
         self.right_wrist_roll_client = rospy.Publisher(right_wrist_roll_controller, Float64)
@@ -175,10 +168,10 @@ class JoyNode():
         self.left_elbow_pan_client = rospy.Publisher(left_elbow_pan_controller, Float64)
         self.right_elbow_pan_client = rospy.Publisher(right_elbow_pan_controller, Float64)
 
-        print "wait for velo gripper server"
-        self.gripper_client = actionlib.SimpleActionClient(
-                  gripper_controller, Pr2GripperCommandAction)
-        self.gripper_client.wait_for_server()
+        print "wait for left gripper server"
+        self.left_gripper_client = actionlib.SimpleActionClient(
+                  left_gripper_controller, Pr2GripperCommandAction)
+        self.left_gripper_client.wait_for_server()
 
         print "wait for head controller"
         self.head_client = actionlib.SimpleActionClient(
@@ -189,19 +182,25 @@ class JoyNode():
 
         #TODO: moveit!
         print "left arm and torso moveit commander"
+        rospy.loginfo("pr2lite_teleop: left arm and torso moveit commander")
         try:
           self.left_arm_group = MoveGroupCommander("left_arm_and_torso")
         except rospy.ServiceException, e:
           self.left_arm_group = MoveGroupCommander("left_arm_and_torso")
         print "right arm and torso moveit commander"
+        rospy.loginfo("pr2lite_teleop: right arm and torso moveit commander")
         try:
           self.right_arm_group = MoveGroupCommander("right_arm_and_torso")
         except rospy.ServiceException, e:
           self.right_arm_group = MoveGroupCommander("right_arm_and_torso")
-        
+
+        rospy.loginfo("pr2lite_teleop: speech engine")
+        self.se = SpeechEngine()
+
         print "subscribe to joystick"
         self.joy = rospy.Subscriber('joy', Joy, self.joyCallback)
         print "joystick ready"
+        self.se.say( "joystick ready")
 
 
     def get_joint_state(self,name):
@@ -224,12 +223,17 @@ class JoyNode():
         "invoked every time a joystick message arrives"
         #rospy.logdebug('joystick input:\n' + str(joy))
         rospy.loginfo('joystick input:\n' + str(joy))
+        print "joystick input:" 
+        print joy
 
 	vel = Twist()
 	vel.angular.z = 0;
 	vel.linear.x = 0;
 	vel.linear.y = 0;
         if joy.buttons[self.right_arm_mode]:
+            if self.prev_mode != self.right_arm_mode:
+              self.prev_mode = self.right_arm_mode
+              self.se.say( "right arm mode")
             new_pos = False
             if joy.buttons[self.pose_incr]:
               self.cur_pos = self.cur_pos + 1
@@ -241,49 +245,73 @@ class JoyNode():
               if self.cur_pos < self.pose_move_aside:
                 self.cur_pos = self.pose_stretch
               new_pos = True
+            print "new pos " + str(new_pos)
             # TODO: have head follow arm?
             if new_pos and self.cur_pos == self.pose_move_aside:
-              self.right_arm_group.set_named_target("move_aside_right_arm")
               print "move_aside_right_arm"
+              self.se.say( "move aside right arm")
+              self.right_arm_group.allow_replanning(True)
+              self.right_arm_group.set_named_target("move_aside_right_arm")
+              # planned = self.right_arm_group.plan()
+              if self.right_arm_group.go() == False:
+                self.se.say( "Error")
             elif new_pos and self.cur_pos == self.pose_tuck:
-              self.right_arm_group.set_named_target("tuck_right_arm")
               print "tuck_right_arm"
+              self.se.say( "tuck right arm")
+              self.right_arm_group.allow_replanning(True)
+              self.right_arm_group.set_named_target("tuck_right_arm")
+              # planned = self.right_arm_group.plan()
+              if self.right_arm_group.go() == False:
+                self.se.say( "Error")
             elif new_pos and self.cur_pos == self.pose_untuck:
-              self.right_arm_group.set_named_target("untuck_right_arm")
               print "untuck_right_arm"
+              self.se.say( "untuck right arm")
+              self.right_arm_group.allow_replanning(True)
+              self.right_arm_group.set_named_target("untuck_right_arm")
+              # planned = self.right_arm_group.plan()
+              if self.right_arm_group.go() == False:
+                self.se.say( "Error")
             elif new_pos and self.cur_pos == self.pose_stretch:
-              self.right_arm_group.set_named_target("stretch_right_arm")
               print "stretch_right_arm"
+              self.se.say( "stretch right arm")
+              self.right_arm_group.allow_replanning(True)
+              self.right_arm_group.set_named_target("stretch_right_arm")
+              # planned = self.right_arm_group.plan()
+              if self.right_arm_group.go() == False:
+                self.se.say( "Error")
             threshold = 0.1
 	    if math.fabs(joy.axes[self.wrist_right_left]) > threshold or math.fabs(joy.axes[self.wrist_fwd_bck]) > threshold or math.fabs(joy.axes[self.wrist_up_down]) > threshold:
+              return
+              self.se.say( "joystick control of right arm")
               print "joystick right arm control"
               currentrf = self.right_arm_group.get_pose_reference_frame()
               self.right_arm_group.set_pose_reference_frame(currentrf)
-              # MoveItCommanderException: There is no end effector to get the pose of
-              newpose = self.right_arm_group.get_current_pose().pose
-              a = self.right_arm_group.get_current_pose().pose
-
-              # newposerpy = self.right_arm_group.get_current_rpy()
-              # print newpose
-              # print newposerpy
-              # print ('Going to..')
-              arm_delta = 0.45
-              newpose.position.x = newpose.position.x-arm_delta * joy.axes[self.wrist_right_left]
-              newpose.position.y = newpose.position.y-arm_delta * joy.axes[self.wrist_fwd_bck]
-              newpose.position.z = newpose.position.z-arm_delta * joy.axes[self.wrist_up_down]
-
-              # planned = self.right_arm_group.plan()
-              # self.right_arm_group.execute(planned)
-
-              print newpose   
-              print('Setting a new target pose..')
-              self.right_arm_group.set_pose_target(newpose)
+              self.right_arm_group.allow_replanning(False)
+              # Comment out replanning:
+              # self.right_arm_group.allow_replanning(True)
+              # With replanning, the joystick arm control is frequently called
+              # with a new status.   The planning never executes anything 
+              # because it is always replanning and never executing.  
+              # For now, no replannng and use blocking callbacks.
+#following lines core dump
+#              ee_link = self.right_arm_group.get_end_effector_link()
+#              newpose = self.right_arm_group.get_current_pose(ee_link).pose
+#              if self.right_arm_group.has_end_effector_link():
+#                print "eef: " +  self.right_arm_group.get_end_effector_link()
+#              # newposerpy = self.right_arm_group.get_current_rpy()
+#              arm_delta = 0.45
+#              newpose.position.x = newpose.position.x-arm_delta * joy.axes[self.wrist_right_left]
+#              newpose.position.y = newpose.position.y-arm_delta * joy.axes[self.wrist_fwd_bck]
+#              newpose.position.z = newpose.position.z-arm_delta * joy.axes[self.wrist_up_down]
+#              # print newpose   
+#              print('Setting a new target pose..')
+#              self.right_arm_group.set_pose_target(newpose, ee_link)
+              self.right_arm_group.set_start_state_to_current_state()
               planned = self.right_arm_group.plan()
               print ('Joint interpolated plan:')
               print planned
-              self.right_arm_group.execute(planned)
-
-              # self.right_arm_group.go()
+              self.right_arm_group.go()
+              # self.right_arm_group.execute(planned)
               # scene = PlanningSceneInterface()
             wrist_delta = .15
             if joy.buttons[self.wrist_roll_clock]:
@@ -303,66 +331,102 @@ class JoyNode():
               right_elbow_pan_pos = right_elbow_pan_pos - joy.axes[self.elbow_pan]*wrist_delta
               self.right_elbow_pan_client.publish(right_elbow_pan_pos)
             if joy.buttons[self.gripper_open]:
-              velo_delta = .1
+              velo_delta = .005
               self.velo_gripper_pos = self.velo_gripper_pos + velo_delta
               if self.velo_gripper_pos > self.max_velo_gripper_pos:
                 self.velo_gripper_pos = self.max_velo_gripper_pos
-              self.velo_gripper_pub = rospy.Publisher(velo_controller,
-                                                      self.velo_gripper_pos)
+              print "velo gripper " + str(self.velo_gripper_pos)
+              goal = Pr2GripperCommandGoal()
+              goal.command.position = self.velo_gripper_pos
+              goal.command.max_effort = 1000
+              self.velo_gripper_client.send_goal(goal)
+              self.velo_gripper_client.wait_for_result(rospy.Duration(1.0))
             if joy.buttons[self.gripper_close]:
-              velo_delta = .1
+              velo_delta = .005
               self.velo_gripper_pos = self.velo_gripper_pos - velo_delta
               if self.velo_gripper_pos < 0:
                 self.velo_gripper_pos = 0
-              self.velo_gripper_pub = rospy.Publisher(velo_controller, 
-                                                      self.velo_gripper_pos)
+              print "velo gripper " + str(self.velo_gripper_pos)
+              goal = Pr2GripperCommandGoal()
+              goal.command.position = self.velo_gripper_pos
+              goal.command.max_effort = 1000
+              self.velo_gripper_client.send_goal(goal)
+              self.velo_gripper_client.wait_for_result(rospy.Duration(1.0))
+
         elif joy.buttons[self.left_arm_mode]:
-            currentrf = self.left_arm_group.get_pose_reference_frame()
-
-            self.left_arm_group.set_pose_reference_frame(currentrf)
-            newpose = self.left_arm_group.get_current_pose().pose
-            a = self.left_arm_group.get_current_pose().pose
-
-            # newposerpy = self.left_arm_group.get_current_rpy()
-            # print newpose
-            # print newposerpy
-            # print ('Going to..')
-            arm_delta = 0.45
-            newpose.position.x = newpose.position.x-arm_delta * joy.axes[self.wrist_right_left]
-            newpose.position.y = newpose.position.y-arm_delta * joy.axes[self.wrist_fwd_bck]
-            newpose.position.z = newpose.position.z-arm_delta * joy.axes[self.wrist_up_down]
-
-            if joy.buttons[self.tuck_arm]:
+            if self.prev_mode != self.left_arm_mode:
+              self.prev_mode = self.left_arm_mode
+              self.se.say( "left arm mode")
+            new_pos = False
+            if joy.buttons[self.pose_incr]:
+              self.cur_pos = self.cur_pos + 1
+              if self.cur_pos > self.pose_stretch:
+                self.cur_pos = self.pose_move_aside
+              new_pos = True
+            if joy.buttons[self.pose_decr]:
+              self.cur_pos = self.cur_pos - 1
+              if self.cur_pos < self.pose_move_aside:
+                self.cur_pos = self.pose_stretch
+              new_pos = True
+            print "new pos " + str(new_pos)
+            # TODO: have head follow arm?
+            if new_pos and self.cur_pos == self.pose_move_aside:
+              print "move_aside_left_arm"
+              self.se.say( "move aside left arm")
+              self.left_arm_group.set_named_target("move_aside_left_arm")
+              # planned = self.left_arm_group.plan()
+              if self.left_arm_group.go() == False:
+                self.se.say( "Error")
+            elif new_pos and self.cur_pos == self.pose_tuck:
+              print "tuck_left_arm"
+              self.se.say( "tuck left arm")
               self.left_arm_group.set_named_target("tuck_left_arm")
-            # planned = self.left_arm_group.plan()
-            # self.left_arm_group.execute(planned)
-
-            # print newpose   
-            # print('Setting a new target pose..')
-            self.left_arm_group.set_pose_target(newpose)
-            planned = self.left_arm_group.plan()
-            # print ('Joint interpolated plan:')
-            # print planned
-            self.left_arm_group.execute(planned)
-
-            # self.left_arm_group.go()
-            # scene = PlanningSceneInterface()
-            wrist_delta = .15
-            if joy.buttons[self.wrist_roll_left]:
-              left_wrist_roll_pos = self.get_joint_state('left_wrist_roll_joint')
-              left_wrist_roll_pos = left_wrist_roll_pos - wrist_delta
-              self.left_wrist_roll_client.publish(left_wrist_roll_pos)
-            if joy.buttons[self.wrist_roll_right]:
-              left_wrist_roll_pos = self.get_joint_state('left_wrist_roll_joint')
-              left_wrist_roll_pos = left_wrist_roll_pos + wrist_delta
-              self.left_wrist_roll_client.publish(left_wrist_roll_pos)
-            if joy.buttons[self.wrist_flex_left]:
-              left_wrist_flex_pos = self.get_joint_state('left_wrist_flex_joint')
-              left_wrist_flex_pos = left_wrist_flex_pos - wrist_delta
-              self.left_wrist_flex_client.publish(left_wrist_flex_pos)
-
-        
+              # planned = self.left_arm_group.plan()
+              if self.left_arm_group.go() == False:
+                self.se.say( "Error")
+            elif new_pos and self.cur_pos == self.pose_untuck:
+              print "untuck_left_arm"
+              self.se.say( "untuck left arm")
+              self.left_arm_group.set_named_target("untuck_left_arm")
+              # planned = self.left_arm_group.plan()
+              if self.left_arm_group.go() == False:
+                self.se.say( "Error")
+            elif new_pos and self.cur_pos == self.pose_stretch:
+              print "stretch_left_arm"
+              self.se.say( "stretch left arm")
+              self.left_arm_group.set_named_target("stretch_left_arm")
+              # planned = self.left_arm_group.plan()
+              if self.left_arm_group.go() == False:
+                self.se.say( "Error")
+                
+            # TODO: Joystick Arm control
+            #
+            if joy.buttons[self.gripper_open]:
+              left_gripper_delta = .005
+              self.left_gripper_pos = self.left_gripper_pos + left_gripper_delta
+              if self.left_gripper_pos > self.max_left_gripper_pos:
+                self.left_gripper_pos = self.max_left_gripper_pos
+              print "left gripper " + str(self.left_gripper_pos)
+              goal = Pr2GripperCommandGoal()
+              goal.command.position = self.left_gripper_pos
+              goal.command.max_effort = 1000
+              self.left_gripper_client.send_goal(goal)
+              self.left_gripper_client.wait_for_result(rospy.Duration(1.0))
+            if joy.buttons[self.gripper_close]:
+              left_gripper_delta = .005
+              self.left_gripper_pos = self.left_gripper_pos - left_gripper_delta
+              if self.left_gripper_pos < 0:
+                self.left_gripper_pos = 0
+              print "left gripper " + str(self.left_gripper_pos)
+              goal = Pr2GripperCommandGoal()
+              goal.command.position = self.left_gripper_pos
+              goal.command.max_effort = 1000
+              self.left_gripper_client.send_goal(goal)
+              self.left_gripper_client.wait_for_result(rospy.Duration(1.0))
         elif joy.buttons[self.head_mode]:
+            if self.prev_mode != self.head_mode:
+              self.prev_mode = self.head_mode
+              self.se.say( "head mode")
 
             level_head = 1
             head_mv_tm = .75
@@ -499,6 +563,9 @@ class JoyNode():
               self.head_client.wait_for_result()
 
         elif joy.buttons[self.body_mode]:
+            if self.prev_mode != self.body_mode:
+              self.prev_mode = self.body_mode
+              self.se.say( "body mode")
             # TODO: move to tuck mode?
             # TODO: have head look down/forward?
             # TODO: follow_mode

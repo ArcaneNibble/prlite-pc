@@ -1,0 +1,14 @@
+<launch>
+
+
+  <!--- Teleop Joystick -->
+  <node pkg="pr2lite_moveit_config" type="pr2lite_torso_teleop.py" name="pr2lite_torso_teleop">
+    <rosparam file="$(find pr2lite_moveit_config)/config/pr2lite_arm.yaml" command="load" />
+  </node>
+  <node pkg="joy" type="joy_node" name="joystick"/>
+<!--
+  <node pkg="pr2lite_moveit_config" type="festival_launcher.py" name="festival_launcher"/>
+-->
+
+
+</launch>

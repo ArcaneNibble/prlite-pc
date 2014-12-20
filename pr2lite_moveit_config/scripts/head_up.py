@@ -1,6 +1,6 @@
 #! /usr/bin/python
 import roslib
-roslib.load_manifest('pr2lite_arm_navigation')
+roslib.load_manifest('pr2lite_moveit_config')
 
 import rospy
 import actionlib

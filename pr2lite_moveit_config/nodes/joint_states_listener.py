@@ -24,6 +24,7 @@ class LatestJointStates:
         self.position = list()
         self.velocity = list()
         self.effort = list()
+        self.jnt_fudge = 0
         self.thread = threading.Thread(target=self.joint_states_listener)
         self.thread.start()
 
@@ -47,7 +48,7 @@ class LatestJointStates:
         for (i,joint_name) in enumerate(msg_name):
           if joint_name in self.name:
             index = self.name.index(joint_name)
-            self.position[index] = msg.position[i]
+            self.position[index] = msg.position[i] 
             self.velocity[index] = msg.velocity[i]
             self.effort[index] = 0
           else:
