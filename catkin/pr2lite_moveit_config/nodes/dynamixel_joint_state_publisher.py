@@ -27,6 +27,8 @@ import rospy
 
 from sensor_msgs.msg import JointState as JointStatePR2
 from dynamixel_msgs.msg import JointState as JointStateDynamixel
+from pr2lite_moveit_config.srv import ReturnJointStates
+
 
 class JointStateMessage():
     def __init__(self, name, position, velocity, effort):
@@ -56,6 +58,7 @@ class JointStatePublisher():
         self.servos = list()
         self.controllers = list()
         self.joint_states = dict({})
+        self.jnt_fudge = 0
         
         for joint in self.joints:
             # Remove "_joint" from the end of the joint name to get the controller names.
@@ -83,6 +86,68 @@ class JointStatePublisher():
         js = JointStateMessage(msg.name, msg.current_pos, msg.velocity, msg.load)
         self.joint_states[msg.name] = js
        
+
+    def shoulder_state(self, shoulder_joint):
+        rospy.wait_for_service("return_joint_states")
+        joint_names = [shoulder_joint]
+        error = 1
+        while (error == 1):
+          try:
+            s = rospy.ServiceProxy("return_joint_states", ReturnJointStates)
+            resp = s(joint_names)
+          except rospy.ServiceException, e:
+            print "error when calling return_joint_states: %s"%e
+            return -1000.0
+          for (ind, joint_name) in enumerate(joint_names):
+            if(not resp.found[ind]):
+                # print "joint %s not found!"%joint_name
+                # rospy.sleep(.1)
+                return -1000.0
+            else:
+                 error = 0
+        # return (resp.position, resp.velocity, resp.effort)
+        return resp.position[ind]
+
+    def compute_elbow_fudge(self, elbow, shoulder):
+          jnt_fudge = 0
+          # Shoulder mimic jnt to elbow joint compensation for gravity
+          elbow_gravity_factor = .1
+          shoulder_elbow_tilt_factor = 0
+          # parameters
+          straight_elbow_threshold = .6
+          shoulder_threshold = .5
+          # from pr2lite urdf: shoulder lower="0.42" upper="1.2"
+          shoulder_min = .42   # arm up
+          shoulder_max   = 1.2 # arm down
+          # 2.4 on model is 2.7 on servo
+          bent_elbow_threshold = 2.1 
+
+          if elbow > (-1 * straight_elbow_threshold) and elbow <= 0:
+              jnt_fudge = -1 * elbow_gravity_factor * (1 + elbow / straight_elbow_threshold)
+              # add back fudge based on shoulder tilt
+              jnt_fudge =  jnt_fudge + shoulder_elbow_tilt_factor * (shoulder - shoulder_min)*(1 + elbow / straight_elbow_threshold)
+          elif elbow > 0 and elbow < straight_elbow_threshold:
+              jnt_fudge = -.1 * elbow_gravity_factor * (1 - elbow / straight_elbow_threshold)
+              jnt_fudge =  jnt_fudge + shoulder_elbow_tilt_factor * (shoulder - shoulder_min) / (shoulder_max - shoulder_min)
+          elif elbow > bent_elbow_threshold:
+              # 2.4 on model is 2.7 on servo
+              jnt_fudge =  (bent_elbow_threshold - elbow) / 2
+          return jnt_fudge
+
+    # we fudge the position to match reality during the follow traj execution
+    # and a matching fudge in the dynamixel joint position publisher.
+    # The joint position is monitored by moveit.
+    def compute_jnt_fudge(self, joint_name, joint_pos):
+          self.jnt_fudge = 0
+          if joint_name == 'right_elbow_flex_joint':
+            shoulder_tilt = self.shoulder_state("right_shoulder_tilt_joint")
+            # right_shoulder_tilt is [1] with right arm conroller
+            self.jnt_fudge = self.compute_elbow_fudge(joint_pos, shoulder_tilt)
+          elif joint_name == 'left_elbow_flex_joint':
+            shoulder_tilt = self.shoulder_state("left_shoulder_tilt_joint")
+            # left_shoulder_tilt is [1] with left arm controller
+            self.jnt_fudge = self.compute_elbow_fudge(joint_pos, shoulder_tilt)
+
     def publish_joint_states(self):
         # Construct message & publish joint states
         msg = JointStatePR2()
@@ -93,29 +158,13 @@ class JointStatePublisher():
        
         for joint in self.joint_states.values():
             msg.name.append(joint.name)
-            if  joint.name == 'right_elbow_flex_joint':
-              # Shoulder mimic jnt to elbow joint compensation for gravity
-              # code must match follow_controller_complex.py
-              jnt_fudge = 0
-              if joint.position > -.42 and joint.position < .38:
-                jnt_fudge = -.02
-                if joint.position > -.34 and joint.position < .26:
-                  jnt_fudge = -.04
-                  if joint.position > -.26 and joint.position < .14:
-                    jnt_fudge = -.06
-                    if joint.position > -.18 and joint.position < .02:
-                      jnt_fudge = -.08
 
-                # jnt_fudge = .15 * (.5 - joint.position)
-                # jnt_fudge = -.08
-              # jnt_fudge = -.1
-              rospy.loginfo('elbow compensation = ' + str(jnt_fudge))
-            else:
-              jnt_fudge = 0
-            jnt_fudge = 0
             fudge_value = rospy.get_param('~fudge_factor/' + joint.name + '/value', 0.0)
-            j_pos = joint.position - fudge_value - jnt_fudge
-            # rospy.loginfo("fudge " + str(joint.name) + ': ' + str(j_pos) + ' = ' + str(joint.position) + ' - ' + str(fudge_value))
+            jp = joint.position - fudge_value
+            self.compute_jnt_fudge(joint.name, jp)
+            j_pos = joint.position - fudge_value - self.jnt_fudge
+            # if joint.name == 'right_elbow_flex_joint':
+            #   rospy.loginfo("dyno fudge " + str(joint.name) + ': ' + str(j_pos) + ' = ' + str(joint.position) + ' - ' + str(fudge_value) + ' - ' + str(self.jnt_fudge))
             msg.position.append(j_pos)
             msg.velocity.append(joint.velocity)
             msg.effort.append(joint.effort)
