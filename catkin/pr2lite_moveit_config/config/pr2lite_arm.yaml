@@ -48,9 +48,10 @@ right_shoulder_pan_joint:{id: 17, max_angle: 150, min_angle: -150, max_speed: 25
 fudge_factor: {
 left_elbow_pan_joint: {value: 1.31922347758},
 left_elbow_flex_joint: {value: 1.51352771071},
-right_elbow_flex_joint: {value: 1.94},
+right_elbow_flex_joint: {value: 1.85},
 head_tilt_joint: {value: 0.03}
 }
+# was:  right_elbow_flex_joint: {value: 1.94},
 
 
 controllers: {

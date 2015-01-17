@@ -20,7 +20,8 @@ import rospy, time
 from dynamixel_controllers.srv import TorqueEnable, SetSpeed, SetTorqueLimit
 import actionlib
 from actionlib_msgs.msg import *
-from pr2_controllers_msgs.msg import *
+from control_msgs.msg import *
+# from pr2_controllers_msgs.msg import *
 from geometry_msgs.msg import *
 from moveit_commander import RobotCommander, PlanningSceneInterface, MoveGroupCommander, conversions
 #from moveit_msgs.msg import RobotTrajectory, Grasp
@@ -146,7 +147,7 @@ class JoyNode():
         self.velo_speed_service = rospy.ServiceProxy(
                   velo_speed_service, SetSpeed)
         self.velo_gripper_client = actionlib.SimpleActionClient(
-                  velo_controller, Pr2GripperCommandAction)
+                  velo_controller, GripperCommandAction)
         print "wait for velo server"
         self.velo_gripper_client.wait_for_server()
         # position in radians
@@ -155,23 +156,23 @@ class JoyNode():
         self.velo_gripper_pos = self.max_velo_gripper_pos
         self.max_left_gripper_pos = .125
         self.left_gripper_pos = self.max_left_gripper_pos
-        self.right_wrist_flex_client = rospy.Publisher(right_wrist_flex_controller, Float64)
-        self.left_wrist_flex_client = rospy.Publisher(left_wrist_flex_controller, Float64)
-        self.right_wrist_roll_client = rospy.Publisher(right_wrist_roll_controller, Float64)
-        self.left_wrist_roll_client = rospy.Publisher(left_wrist_roll_controller, Float64)
-        self.left_elbow_pan_client = rospy.Publisher(left_elbow_pan_controller, Float64)
-        self.right_elbow_pan_client = rospy.Publisher(right_elbow_pan_controller, Float64)
-        self.left_elbow_flex_client = rospy.Publisher(left_elbow_flex_controller, Float64)
-        self.right_elbow_flex_client = rospy.Publisher(right_elbow_flex_controller, Float64)
-        self.left_shoulder_pan_client = rospy.Publisher(left_shoulder_pan_controller, Float64)
-        self.right_shoulder_pan_client = rospy.Publisher(right_shoulder_pan_controller, Float64)
-        self.left_shoulder_tilt_client = rospy.Publisher(left_shoulder_tilt_controller, Float64)
-        self.right_shoulder_tilt_client = rospy.Publisher(right_shoulder_tilt_controller, Float64)
-        self.torso_lift_client = rospy.Publisher(torso_lift_controller, Float64)
+        self.right_wrist_flex_client = rospy.Publisher(right_wrist_flex_controller, Float64, queue_size=10)
+        self.left_wrist_flex_client = rospy.Publisher(left_wrist_flex_controller, Float64, queue_size=10)
+        self.right_wrist_roll_client = rospy.Publisher(right_wrist_roll_controller, Float64, queue_size=10)
+        self.left_wrist_roll_client = rospy.Publisher(left_wrist_roll_controller, Float64, queue_size=10)
+        self.left_elbow_pan_client = rospy.Publisher(left_elbow_pan_controller, Float64, queue_size=10)
+        self.right_elbow_pan_client = rospy.Publisher(right_elbow_pan_controller, Float64, queue_size=10)
+        self.left_elbow_flex_client = rospy.Publisher(left_elbow_flex_controller, Float64, queue_size=10)
+        self.right_elbow_flex_client = rospy.Publisher(right_elbow_flex_controller, Float64, queue_size=10)
+        self.left_shoulder_pan_client = rospy.Publisher(left_shoulder_pan_controller, Float64, queue_size=10)
+        self.right_shoulder_pan_client = rospy.Publisher(right_shoulder_pan_controller, Float64, queue_size=10)
+        self.left_shoulder_tilt_client = rospy.Publisher(left_shoulder_tilt_controller, Float64, queue_size=10)
+        self.right_shoulder_tilt_client = rospy.Publisher(right_shoulder_tilt_controller, Float64, queue_size=10)
+        self.torso_lift_client = rospy.Publisher(torso_lift_controller, Float64, queue_size=10)
 
         print "wait for left gripper server"
         self.left_gripper_client = actionlib.SimpleActionClient(
-                  left_gripper_controller, Pr2GripperCommandAction)
+                  left_gripper_controller, GripperCommandAction)
         self.left_gripper_client.wait_for_server()
 
         print "wait for head controller"
@@ -179,7 +180,7 @@ class JoyNode():
                   head_controller, PointHeadAction)
         self.head_client.wait_for_server()
 
-        # self.cmd_vel = rospy.Publisher(base_controller, Twist)
+        # self.cmd_vel = rospy.Publisher(base_controller, Twist, queue_size=10)
 
         print "subscribe to joystick"
         self.joy = rospy.Subscriber('joy', Joy, self.joyCallback)
@@ -346,7 +347,7 @@ class JoyNode():
               if self.velo_gripper_pos > self.max_velo_gripper_pos:
                 self.velo_gripper_pos = self.max_velo_gripper_pos
               print "velo gripper " + str(self.velo_gripper_pos)
-              goal = Pr2GripperCommandGoal()
+              goal = GripperCommandGoal()
               goal.command.position = self.velo_gripper_pos
               goal.command.max_effort = 1000
               self.velo_gripper_client.send_goal(goal)
@@ -357,7 +358,7 @@ class JoyNode():
               if self.velo_gripper_pos < 0:
                 self.velo_gripper_pos = 0
               print "velo gripper " + str(self.velo_gripper_pos)
-              goal = Pr2GripperCommandGoal()
+              goal = GripperCommandGoal()
               goal.command.position = self.velo_gripper_pos
               goal.command.max_effort = 1000
               self.velo_gripper_client.send_goal(goal)
@@ -497,7 +498,7 @@ class JoyNode():
               if self.left_gripper_pos > self.max_left_gripper_pos:
                 self.left_gripper_pos = self.max_left_gripper_pos
               print "left gripper " + str(self.left_gripper_pos)
-              goal = Pr2GripperCommandGoal()
+              goal = GripperCommandGoal()
               goal.command.position = self.left_gripper_pos
               goal.command.max_effort = 1000
               self.left_gripper_client.send_goal(goal)
@@ -508,7 +509,7 @@ class JoyNode():
               if self.left_gripper_pos < 0:
                 self.left_gripper_pos = 0
               print "left gripper " + str(self.left_gripper_pos)
-              goal = Pr2GripperCommandGoal()
+              goal = GripperCommandGoal()
               goal.command.position = self.left_gripper_pos
               goal.command.max_effort = 1000
               self.left_gripper_client.send_goal(goal)

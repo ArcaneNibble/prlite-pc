@@ -48,7 +48,6 @@ import rospy, time
 from dynamixel_controllers.srv import TorqueEnable, SetSpeed
 from collections import deque
 
-# high_tolerance_joint = ['right_elbow_pan_joint', 'right_elbow_flex_joint', 'right_shoulder_pan_joint', 'left_elbow_flex_joint', 'left_shoulder_pan_joint', 'left_wrist_flex_joint', 'right_wrist_roll_joint']
 # linact_controllers = ['left_shoulder_tilt_controller', 'right_shoulder_tilt_controller', 'torso_lift_controller']
 # passive_controllers = ['left_upper_arm_hinge_controller','right_upper_arm_hinge_controller']
 # ELBOW_MOVING = -2000 
@@ -192,9 +191,9 @@ class FollowController:
             self.jnt_fudge = self.compute_elbow_fudge(self.execute_positions[k], self.current_pos[1])
 
     def log_final_traj_pos(self):
-        # likely joint pos order:
+        # likely joint pos order (from pr2lite_arm.yaml):
         # right_shoulder_pan_joint, right_shoulder_tilt_joint, 
-        # right_elbow_flex_joint, right_elbow_pan_joint,
+        # right_elbow_pan_joint, right_elbow_flex_joint, 
         # right_wrist_flex_joint, right_wrist_roll_joint, torso_lift_joint
         rospy.loginfo("final arm traj: [" + str(self.current_pos[0]) + ', ' + str(self.current_pos[1]) + ', ' + str(self.current_pos[2]) + ', ' + str(self.current_pos[3]) + ', ' + str(self.current_pos[4]) + ', ' + str(self.current_pos[5]) + ', ' + str(self.current_pos[6]) + ' ]')
 
@@ -253,17 +252,23 @@ class FollowController:
           if joint == 'right_elbow_flex_joint':
             pub_right_elbow_flex = i
           for joint_state_name in msg.name:
-            
             if joint == joint_state_name:
+              if joint not in self.execute_joints:
+                # joint not moving, record latest state
+                self.current_pos[i] = msg.position[j]
+                self.current_pos_cnt[i] = 0
+                j += 1
+                continue
               tolerance = .01
-              # removed: or joint == 'right_shoulder_pan_joint'
-              # removed: or joint == 'right_elbow_pan_joint'
+              # removed: 'right_shoulder_pan_joint' 'right_elbow_pan_joint'
               if joint == 'right_elbow_flex_joint' or joint == 'left_elbow_flex_joint' or joint == 'left_shoulder_pan_joint' or joint == 'left_wrist_flex_joint' or joint == 'right_wrist_roll_joint':
                 tolerance = .1
+              if joint == 'right_elbow_flex_joint':
+                tolerance = .15
               if self.current_pos[i] == msg.position[j]:
                 # give it a second to get started
                 tolerance = .05 * max(self.current_pos_cnt[i] - 4, 1)
-                if joint == 'right_elbow_pan_joint' or joint == 'right_elbow_flex_joint' or joint == 'right_shoulder_pan_joint' or joint == 'left_elbow_flex_joint' or joint == 'left_shoulder_pan_joint' or joint == 'left_wrist_flex_joint' or joint == 'right_wrist_roll_joint':
+                if joint == 'right_elbow_flex_joint' or joint == 'left_elbow_flex_joint' or joint == 'left_shoulder_pan_joint' or joint == 'left_wrist_flex_joint' or joint == 'right_wrist_roll_joint':
                   tolerance = .1 * max(self.current_pos_cnt[i] - 1, 1)
                 self.current_pos_cnt[i] += 1
               else:
@@ -278,11 +283,7 @@ class FollowController:
                   #WRONG: desired=self.execute_positions[k]+self.fudge_value[i]
                   # IndexError: list index out of range
                   rospy.loginfo("desired index k %d" % k)
-                  # was abs(self.execute_positions[k] - msg.position[j]) 
-                  # if abs(desired- msg.position[j]) < tolerance or joint == 'left_upper_arm_hinge_joint' or joint == 'right_upper_arm_hinge_joint' or joint == 'left_shoulder_tilt_joint' or joint == 'right_shoulder_tilt_joint' or (joint == 'torso_lift_joint' and abs(desired - msg.position[j]) < .06):
                   # ARD: try to handle shoulder tilt joints like dynamixel joints
-                  # right_elbow_flex may need .12 below
-                  # if abs(desired- msg.position[j]) < tolerance or joint == 'left_upper_arm_hinge_joint' or joint == 'right_upper_arm_hinge_joint' or (joint == 'torso_lift_joint' and abs(desired - msg.position[j]) < .06) or (joint == 'right_elbow_flex_joint' and abs(desired - msg.position[j]) < .06):
                   if abs(desired- msg.position[j]) < tolerance or joint == 'left_upper_arm_hinge_joint' or joint == 'right_upper_arm_hinge_joint' or (joint == 'torso_lift_joint' and abs(desired - msg.position[j]) < .006):
                     # close enough to consider the goal met
                     if joint == 'right_elbow_flex_joint':
@@ -290,7 +291,7 @@ class FollowController:
                       self.last_elbow_flex_pos = desired
                     if self.current_pos_cnt[i] - 5 > 0:
                       rospy.loginfo('Stall Warning: ' + joint + ' cur_pos:' + str (msg.position[j]) + " desired_pos " + str(self.execute_positions[k]))
-                    self.current_pos_cnt[i] = 0
+                    # self.current_pos_cnt[i] = 0
                     del self.execute_positions[k]
                     del self.execute_joints[k]
                     rospy.loginfo("del index k %d" % k)
@@ -337,7 +338,7 @@ class FollowController:
           if match == -1:
             rospy.loginfo('ERROR: no match for ' + exec_joint)
             return
-          self.current_pos_cnt[match] = 0
+          # self.current_pos_cnt[match] = 0
           self.compute_jnt_fudge(k, exec_joint) # fills in self.jnt_fudge
           desired = self.execute_positions[k] + self.fudge_value[match] + self.jnt_fudge
           endtime = start + self.trajectory_goal[0].trajectory.points[self.cur_point].time_from_start

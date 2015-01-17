@@ -15,6 +15,7 @@ LinearActuator::LinearActuator(ros::NodeHandle& nh, int id, int initialGoal) : m
     m_name = "";
 
     // Subscribe to the callback and advertise the published commands
+    // m_subscriber = m_nh.subscribe("net_485net_incoming_dgram", 1000, &LinearActuator::actuator_callback, this);
     m_subscriber = m_nh.subscribe("net_485net_incoming_dgram", 1000, &LinearActuator::actuator_callback, this);
     m_publisher = m_nh.advertise<packets_485net::packet_485net_dgram>("net_485net_outgoing_dgram", 1000);
 }

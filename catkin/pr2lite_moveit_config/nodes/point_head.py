@@ -37,7 +37,8 @@ import actionlib
 import rospy, time
 import tf2_ros
 from std_msgs.msg import Float64
-from pr2_controllers_msgs.msg import *
+from control_msgs.msg import *
+# from pr2_controllers_msgs.msg import *
 from geometry_msgs.msg import PointStamped
 from pr2lite_moveit_config.srv import ReturnJointStates
 
@@ -72,11 +73,11 @@ class PointHeadNode():
         self.head_pan_frame = 'head_pan_link'
         # self.head_pan_frame = 'kinect_depth_optical_frame'
         # self.head_pan_frame = 'kinect_link'
-        self.head_pan_pub = rospy.Publisher(self.head_pan_controller_topic, Float64)
+        self.head_pan_pub = rospy.Publisher(self.head_pan_controller_topic, Float64, queue_size=10)
        
         # Initialize publisher for the tilt servo
         self.head_tilt_frame = 'head_pan_link'
-        self.head_tilt_pub = rospy.Publisher(self.head_tilt_controller_topic, Float64)
+        self.head_tilt_pub = rospy.Publisher(self.head_tilt_controller_topic, Float64,queue_size=10)
 
         # Initialize tf listener
         self.buf = tf2_ros.Buffer()

@@ -1483,7 +1483,10 @@ hokuyo side bar dimensions:
     <limit effort="300" lower="-2.618" upper="2.618" velocity=".1"/>
   </joint>
   <joint name="left_elbow_flex_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0762 0.0 0.0127"/>
+<!-- ARD
     <origin rpy="0 0 0" xyz="0.0762 0.0 0.0254"/>
+-->
     <parent link="left_elbow_flex_link"/>
     <child link="left_forearm_link"/>
     <axis xyz="0 -1 0"/>

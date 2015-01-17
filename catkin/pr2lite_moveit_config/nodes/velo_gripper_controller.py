@@ -31,7 +31,8 @@ import roslib;
 roslib.load_manifest('pr2lite_moveit_config')
 import rospy
 import actionlib
-from pr2_controllers_msgs.msg import(Pr2GripperCommandGoal, Pr2GripperCommand, Pr2GripperCommandAction)
+# from pr2_controllers_msgs.msg import(GripperCommandGoal, Pr2GripperCommand, Pr2GripperCommandAction)
+from control_msgs.msg import *
 from dynamixel_controllers.srv import TorqueEnable, SetSpeed, SetTorqueLimit
 from std_msgs.msg import Float64
 from math import asin
@@ -72,13 +73,13 @@ class VeloGripperController:
         # position in radians
         rospy.loginfo("pub_topic")
         pub_topic = '/' + self.ax12_controller + '/command'
-        self.velo_pub = rospy.Publisher(pub_topic, Float64)
+        self.velo_pub = rospy.Publisher(pub_topic, Float64, queue_size=10)
 
         # subscribe to command and then spin
         # Pr2GripperCommand(position, max_effort)
         #self.server = actionlib.SimpleActionServer(side_c +"_gripper_controller/gripper_action", Pr2GripperCommandAction, execute_cb=self.commandCb, auto_start=False)
         rospy.loginfo("gripper_action")
-        self.server = actionlib.SimpleActionServer("velo_gripper_controller/gripper_action", Pr2GripperCommandAction, execute_cb=self.commandCb, auto_start=False)
+        self.server = actionlib.SimpleActionServer("velo_gripper_controller/gripper_action", GripperCommandAction, execute_cb=self.commandCb, auto_start=False)
         self.iter = 0
         rospy.loginfo("start server")
         self.server.start()

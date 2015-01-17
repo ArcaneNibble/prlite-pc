@@ -3,6 +3,9 @@
   <include file="$(find pr2lite_moveit_config)/launch/planning_context.launch" />
 
   <arg name="debug" default="false" />
+<!-- ARD
+  <arg name="debug" default="true" />
+-->
   <arg unless="$(arg debug)" name="launch_prefix" value="" />
   <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
 
@@ -41,6 +44,7 @@
     <!-- MoveGroup capabilities to load -->
     <param name="capabilities" value="move_group/MoveGroupCartesianPathService
 				      move_group/MoveGroupExecuteService
+                                      move_group/MoveGroupGetPlanningSceneService
 				      move_group/MoveGroupKinematicsService
 				      move_group/MoveGroupMoveAction
 				      move_group/MoveGroupPickPlaceAction

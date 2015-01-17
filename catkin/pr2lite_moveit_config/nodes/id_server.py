@@ -18,7 +18,7 @@ def parse_db(file):
 	uc_list = {}
 	firm_list = {}
 	while True:
-                print "i"
+                # print "i"
 		l = f.readline()
 		if l == "":
 			raise Exception("Premature end of uc.txt file")
@@ -29,7 +29,7 @@ def parse_db(file):
 			vals = l.split("|")
 			uc_list[ord(binascii.unhexlify(vals[0]))] = (vals[1], vals[2])
 	while True:
-                print "j"
+                # print "j"
 		l = f.readline()
 		if l == "":
 			break

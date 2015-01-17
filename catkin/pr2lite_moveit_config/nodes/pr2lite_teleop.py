@@ -20,7 +20,8 @@ import rospy, time
 from dynamixel_controllers.srv import TorqueEnable, SetSpeed, SetTorqueLimit
 import actionlib
 from actionlib_msgs.msg import *
-from pr2_controllers_msgs.msg import *
+from control_msgs.msg import *
+#from pr2_controllers_msgs.msg import *
 from geometry_msgs.msg import *
 from moveit_commander import RobotCommander, PlanningSceneInterface, MoveGroupCommander, conversions
 #from moveit_msgs.msg import RobotTrajectory, Grasp
@@ -152,21 +153,21 @@ class JoyNode():
         self.velo_speed_service = rospy.ServiceProxy(
                   velo_speed_service, SetSpeed)
         self.velo_gripper_client = actionlib.SimpleActionClient(
-                  velo_controller, Pr2GripperCommandAction)
+                  velo_controller, GripperCommandAction)
         print "wait for velo server"
         self.velo_gripper_client.wait_for_server()
         # position in radians
-        # self.velo_gripper_pub = rospy.Publisher(velo_controller, Float64)
+        # self.velo_gripper_pub = rospy.Publisher(velo_controller, Float64, queue_size=10)
         self.max_velo_gripper_pos = .125
         self.velo_gripper_pos = self.max_velo_gripper_pos
         self.max_left_gripper_pos = .125
         self.left_gripper_pos = self.max_left_gripper_pos
-        self.right_wrist_flex_client = rospy.Publisher(right_wrist_flex_controller, Float64)
-        self.left_wrist_flex_client = rospy.Publisher(left_wrist_flex_controller, Float64)
-        self.right_wrist_roll_client = rospy.Publisher(right_wrist_roll_controller, Float64)
-        self.left_wrist_roll_client = rospy.Publisher(left_wrist_roll_controller, Float64)
-        self.left_elbow_pan_client = rospy.Publisher(left_elbow_pan_controller, Float64)
-        self.right_elbow_pan_client = rospy.Publisher(right_elbow_pan_controller, Float64)
+        self.right_wrist_flex_client = rospy.Publisher(right_wrist_flex_controller, Float64, queue_size=10)
+        self.left_wrist_flex_client = rospy.Publisher(left_wrist_flex_controller, Float64, queue_size=10)
+        self.right_wrist_roll_client = rospy.Publisher(right_wrist_roll_controller, Float64, queue_size=10)
+        self.left_wrist_roll_client = rospy.Publisher(left_wrist_roll_controller, Float64, queue_size=10)
+        self.left_elbow_pan_client = rospy.Publisher(left_elbow_pan_controller, Float64, queue_size=10)
+        self.right_elbow_pan_client = rospy.Publisher(right_elbow_pan_controller, Float64, queue_size=10)
 
         print "wait for left gripper server"
         self.left_gripper_client = actionlib.SimpleActionClient(
@@ -178,7 +179,7 @@ class JoyNode():
                   head_controller, PointHeadAction)
         self.head_client.wait_for_server()
 
-        self.cmd_vel = rospy.Publisher(base_controller, Twist)
+        self.cmd_vel = rospy.Publisher(base_controller, Twist, queue_size=10)
 
         #TODO: moveit!
         print "left arm and torso moveit commander"

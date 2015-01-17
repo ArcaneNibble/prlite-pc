@@ -125,8 +125,8 @@ class FollowController:
           
         for c in self.controllers:
           if c == 'torso_lift_controller':
-            # c_srv = rospy.Publisher('torso_lift_controller/position_joint_action', Float64)
-            c_srv = rospy.Publisher('torso_lift_controller/command', Float64)
+            # c_srv = rospy.Publisher('torso_lift_controller/position_joint_action', Float64, queue_size=10)
+            c_srv = rospy.Publisher('torso_lift_controller/command', Float64, queue_size=10)
             self.position_pub.append(c_srv)
             rospy.loginfo("Real pos pub:" + c)
             # add dummy service so positions align
@@ -135,7 +135,7 @@ class FollowController:
             self.last_speed.append(self.max_speed)
             rospy.loginfo("Dummy speed:" + c)
           elif c != 'left_upper_arm_hinge_controller' and c != 'right_upper_arm_hinge_controller':
-            c_srv = rospy.Publisher(c + '/command', Float64)
+            c_srv = rospy.Publisher(c + '/command', Float64, queue_size=10)
             self.position_pub.append(c_srv)
             rospy.loginfo("Real pos pub " + c)
             if c != 'left_shoulder_tilt_controller' and c != 'right_shoulder_tilt_controller' and c != 'torso_lift_controller':
@@ -169,11 +169,15 @@ class FollowController:
           self.server.start()
 
 
-    def compute_elbow_fudge(self, elbow, shoulder):
+    def compute_elbow_fudge(self, R_L, elbow, shoulder):
           jnt_fudge = 0
           # Shoulder mimic jnt to elbow joint compensation for gravity
-          elbow_gravity_factor = .1
-          shoulder_elbow_tilt_factor = 0
+          if R_L == "R":
+             elbow_gravity_factor = .1
+             shoulder_elbow_tilt_factor = 0
+          elif R_L == "L":
+             elbow_gravity_factor = 0
+             shoulder_elbow_tilt_factor = 0
           # parameters
           straight_elbow_threshold = .6
           shoulder_threshold = .5
@@ -202,10 +206,10 @@ class FollowController:
           self.jnt_fudge = 0
           if joint == 'right_elbow_flex_joint':
             # right_shoulder_tilt is [1] with right arm conroller
-            self.jnt_fudge = self.compute_elbow_fudge(self.execute_positions[k], self.current_pos[1])
+            self.jnt_fudge = self.compute_elbow_fudge("R",self.execute_positions[k], self.current_pos[1])
           elif joint == 'left_elbow_flex_joint':
             # left_shoulder_tilt is [1] with left arm controller
-            self.jnt_fudge = self.compute_elbow_fudge(self.execute_positions[k], self.current_pos[1])
+            self.jnt_fudge = self.compute_elbow_fudge("L",self.execute_positions[k], self.current_pos[1])
 
     def log_final_traj_pos(self):
         # likely joint pos order:
@@ -268,6 +272,8 @@ class FollowController:
           j = 0
           if joint == 'right_elbow_flex_joint':
             pub_right_elbow_flex = i
+          elif joint == 'left_elbow_flex_joint':
+            pub_left_elbow_flex = i
           for joint_state_name in msg.name:
             
             if joint == joint_state_name:
@@ -383,7 +389,7 @@ class FollowController:
                if 'right_elbow_flex_joint' not in self.execute_joints:
                  # if shoulder tilt is moving, but elbow flex is not,
                  # compensate elbow flex as a function of shoulder_tilt
-                 desired_right_elbow_flex =  self.compute_elbow_fudge(self.right_elbow_flex_pos, self.execute_positions[k])
+                 desired_right_elbow_flex =  self.compute_elbow_fudge("R",self.right_elbow_flex_pos, self.execute_positions[k])
                  desired_right_elbow_flex = desired_right_elbow_flex + self.right_elbow_flex_pos + self.right_elbow_flex_fudge 
                  rospy.loginfo('Adjust elbow to ' + str(desired_right_elbow_flex) + ' last pos: ' + str(self.right_elbow_flex_pos) + ' fudge ' + str(self.right_elbow_flex_fudge))
                  self.position_pub[pub_right_elbow_flex].publish(desired_right_elbow_flex)
@@ -391,7 +397,7 @@ class FollowController:
                if 'left_elbow_flex_joint' not in self.execute_joints:
                  # if shoulder tilt is moving, but elbow flex is not,
                  # compensate elbow flex as a function of shoulder_tilt
-                 desired_left_elbow_flex =  self.compute_elbow_fudge(self.left_elbow_flex_pos, self.execute_positions[k])
+                 desired_left_elbow_flex =  self.compute_elbow_fudge("L",self.left_elbow_flex_pos, self.execute_positions[k])
                  desired_left_elbow_flex = desired_left_elbow_flex + self.left_elbow_flex_pos + self.left_elbow_flex_fudge
                  rospy.loginfo('Adjust elbow to ' + str(desired_left_elbow_flex) + ' last pos: ' + str(self.left_elbow_flex_pos) + ' fudge ' + str(self.left_elbow_flex_fudge))
                  self.position_pub[pub_left_elbow_flex].publish(desired_left_elbow_flex)

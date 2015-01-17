@@ -1,6 +1,6 @@
 pkill -f roscore 
 pkill -f pc_485net_raw.py
-pkill -f 485net_packet_sorter.py
+pkill -f net_485net_packet_sorter.py
 pkill -f id_server.py
 pkill -f rviz
 pkill -f rxgraph
@@ -25,3 +25,11 @@ pkill -f robot_pose_ekf
 pkill -f map_server
 pkill -f tf_broadcaster
 pkill -f move_base
+pkill -f velo_gripper_controller.py
+pkill -f follow_controller_complex.py
+pkill -f dynamixel_joint_states_publisher.py
+pkill -f imu_um6_node.py
+pkill -f fake_pub.py
+pkill -f move_group
+pkill -f prlite_odom/odom
+pkill -f gnuchess

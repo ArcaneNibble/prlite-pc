@@ -73,7 +73,7 @@ class JointStatePublisher():
         [rospy.Subscriber(c + '/state', JointStateDynamixel, self.controller_state_handler) for c in self.controllers]
      
         # Start publisher
-        self.joint_states_pub = rospy.Publisher('/joint_states', JointStatePR2)
+        self.joint_states_pub = rospy.Publisher('/joint_states', JointStatePR2, queue_size=10)
        
         rospy.loginfo("Starting Dynamixel Joint State Publisher at " + str(rate) + "Hz")
        
@@ -108,11 +108,15 @@ class JointStatePublisher():
         # return (resp.position, resp.velocity, resp.effort)
         return resp.position[ind]
 
-    def compute_elbow_fudge(self, elbow, shoulder):
+    def compute_elbow_fudge(self, R_L, elbow, shoulder):
           jnt_fudge = 0
           # Shoulder mimic jnt to elbow joint compensation for gravity
-          elbow_gravity_factor = .1
-          shoulder_elbow_tilt_factor = 0
+          if R_L == "R":
+            elbow_gravity_factor = .1
+            shoulder_elbow_tilt_factor = 0
+          elif R_L == "L":
+            elbow_gravity_factor = 0
+            shoulder_elbow_tilt_factor = 0
           # parameters
           straight_elbow_threshold = .6
           shoulder_threshold = .5
@@ -142,11 +146,11 @@ class JointStatePublisher():
           if joint_name == 'right_elbow_flex_joint':
             shoulder_tilt = self.shoulder_state("right_shoulder_tilt_joint")
             # right_shoulder_tilt is [1] with right arm conroller
-            self.jnt_fudge = self.compute_elbow_fudge(joint_pos, shoulder_tilt)
+            self.jnt_fudge = self.compute_elbow_fudge("R",joint_pos, shoulder_tilt)
           elif joint_name == 'left_elbow_flex_joint':
             shoulder_tilt = self.shoulder_state("left_shoulder_tilt_joint")
             # left_shoulder_tilt is [1] with left arm controller
-            self.jnt_fudge = self.compute_elbow_fudge(joint_pos, shoulder_tilt)
+            self.jnt_fudge = self.compute_elbow_fudge("L",joint_pos, shoulder_tilt)
 
     def publish_joint_states(self):
         # Construct message & publish joint states

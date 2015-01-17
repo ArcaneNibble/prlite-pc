@@ -7,10 +7,11 @@ roslib.load_manifest('pr2lite_moveit_config')
 import actionlib
 import rospy
 from sensor_msgs.msg import JointState
-from control_msgs.msg import FollowJointTrajectoryAction
-from control_msgs.msg import FollowJointTrajectoryActionGoal
+# from control_msgs.msg import FollowJointTrajectoryAction
+# from control_msgs.msg import FollowJointTrajectoryActionGoal
+from control_msgs.msg import *
 from actionlib_msgs.msg import *
-from pr2_controllers_msgs.msg import *
+# from pr2_controllers_msgs.msg import *
 #from joint_states_listener.srv import ReturnJointStates
 from joint_states_listener import ReturnJointStates
 import time
@@ -21,13 +22,13 @@ import tf2_ros
 
 roslib.load_manifest('rospy')
 roslib.load_manifest('actionlib')
-roslib.load_manifest('pr2_controllers_msgs')
+roslib.load_manifest('control_msgs')
 
 
 
-from pr2_controllers_msgs.msg import JointTrajectoryAction, JointTrajectoryControllerState, JointTrajectoryActionGoal,\
-  SingleJointPositionAction, SingleJointPositionGoal, Pr2GripperCommandAction,\
-  Pr2GripperCommandGoal, JointTrajectoryGoal
+# from pr2_controllers_msgs.msg import JointTrajectoryAction, JointTrajectoryControllerState, JointTrajectoryActionGoal,\
+#   SingleJointPositionAction, SingleJointPositionGoal, Pr2GripperCommandAction,\
+#   Pr2GripperCommandGoal, JointTrajectoryGoal
 
 from diagnostic_msgs.msg import *
 from std_msgs.msg import Float64
@@ -43,8 +44,8 @@ class TorsoFollowTrajController:
         self.active = 0
         self.name = "torso_controller/position_joint_action"
         self.server = actionlib.SimpleActionServer(self.name, SingleJointPositionAction, execute_cb=self.actionCb, auto_start=False)
-        self.torso_pub = rospy.Publisher('torso_lift_controller/command', Float64)
-        self.set_torso_pos = rospy.Publisher('net_485net_set_torso_pos', Float64)
+        self.torso_pub = rospy.Publisher('torso_lift_controller/command', Float64, queue_size=10)
+        self.set_torso_pos = rospy.Publisher('net_485net_set_torso_pos', Float64, queue_size=10)
         self.current_pos = 0.0
         self.velocity = 0.0508
         rospy.loginfo("Started TorsoFollowTrajController")

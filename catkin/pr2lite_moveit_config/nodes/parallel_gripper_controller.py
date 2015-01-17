@@ -32,13 +32,12 @@ import roslib;
 roslib.load_manifest('pr2lite_moveit_config')
 import rospy
 import actionlib
-from pr2_controllers_msgs.msg import (Pr2GripperCommandGoal, Pr2GripperCommand,
-                                      Pr2GripperCommandAction)
+from control_msgs.msg import *
+# from pr2_controllers_msgs.msg import (Pr2GripperCommandGoal, Pr2GripperCommand,
+#                                      Pr2GripperCommandAction)
 import thread
 
 
-from pr2_controllers_msgs.msg import (Pr2GripperCommandGoal, Pr2GripperCommand,
-                                      Pr2GripperCommandAction)
 from std_msgs.msg import Float64
 from math import asin
 
@@ -63,8 +62,8 @@ class ParallelGripperController:
         self.invert_r = rospy.get_param("~invert_right", False)
 
         # publishers
-        self.l_pub = rospy.Publisher(self.side + "_gripper_left_controller/command", Float64)
-        self.r_pub = rospy.Publisher(self.side + "_gripper_right_controller/command", Float64)
+        self.l_pub = rospy.Publisher(self.side + "_gripper_left_controller/command", Float64,queue_size=10)
+        self.r_pub = rospy.Publisher(self.side + "_gripper_right_controller/command", Float64,queue_size=10)
 
         # subscribe to command and then spin
         # Pr2GripperCommand(position, max_effort)
@@ -73,9 +72,9 @@ class ParallelGripperController:
             side_c = "r"
         if self.side == "left":
             side_c = "l"
-        # rospy.Subscriber(side_c+"_gripper_controller/gripper_action", Pr2GripperCommand, self.commandCb)
+        # rospy.Subscriber(side_c+"_gripper_controller/gripper_action", GripperCommand, self.commandCb)
         #self.server = actionlib.SimpleActionServer(side_c+"_gripper_controller/gripper_action", Pr2GripperCommandAction, execute_cb=self.commandCb, auto_start=False)
-        self.server = actionlib.SimpleActionServer("gripper_controller/gripper_action", Pr2GripperCommandAction, execute_cb=self.commandCb, auto_start=False)
+        self.server = actionlib.SimpleActionServer("gripper_controller/gripper_action", GripperCommandAction, execute_cb=self.commandCb, auto_start=False)
         self.server.start()
         
 

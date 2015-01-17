@@ -22,6 +22,7 @@ outgoing_pub = None
 prev_time = None
 jspr2msg = None
 ser = None
+pwrser = None
 joint_states_msg = None
 joint_states_pub = None
 r_arm_la_ctr = 0
@@ -47,7 +48,7 @@ class JointStateMessages():
       global joint_states_pub
 
       joint_states_msg = JointStatePR2Message()
-      joint_states_pub = rospy.Publisher('/joint_states', JointState)
+      joint_states_pub = rospy.Publisher('/joint_states', JointState, queue_size=10)
       global ser
       global r_arm_la_ctr 
       global l_arm_la_ctr 
@@ -137,7 +138,7 @@ def shoulder_handler(packet):
             jspr2msg.velocity[RIGHT_LIN_ACT_CYL_JOINT] = 0
             jspr2msg.velocity[RIGHT_SHOULDER_TILT_JOINT] = 0
             # print "linact: Right Shoulder len %f angle %f" %  ( jspr2msg.position[RIGHT_LINEAR_ACTUATOR_JOINT], jspr2msg.position[RIGHT_SHOULDER_TILT_JOINT])
-            rospy.loginfo( "linact: Right Shoulder len %f angle %f" %  ( jspr2msg.position[RIGHT_LINEAR_ACTUATOR_JOINT], jspr2msg.position[RIGHT_SHOULDER_TILT_JOINT]))
+            # rospy.loginfo( "linact: Right Shoulder len %f angle %f" %  ( jspr2msg.position[RIGHT_LINEAR_ACTUATOR_JOINT], jspr2msg.position[RIGHT_SHOULDER_TILT_JOINT]))
           else:
             jspr2msg.velocity[RIGHT_LINEAR_ACTUATOR_JOINT] = LINACT_VEL*INCHES_TO_METERS
             jspr2msg.velocity[RIGHT_LIN_ACT_CYL_JOINT] = LINACT_VEL*INCHES_TO_METERS
@@ -396,6 +397,7 @@ def handler_incoming(packet):
 	global torso_la_ctr
 	global base_la_ctr
 	global bad_usb_tx
+	global pwrser
 
 	#packet is a packet_485net_raw
 	proto = struct.unpack("B", packet.data[2])[0] & 0b11000000
@@ -436,6 +438,15 @@ def handler_incoming(packet):
                   if r_arm_la_ctr > 5 or l_arm_la_ctr > 5 or torso_la_ctr > 5 or base_la_ctr > 5:
                     bad_usb_tx = 1
                     rospy.loginfo("bad_usb_tx set %d %d %d %d", r_arm_la_ctr, l_arm_la_ctr, torso_la_ctr, base_la_ctr)
+                    pwrser.setRTS(False)
+                    rospy.sleep(1)
+                    pwrser.setRTS(True)
+                    r_arm_la_ctr = 0
+                    l_arm_la_ctr = 0
+                    torso_la_ctr = 0
+                    base_la_ctr = 0
+                    bad_usb_tx = 0
+
                   publish_LA_states()
                   # print "pub LA"
                   prev_time = cur_time
@@ -614,6 +625,7 @@ def main():
     global outgoing_pub
     global prev_time
     global ser
+    global pwrser
     global bad_usb_tx
     
     print "PC 485net interface (raw serial)"
@@ -634,17 +646,20 @@ def main():
     ser = serial.Serial(serport, baud, timeout=1)
     ser.setRTS(True)
     ser.setDTR(True)
+
+    pwrser = serial.Serial("/dev/pwrrst", 9600, timeout=1)
+    pwrser.setRTS(True)
    
     # rospy.Subscriber("net_485net_incoming_packets", packet_485net_raw, handler_incoming)
     # pub = rospy.Publisher("net_485net_incoming_packets", packet_485net_raw)
-    dgram_pub = rospy.Publisher("net_485net_incoming_dgram", packet_485net_dgram)
+    dgram_pub = rospy.Publisher("net_485net_incoming_dgram", packet_485net_dgram,queue_size=10)
     rospy.Subscriber("net_485net_outgoing_packets", packet_485net_raw, tx_packet)
     rospy.Subscriber("net_485net_outgoing_stream", packet_485net_stream, handler_stream)
     rospy.Subscriber("net_485net_outgoing_dgram", packet_485net_dgram, handler_dgram)
     rospy.Subscriber("net_485net_outgoing_bootloader", packet_485net_bootloader, handler_bootloader)
-    stream_pub = rospy.Publisher("net_485net_incoming_stream", packet_485net_stream)
-    bootloader_pub = rospy.Publisher("net_485net_incoming_bootloader", packet_485net_bootloader)
-    outgoing_pub = rospy.Publisher("net_485net_outgoing_packets", packet_485net_raw)
+    stream_pub = rospy.Publisher("net_485net_incoming_stream", packet_485net_stream,queue_size=10)
+    bootloader_pub = rospy.Publisher("net_485net_incoming_bootloader", packet_485net_bootloader,queue_size=10)
+    outgoing_pub = rospy.Publisher("net_485net_outgoing_packets", packet_485net_raw,queue_size=10)
    
     # rospy.Subscriber("net_485net_set_torso_pos", Float64, set_torso_pos)
     # i = 0

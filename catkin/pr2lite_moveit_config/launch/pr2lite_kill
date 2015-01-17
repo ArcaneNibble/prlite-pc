@@ -27,6 +27,7 @@ pkill -f tf_broadcaster
 pkill -f move_base
 pkill -f velo_gripper_controller.py
 pkill -f follow_controller_complex.py
+pkill -f dynamixel_joint_states_publisher.py
 pkill -f imu_um6_node.py
 pkill -f fake_pub.py
 pkill -f move_group

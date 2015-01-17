@@ -64,8 +64,9 @@ import math
 
 from trajectory_msgs.msg import *
 from actionlib_msgs.msg import *
-from pr2_controllers_msgs.msg import *
-from pr2_common_action_msgs.msg import *
+from control_msgs.msg import *
+
+# from pr2_controllers_msgs.msg import *
 import getopt
 import actionlib
 

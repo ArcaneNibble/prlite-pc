@@ -1,7 +1,7 @@
 // Implementation of our simple linear actuator control object
 #include "pr2lite_actuators/LinearActuator.hpp"
 #include <sensor_msgs/JointState.h>
-#include "dynamixel_msgs/JointState.h"
+/* #include "dynamixel_msgs/JointState.h" */
 #include "ros/time.h"
 
 using namespace pr2lite::actuators;
@@ -100,6 +100,7 @@ void LinearActuator::publish_dyna_state(int cur_pos)
 #define HYPOTENUSE (14.968)    /* Len from bottom LinAct hole to Shoulder Joint
     // double angle = (1.44129 - pow(acos((length + 9.9), 2.0) - 256.0)/(-162.2));
 
+    angle = angle + .1;   // ard: attempt to match kinect
     // ROS_INFO("current length of \"%s\" dynamixel: %lf radians %d cur_pos", m_name.c_str(), angle, cur_pos);
 
     // Bound the value
@@ -110,7 +111,6 @@ void LinearActuator::publish_dyna_state(int cur_pos)
 /* constants in inches */
 #define LINACT_DWN (9.9)       /* length of LinAct when retracted */
 #define LINACT_UP (13.9)       /* length of LinAct when extended */
-*/
 #define LINACT_TO_TOP (14.715) /* len from bottom LinAct hole to top lazy susan
 */
 #define BRACKET_TO_BAR (1.26)  /* From LinAct hole to upper arm bar */
